@@ -1,0 +1,16 @@
+{
+  "name": "lesna-radiowezel",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile-sass": "sass --watch styles:public/css"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-sass": "^9.0.0",
+    "sass": "^1.66.1"
+  }
+}
