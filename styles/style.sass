@@ -1,4 +1,5 @@
 $text-base: white
+$text-darker: lightgray
 $padding-grid: 10em
 
 @font-face 
@@ -106,6 +107,9 @@ html, body
     -webkit-mask-image: linear-gradient(90deg, #000 75%, transparent)
 .song-artist
     font-size: 1.5rem
+    font-weight: 600
+    color: $text-darker
+    
 
 .main-right
     grid-area: 2 / 2 / 3 / 3
@@ -123,6 +127,7 @@ html, body
     padding: 0.5em
     justify-content: flex-end
     align-items: flex-end
+    font-weight: 200
     opacity: 0.5
     text-align: right
 
@@ -172,8 +177,12 @@ html, body
 
 .queue-item-title
     font-size: 1.5rem
+    font-weight: 200
 
 .queue-item-artist
     display: flex
     flex-direction: row
     gap: 0.5em
+    color: $text-darker
+    :first-child
+            font-weight: 600
