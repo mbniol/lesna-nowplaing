@@ -199,3 +199,26 @@ html, body
 .song-progress-bar::-webkit-progress-value
     background: $text-base
     transition: width 1s ease-in-out
+
+.player-wrapper
+    @include flexCenter()
+    flex-direction: column
+    font-size: 2rem
+    gap: 1em
+
+.player-controls
+    @include flexCenter()
+    flex-direction: row
+    gap: 1em
+
+.player-controls-button
+    @include flexCenter()
+    color: black
+    width: 1.5em
+    height: 1.5em
+    line-height: 1.5em
+    border-radius: 100%
+    background-color: white
+
+.player-status
+    font-size: 1rem
