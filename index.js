@@ -32,12 +32,12 @@ app.use(mainRouter);
 //   }
 // );
 
-// Authentication.setInstance(client_id, client_secret);
-// const token = await Authentication.getInstance().getToken();
-// console.log(
-//   "TEST API QUERY: ",
-//   await fetchWebApi(token, "search?q=choppa&type=track")
-// );
+Authentication.setInstance(client_id, client_secret);
+const token = await Authentication.getInstance().getToken();
+console.log(
+  "TEST API QUERY: ",
+  (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
+);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
