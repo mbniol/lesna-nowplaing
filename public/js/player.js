@@ -37,7 +37,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   //token here
   const token = '';
   const player = new Spotify.Player({
-    name: 'Web Playback SDK Quick Start Player',
+    name: 'Lesna',
     getOAuthToken: cb => { cb(token); },
     volume: 0.5
   });
