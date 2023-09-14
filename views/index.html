@@ -1,52 +1,56 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/css/style.css">
-    <!-- <script src="/public/js/script.js" defer></script> -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <!-- <script src="/js/script.js" defer></script> -->
     <title>Leśna - Now Playing</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="root">
-        <div class="main-grid">
-            <div class="title">Teraz odtwarzane</div>
-            <div class="main-left">
-                <div class="now-playing">
-                    <div class="cover-art">
-                        <progress class="song-progress-bar" value="0" max="100"></progress>
-                        <img src="/public/img/cover-placeholder.png" width="100%">
-                    </div>
-                    <div class="song-title-container">
-                        <div class="song-title">-</div>
-                        <div class="song-artist">-</div>
-                    </div>
-                </div>
+      <div class="main-grid">
+        <div class="title">Teraz odtwarzane</div>
+        <div class="main-left">
+          <div class="now-playing">
+            <div class="cover-art">
+              <progress
+                class="song-progress-bar"
+                value="0"
+                max="100"
+              ></progress>
+              <img src="/img/cover-placeholder.png" width="100%" />
             </div>
-            <div class="main-right">
-                <div class="queue">
-                    <div class="queue-title">Kolejka</div>
-                    <div class="queue-list">
-                        <div class="queue-item">
-                            <div class="queue-item-title">-</div>
-                            <div class="queue-item-artist">
-                                <div>-</div>
-                                <div>•</div>
-                                <div>00:00</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="song-title-container">
+              <div class="song-title">-</div>
+              <div class="song-artist">-</div>
             </div>
-            <div class="qr">
-                <img src="/public/img/qr.png" height="100%">
-            </div>
-            <div class="info">
-                Version: 0.1 <br>
-                &copy; Mateusz Biniak, Jan Michalak, Dawid Ordon <br>
-            </div>
+          </div>
         </div>
-        <div class="background"><img src="/public/img/cover-placeholder.png"></div>
+        <div class="main-right">
+          <div class="queue">
+            <div class="queue-title">Kolejka</div>
+            <div class="queue-list">
+              <div class="queue-item">
+                <div class="queue-item-title">-</div>
+                <div class="queue-item-artist">
+                  <div>-</div>
+                  <div>•</div>
+                  <div>00:00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="qr">
+          <img src="/img/qr.png" height="100%" />
+        </div>
+        <div class="info">
+          Version: 0.1 <br />
+          &copy; Mateusz Biniak, Jan Michalak, Dawid Ordon <br />
+        </div>
+      </div>
+      <div class="background"><img src="/img/cover-placeholder.png" /></div>
     </div>
-</body>
+  </body>
 </html>
