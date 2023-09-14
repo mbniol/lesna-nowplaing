@@ -35,7 +35,7 @@ function updateInfo(infoObject, infoObjectNext){
 
 window.onSpotifyWebPlaybackSDKReady = () => {
   //token here
-  const token = '';
+  const token = 'BQDcEtY419E2Nig00AXlmSWGp01LhJL7iewZ96vQsAhZJrXS_eRwLKJw9iUe-Wo-hp7pjA-HG1-Am0uFQuzUdsap3IsqAzwuC5HxTxl-HjKWBBGo7353-YMj0pU_Z7SaVmVy46nLm5uVFuryjuWC7fROI8v0Zd8i9wWHgA0nzm0n0Th1zHWpxeDXDO5d2nKZzdTdREMA1Z9_dA';
   const player = new Spotify.Player({
     name: 'Lesna',
     getOAuthToken: cb => { cb(token); },
