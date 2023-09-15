@@ -8,9 +8,9 @@ const router = new Router();
 
 
 
-router.get("*", (req, res) => {
-  res.send("PAGE NOT FOUND");
-});
+// router.get("*", (req, res) => {
+//   res.send("PAGE NOT FOUND");
+// });
 
 router.use((err, req, res, next) => {
   console.error(err.stack)

@@ -1,17 +1,20 @@
 import express from "express";
 import helmet from "helmet";
 import "dotenv/config";
-
-import Authentication from "./helpers/authentication.js";
+import Auth from "./helpers/auth.js";
 import Mysql from "./helpers/database.js";
 import { fetchWebApi } from "./helpers/helpers.js";
-
 import mainRouter from "./routes/router.js";
+import session from "express-session";
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
 
 const app = express();
 const port = process.env.PORT || 3000;
-const client_id = "2aac28ace2cf4d76954eca268d299d6c";
-const client_secret = "0cc35cd4b9844e33b45c10cabd0fb19b";
+const client_id = "405c695fe40447e5870aa2e44101c5a7";
+const client_secret = "1f89010e9b5749cb89947602fd2443f3";
+app.use(express.static("public"));
+app.use(session({ secret: "sekret", cookie: { maxAge: 60000 } }));
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -35,12 +38,12 @@ app.use(mainRouter);
 //   }
 // );
 
- Authentication.setInstance(client_id, client_secret);
- const token = await Authentication.getInstance().getToken();
- /* console.log(
-   "TEST API QUERY: ",
-   await fetchWebApi(token, "search?q=choppa&type=track")
- ); */
+Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
+const token = await Auth.getInstance().getAPIToken();
+// console.log(
+//   "TEST API QUERY: ",
+//   (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
+// );
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
