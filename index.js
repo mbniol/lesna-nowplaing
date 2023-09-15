@@ -5,7 +5,7 @@ import Auth from "./helpers/auth.js";
 import { fetchWebApi } from "./helpers/helpers.js";
 import mainRouter from "./routes/router.js";
 import session from "express-session";
-import { newTruck, vote } from "./models/song.js";
+import { newTruck, vote, votes } from "./models/song.js";
 import Mysql from "./helpers/database.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
@@ -55,8 +55,9 @@ app.listen(port, () => {
 
 
 //testy pobierania danych piosenki z api
-const track_id="5sGv8YdAa3XjggnbpF9NC9";
-
+const track_id="2LBqCSwhJGcFQeTHMVGwy3";
+//console.log(vote(token,track_id))
+votes()
 
 /* console.log(
   'track',track['name']
@@ -73,4 +74,3 @@ console.log(
 console.log(
   'czas', Number((track['duration_ms']/1000).toFixed(2)),'s'
 ) */
-vote(token,track_id)
