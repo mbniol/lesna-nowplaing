@@ -48,7 +48,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
   const token = jsonResponse.token;
   console.log(token);
   const player = new Spotify.Player({
-    name: "Web Playback SDK Quick Start Player",
+    name: "Lesna",
     getOAuthToken: (cb) => {
       cb(token);
     },
@@ -92,4 +92,29 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
       updateInfo(current_track, next_track);
     });
   });
+
+  document.getElementsByClassName('prev')[0].addEventListener("click",() => {
+    player.previousTrack().then(() => {
+      console.log('Set to previous track!');
+    }).catch((e)=> {
+      console.log(e)
+    })
+  })
+
+  document.getElementsByClassName('next')[0].addEventListener("click",() => {
+    player.nextTrack().then(() => {
+      console.log('Set to next track!');
+    }).catch((e)=> {
+      console.log(e)
+    })
+  })
+
+  
+  document.getElementsByClassName('play')[0].addEventListener("click",() => {
+    player.togglePlay().then(() => {
+      console.log('Toggled playback!');
+    }).catch((e)=> {
+      console.log(e)
+    })
+  })
 };
