@@ -98,7 +98,7 @@ export default class Auth {
     const currentTimestamp = currentDate.getTime();
     if (
       this.#tokens.api.access == undefined ||
-      this.#tokens.api.expiration_date + 1000 * 60 * 1 > currentTimestamp
+      this.#tokens.api.expiration_date < currentTimestamp + 1000 * 60 * 1
     ) {
       await this.#setAPIToken();
     }
@@ -114,12 +114,12 @@ export default class Auth {
   async getSDKToken(code) {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
-    if (this.#tokens.sdk.access == undefined && code) {
+    if (this.#tokens.sdk.access === undefined && code) {
       const tokenOptions = this.#getSDKTokenOptions(code);
       await this.#setSDKToken(tokenOptions);
     } else if (
-      this.#tokens.sdk.expiration_date + 1000 * 60 * 1 >
-      currentTimestamp
+      this.#tokens.sdk.expiration_date <
+      currentTimestamp + 1000 * 60 * 1 && this.#tokens.refresh !== undefined
     ) {
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
@@ -129,18 +129,24 @@ export default class Auth {
   }
 
   async #setSDKToken(tokenOptions) {
-    const response = await fetch(
-      "https://accounts.spotify.com/api/token",
-      tokenOptions
-    );
-    const jsonResponse = await response.json();
-    const currentDate = new Date();
-    // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
-    this.#tokens.sdk = {
-      expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,
-      access: jsonResponse.access_token,
-      refresh: jsonResponse.refresh_token,
-    };
+    try{
+      const response = await fetch(
+        "https://accounts.spotify.com/api/token",
+        tokenOptions
+      );
+      const jsonResponse = await response.json();
+      console.log(jsonResponse)
+      const currentDate = new Date();
+      // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
+      this.#tokens.sdk = {
+        expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,
+        access: jsonResponse.access_token,
+        refresh: jsonResponse.refresh_token,
+      };
+    }catch(e){
+      console.error(e);
+    }
+
   }
 
   async #setAPIToken() {
