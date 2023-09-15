@@ -124,7 +124,6 @@ export default class Auth {
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
     }
-    console.log(this.#tokens);
     return this.#tokens.sdk.access;
   }
 
@@ -135,7 +134,6 @@ export default class Auth {
         tokenOptions
       );
       const jsonResponse = await response.json();
-      console.log(jsonResponse)
       const currentDate = new Date();
       // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
       this.#tokens.sdk = {
