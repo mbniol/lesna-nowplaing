@@ -1,4 +1,4 @@
-import express from "express";
+
 //testy
 console.log(get_id("7ABLbnD53cQK00mhcaOUVG"))
 console.log(get_id("https://open.spotify.com/track/7ABLbnD53cQK00mhcaOUVG"))
