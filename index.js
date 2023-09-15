@@ -2,11 +2,13 @@ import express from "express";
 import helmet from "helmet";
 import "dotenv/config";
 import Auth from "./helpers/auth.js";
-import Mysql from "./helpers/database.js";
 import { fetchWebApi } from "./helpers/helpers.js";
 import mainRouter from "./routes/router.js";
 import session from "express-session";
+import { newTruck, vote } from "./models/song.js";
+import Mysql from "./helpers/database.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
 
 
 const app = express();
@@ -23,12 +25,12 @@ app.use(
 );
 app.use(mainRouter);
 
-// Mysql.setInstance(
-//   process.env.DB_HOST || "localhost",
-//   process.env.DB_USER || "root",
-//   process.env.DB_PASSWORD || "",
-//   process.env.DB_NAME || "lesna-radiowezel"
-// );
+ Mysql.setInstance(
+   process.env.DB_HOST || "localhost",
+   process.env.DB_USER || "root",
+   process.env.DB_PASSWORD || "",
+   process.env.DB_NAME || "lesna-radiowezel"
+ );
 // Mysql.getInstance().query(
 //   "SELECT * FROM tracks where id = ?",
 //   [1],
@@ -53,9 +55,10 @@ app.listen(port, () => {
 
 
 //testy pobierania danych piosenki z api
-const track = await fetchWebApi(token, "tracks/4h9wh7iOZ0GGn8QVp4RAOB")
+const track_id="5sGv8YdAa3XjggnbpF9NC9";
 
-console.log(
+
+/* console.log(
   'track',track['name']
 )
 console.log(
@@ -69,4 +72,5 @@ console.log(
 )
 console.log(
   'czas', Number((track['duration_ms']/1000).toFixed(2)),'s'
-)
+) */
+vote(token,track_id)
