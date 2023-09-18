@@ -3,9 +3,9 @@ import mysql from "mysql2";
 export default class Mysql {
   static #instance;
 
-  static setInstance(host, user, password, database) {
+  static async setInstance(host, user, password, database) {
     if (Mysql.#instance === undefined) {
-      Mysql.#instance = mysql.createConnection({
+      Mysql.#instance = await mysql.createConnection({
         host,
         user,
         password,
@@ -16,5 +16,9 @@ export default class Mysql {
 
   static getInstance() {
     return Mysql.#instance;
+  }
+
+  static getPromiseInstance() {
+    return Mysql.#instance.promise();
   }
 }

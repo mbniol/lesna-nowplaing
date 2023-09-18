@@ -5,11 +5,8 @@ import Auth from "./helpers/auth.js";
 import { fetchWebApi } from "./helpers/helpers.js";
 import mainRouter from "./routes/router.js";
 import session from "express-session";
-import { newTruck, vote, votes } from "./models/song.js";
 import Mysql from "./helpers/database.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-
-
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,13 +21,13 @@ app.use(
   })
 );
 app.use(mainRouter);
-
- Mysql.setInstance(
-   process.env.DB_HOST || "localhost",
-   process.env.DB_USER || "root",
-   process.env.DB_PASSWORD || "",
-   process.env.DB_NAME || "lesna-radiowezel"
- );
+Mysql.setInstance(
+  process.env.DB_HOST || "localhost",
+  process.env.DB_USER || "root",
+  process.env.DB_PASSWORD || "",
+  process.env.DB_NAME || "lesna-radiowezel"
+);
+console.log("elo");
 // Mysql.getInstance().query(
 //   "SELECT * FROM tracks where id = ?",
 //   [1],
@@ -50,14 +47,14 @@ const token = await Auth.getInstance().getAPIToken();
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-
-
-
-//testy pobierania danych piosenki z api
-const track_id="2LBqCSwhJGcFQeTHMVGwy3";
-//console.log(vote(token,track_id))
-votes()
+{
+}
+import("./models/song.js").then(({ newTruck, vote, votes }) => {
+  //testy pobierania danych piosenki z api
+  const track_id = "2LBqCSwhJGcFQeTHMVGwy3";
+  //console.log(vote(token,track_id))
+  votes();
+});
 
 /* console.log(
   'track',track['name']
