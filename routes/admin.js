@@ -7,4 +7,8 @@ router.get('/admin', (req, res) => {
     renderView("admin/index.html")(res);
 })
 
+router.get('/admin/editpreset', (req, res) => {
+    renderView("admin/editpreset.html")(res);
+})
+
 export default router;

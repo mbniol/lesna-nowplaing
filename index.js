@@ -53,7 +53,7 @@ import("./models/song.js").then(({ newTruck, vote, votes }) => {
   //testy pobierania danych piosenki z api
   const track_id = "2LBqCSwhJGcFQeTHMVGwy3";
   //console.log(vote(token,track_id))
-  votes();
+  // votes();
 });
 
 /* console.log(

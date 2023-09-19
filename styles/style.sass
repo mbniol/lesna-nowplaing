@@ -226,17 +226,27 @@ html, body
     font-size: 2rem
     width: 100%
     height: 100%
-    @include flexCenter()
+    display: flex
+    align-items: center
+    justify-content: flex-start
     flex-direction: column
+
+.admin-title
+        height: 2em
+        @include flexCenter()
+        
 
 .preset-box
     background-color: white
     border-radius: 1rem
     padding: 1em
     color: black
-    width: 15em
+    width: 12em
+    height: 6em
     display: flex
     flex-direction: column
+    justify-content: center
+    overflow: hidden
 
 .preset-header
     display: flex
@@ -254,3 +264,126 @@ html, body
 
 .preset-selected
     color: lime
+
+.admin-presets
+    display: flex
+    flex-direction: row
+    width: 100%
+    flex-wrap: wrap
+    gap: 1em
+    justify-content: center
+
+.preset-quick-settings
+    position: absolute
+    translate: 100% -150%
+    font-size: 1rem
+    display: flex
+    flex-direction: column
+    background-color: #00c2c9
+    align-items: flex-start
+    justify-content: space-evenly
+    border-radius: 1rem
+    gap: 0.5em
+    padding: 0.5em
+    a
+        text-decoration: none
+        color: $text-base
+.preset-quick-settings:after
+    content: ""
+    display: block
+    position: absolute
+    height: 0
+    bottom: 0
+    right: 0
+    translate: -0.5em 1em
+    width: 0
+    z-index: 10
+    border-left: 1em solid transparent
+    border-right: 1em solid transparent        
+    border-top: 1.5em solid #00c2c9
+
+.edit-preset-wrapper
+    display: grid
+    height: 100%
+    width: 100%
+    grid-template-columns: 1fr 2fr
+    grid-template-rows: 1fr 15fr
+    grid-column-gap: 0px
+    grid-row-gap: 0px
+
+.edit-preset-title
+    grid-area: 1 / 1 / 2 / 3
+    font-size: 2rem
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    padding: 0 1.5em
+.edit-preset-main
+    font-size: 1.5rem
+    grid-area: 2 / 1 / 3 / 2
+    width: 100%
+    height: 100%
+    padding: 0 2em
+.edit-preset-breaks
+    grid-area: 2 / 2 / 3 / 3
+
+.edit-preset-main-box
+    display: flex
+    flex-direction: column
+    border-radius: 1rem
+    background-color: white
+    color: black
+    padding: 2em
+    gap: 1em
+
+.edit-preset-main-box-item
+    display: flex
+    flex-direction: column
+    gap: 0.25em
+
+.edit-preset-main-box-settings
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    div
+        width: fit-content
+
+.edit-preset-main-box input[type="text"],.edit-preset-main-box input[type="number"]
+    font-size: 1.5rem
+    outline: none
+    border: 0.125rem solid black
+    border-radius: 1rem
+    color: $text-base
+    padding: 0.125em 0.25em
+    width: 10em
+    background-color: white
+
+.edit-preset-breaks
+    padding: 0 2em
+    gap: 1em
+    display: flex
+    flex-direction: column
+    overflow-y: auto
+    -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent)
+    padding-bottom: 5em
+
+.break
+    background-color: white
+    color: black
+    padding: 1em
+    display: flex
+    flex-direction: row
+    border-radius: 1rem
+
+.break-number
+    @include flexCenter()
+    flex: 0 1 2em
+
+.break-delete
+    display: flex
+    align-items: flex-start
+    justify-content: center
+    flex: 0 1 3em
+
+.break-main
+    flex: 1 1 auto

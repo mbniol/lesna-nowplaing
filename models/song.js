@@ -56,27 +56,27 @@ export async function addVote(id) {
   );
 }
 //sprawdzanie aktualnej listy głosów
-export async function votes() {
-  //zapytanie co wyciąga sume głosów z danego dnia i połowę glosów z dnia poprzedniego
-  const [rows] = await pool.query(`
-    SELECT tracks.name, count(main_votes.id)+
-	(if(/*sprawdzenie czy wartość połowy głosów nie jest null*/
-        (SELECT count(votes.id)/2 as count
-        FROM votes join tracks on votes.track_id = tracks.id 
-        WHERE votes.date_added=CURRENT_DATE()-1 AND main_votes.track_id=votes.track_id
-        group by tracks.id),/*jeżeli nie jest null zwróć liczbę głosów*/
-        (SELECT floor(count(votes.id)/2) as count
-        FROM votes join tracks on votes.track_id = tracks.id 
-        WHERE votes.date_added=CURRENT_DATE()-1
-        group by tracks.id),/*jeżeli jest null zwróć 0*/
-        0)) 
-    as count
-    FROM votes as main_votes join tracks on main_votes.track_id = tracks.id
-    WHERE main_votes.date_added=CURRENT_DATE()
-    group by tracks.id
-    order by count DESC;`);
-  //wypisanie listy głosów
-  rows.forEach((element) => {
-    console.log(element["name"] + " " + element["count"]);
-  });
-}
+// export async function votes() {
+//   //zapytanie co wyciąga sume głosów z danego dnia i połowę glosów z dnia poprzedniego
+//   const [rows] = await pool.query(`
+//     SELECT tracks.name, count(main_votes.id)+
+// 	(if(/*sprawdzenie czy wartość połowy głosów nie jest null*/
+//         (SELECT count(votes.id)/2 as count
+//         FROM votes join tracks on votes.track_id = tracks.id 
+//         WHERE votes.date_added=CURRENT_DATE()-1 AND main_votes.track_id=votes.track_id
+//         group by tracks.id),/*jeżeli nie jest null zwróć liczbę głosów*/
+//         (SELECT floor(count(votes.id)/2) as count
+//         FROM votes join tracks on votes.track_id = tracks.id 
+//         WHERE votes.date_added=CURRENT_DATE()-1
+//         group by tracks.id),/*jeżeli jest null zwróć 0*/
+//         0)) 
+//     as count
+//     FROM votes as main_votes join tracks on main_votes.track_id = tracks.id
+//     WHERE main_votes.date_added=CURRENT_DATE()
+//     group by tracks.id
+//     order by count DESC;`);
+//   //wypisanie listy głosów
+//   rows.forEach((element) => {
+//     console.log(element["name"] + " " + element["count"]);
+//   });
+// }
