@@ -30,7 +30,7 @@ USE `radio`;
 --
 
 CREATE TABLE `artists` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -52,7 +52,7 @@ CREATE TABLE `artists_tracks` (
 --
 
 CREATE TABLE `breaks` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) DEFAULT NULL,
   `position` int(11) DEFAULT NULL,
   `start` varchar(255) DEFAULT NULL,
@@ -68,10 +68,10 @@ CREATE TABLE `breaks` (
 --
 
 CREATE TABLE `patterns` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) DEFAULT NULL,
   `alarm_offset` int(11) DEFAULT NULL,
-  `active` BOOLEAN DEFAULT NULL
+  `active` BOOLEAN DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -81,7 +81,7 @@ CREATE TABLE `patterns` (
 --
 
 CREATE TABLE `requested_tracks` (
-  `id` int(11) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `votes` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -92,7 +92,7 @@ CREATE TABLE `requested_tracks` (
 --
 
 CREATE TABLE `tracks` (
-  `id` varchar(22) NOT NULL,
+  `id` varchar(22) PRIMARY KEY,
   `cover` varchar(255) DEFAULT NULL,
   `length` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -117,9 +117,9 @@ INSERT INTO `tracks` (`id`, `cover`, `length`, `name`, `banned`) VALUES
 --
 
 CREATE TABLE `votes` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `track_id` varchar(22) NOT NULL,
-  `date_added` date NOT NULL DEFAULT current_timestamp()
+  `date_added` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -147,8 +147,6 @@ INSERT INTO `votes` (`id`, `track_id`, `date_added`) VALUES
 --
 -- Indeksy dla tabeli `artists`
 --
-ALTER TABLE `artists`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeksy dla tabeli `artists_tracks`
@@ -161,43 +159,25 @@ ALTER TABLE `artists_tracks`
 -- Indeksy dla tabeli `breaks`
 --
 ALTER TABLE `breaks`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `pattern_id` (`pattern_id`);
 
 --
 -- Indeksy dla tabeli `patterns`
 --
-ALTER TABLE `patterns`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeksy dla tabeli `requested_tracks`
 --
-ALTER TABLE `requested_tracks`
-  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Indeksy dla tabeli `tracks`
 --
-ALTER TABLE `tracks`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeksy dla tabeli `votes`
 --
 ALTER TABLE `votes`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `track_id` (`track_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `votes`
---
-ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables

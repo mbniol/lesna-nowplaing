@@ -1,106 +1,118 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>Lesna - admin panel</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="root">
-        <div class="add-preset-button">+</div>
-        <div class="add-preset">
-            <div action="" method="post" id="pattern_form">
-                <input type="text" name="name" id="name" placeholder="imie">
-                <input type="number" name="offset" id="offset" placeholder="s">
-                <button type="submit">aaaaaaaaaaaa</button>
+      <div class="add-preset-button">+</div>
+      <div class="add-preset">
+        <form action="/api/pattern" method="post" id="pattern_form">
+          <input type="text" name="name" id="name" placeholder="imie" />
+          <input type="number" name="offset" id="offset" placeholder="s" />
+          <button type="submit">aaaaaaaaaaaa</button>
+        </form>
+      </div>
+      <div class="admin-wrapper">
+        <div class="admin-title">Szablony</div>
+        <div class="admin-presets">
+          <div class="preset-box">
+            <div class="preset-quick-settings">
+              <a href="">Usuń</a>
+              <a href="">Ustaw jako aktywny</a>
             </div>
-        </div>
-        <div class="admin-wrapper">
-            <div class="admin-title">Szablony</div>
-            <div class="admin-presets">
-                <div class="preset-box">
-                    <div class="preset-quick-settings">
-                        <a href="">Usuń</a>
-                        <a href="">Ustaw jako aktywny</a>
-                    </div>
-                    <div class="preset-header">
-                        <a href="/admin/editpreset"><div class="preset-name">Szablon 1</div></a>
-                        <div class="preset-header-button">&#9998;</div>
-                    </div>
-                    <div class="preset-info">Liczba przerw:</div>
-                    <div class="preset-info">Przesunięcie przerw:</div>
-                    <div class="preset-isselected preset-selected">Aktywne</div>
-                </div>
-                <div class="preset-box">
-                    <div class="preset-quick-settings">
-                        <a href="">Usuń</a>
-                        <a href="">Ustaw jako aktywny</a>
-                    </div>
-                    <div class="preset-header">
-                        <a href="/admin/editpreset"><div class="preset-name">Szablon 1</div></a>
-                        <div class="preset-header-button">&#9998;</div>
-                    </div>
-                    <div class="preset-info">Liczba przerw:</div>
-                    <div class="preset-info">Przesunięcie przerw:</div>
-                    <div class="preset-isselected preset-selected">Aktywne</div>
-                </div>
-                <div class="preset-box">
-                    <div class="preset-quick-settings">
-                        <a href="">Usuń</a>
-                        <a href="">Ustaw jako aktywny</a>
-                    </div>
-                    <div class="preset-header">
-                        <a href="/admin/editpreset"><div class="preset-name">Szablon 1</div></a>
-                        <div class="preset-header-button">&#9998;</div>
-                    </div>
-                    <div class="preset-info">Liczba przerw:</div>
-                    <div class="preset-info">Przesunięcie przerw:</div>
-                    <div class="preset-isselected preset-selected">Aktywne</div>
-                </div>
-                <div class="preset-box">
-                    <div class="preset-quick-settings">
-                        <a href="">Usuń</a>
-                        <a href="">Ustaw jako aktywny</a>
-                    </div>
-                    <div class="preset-header">
-                        <a href="/admin/editpreset"><div class="preset-name">Szablon 1</div></a>
-                        <div class="preset-header-button">&#9998;</div>
-                    </div>
-                    <div class="preset-info">Liczba przerw:</div>
-                    <div class="preset-info">Przesunięcie przerw:</div>
-                    <div class="preset-isselected preset-selected">Aktywne</div>
-                </div>
-                <div class="preset-box">
-                    <div class="preset-quick-settings">
-                        <a href="">Usuń</a>
-                        <a href="">Ustaw jako aktywny</a>
-                    </div>
-                    <div class="preset-header">
-                        <a href="/admin/editpreset"><div class="preset-name">Szablon 1</div></a>
-                        <div class="preset-header-button">&#9998;</div>
-                    </div>
-                    <div class="preset-info">Liczba przerw:</div>
-                    <div class="preset-info">Przesunięcie przerw:</div>
-                    <div class="preset-isselected preset-selected">Aktywne</div>
-                </div>
-                <div class="preset-box">
-                    <div class="preset-quick-settings">
-                        <a href="">Usuń</a>
-                        <a href="">Ustaw jako aktywny</a>
-                    </div>
-                    <div class="preset-header">
-                        <a href="/admin/editpreset"><div class="preset-name">Szablon 1</div></a>
-                        <div class="preset-header-button">&#9998;</div>
-                    </div>
-                    <div class="preset-info">Liczba przerw:</div>
-                    <div class="preset-info">Przesunięcie przerw:</div>
-                    <div class="preset-isselected preset-selected">Aktywne</div>
-                </div>
+            <div class="preset-header">
+              <a href="/admin/editpreset"
+                ><div class="preset-name">Szablon 1</div></a
+              >
+              <div class="preset-header-button">&#9998;</div>
             </div>
+            <div class="preset-info">Liczba przerw:</div>
+            <div class="preset-info">Przesunięcie przerw:</div>
+            <div class="preset-isselected preset-selected">Aktywne</div>
+          </div>
+          <div class="preset-box">
+            <div class="preset-quick-settings">
+              <a href="">Usuń</a>
+              <a href="">Ustaw jako aktywny</a>
+            </div>
+            <div class="preset-header">
+              <a href="/admin/editpreset"
+                ><div class="preset-name">Szablon 1</div></a
+              >
+              <div class="preset-header-button">&#9998;</div>
+            </div>
+            <div class="preset-info">Liczba przerw:</div>
+            <div class="preset-info">Przesunięcie przerw:</div>
+            <div class="preset-isselected preset-selected">Aktywne</div>
+          </div>
+          <div class="preset-box">
+            <div class="preset-quick-settings">
+              <a href="">Usuń</a>
+              <a href="">Ustaw jako aktywny</a>
+            </div>
+            <div class="preset-header">
+              <a href="/admin/editpreset"
+                ><div class="preset-name">Szablon 1</div></a
+              >
+              <div class="preset-header-button">&#9998;</div>
+            </div>
+            <div class="preset-info">Liczba przerw:</div>
+            <div class="preset-info">Przesunięcie przerw:</div>
+            <div class="preset-isselected preset-selected">Aktywne</div>
+          </div>
+          <div class="preset-box">
+            <div class="preset-quick-settings">
+              <a href="">Usuń</a>
+              <a href="">Ustaw jako aktywny</a>
+            </div>
+            <div class="preset-header">
+              <a href="/admin/editpreset"
+                ><div class="preset-name">Szablon 1</div></a
+              >
+              <div class="preset-header-button">&#9998;</div>
+            </div>
+            <div class="preset-info">Liczba przerw:</div>
+            <div class="preset-info">Przesunięcie przerw:</div>
+            <div class="preset-isselected preset-selected">Aktywne</div>
+          </div>
+          <div class="preset-box">
+            <div class="preset-quick-settings">
+              <a href="">Usuń</a>
+              <a href="">Ustaw jako aktywny</a>
+            </div>
+            <div class="preset-header">
+              <a href="/admin/editpreset"
+                ><div class="preset-name">Szablon 1</div></a
+              >
+              <div class="preset-header-button">&#9998;</div>
+            </div>
+            <div class="preset-info">Liczba przerw:</div>
+            <div class="preset-info">Przesunięcie przerw:</div>
+            <div class="preset-isselected preset-selected">Aktywne</div>
+          </div>
+          <div class="preset-box">
+            <div class="preset-quick-settings">
+              <a href="">Usuń</a>
+              <a href="">Ustaw jako aktywny</a>
+            </div>
+            <div class="preset-header">
+              <a href="/admin/editpreset"
+                ><div class="preset-name">Szablon 1</div></a
+              >
+              <div class="preset-header-button">&#9998;</div>
+            </div>
+            <div class="preset-info">Liczba przerw:</div>
+            <div class="preset-info">Przesunięcie przerw:</div>
+            <div class="preset-isselected preset-selected">Aktywne</div>
+          </div>
         </div>
+      </div>
     </div>
-    <script src="admin.js"></script>
-</body>
+    <script src="js/admin.js"></script>
+  </body>
 </html>

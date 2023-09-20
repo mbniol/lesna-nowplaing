@@ -4,6 +4,7 @@ import "dotenv/config";
 import Auth from "./helpers/auth.js";
 import { fetchWebApi } from "./helpers/helpers.js";
 import mainRouter from "./routes/router.js";
+import bodyParser from "body-parser";
 import session from "express-session";
 import Mysql from "./helpers/database.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
@@ -13,6 +14,7 @@ const port = process.env.PORT || 3000;
 const client_id = "405c695fe40447e5870aa2e44101c5a7";
 const client_secret = "1f89010e9b5749cb89947602fd2443f3";
 app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: "sekret", cookie: { maxAge: 60000 } }));
 app.use(
   helmet({
