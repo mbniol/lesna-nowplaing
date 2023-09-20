@@ -70,7 +70,8 @@ CREATE TABLE `breaks` (
 CREATE TABLE `patterns` (
   `id` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `alarm_offset` int(11) DEFAULT NULL
+  `alarm_offset` int(11) DEFAULT NULL,
+  `active` BOOLEAN DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

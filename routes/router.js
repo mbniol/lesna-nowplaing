@@ -1,9 +1,6 @@
 import { Router } from "express";
-import viewPlayerRouter from "./view/player.js";
-import viewRequestRouter from "./view/request.js";
-import apiPlayerRouter from "./api/player.js";
-import apiRequestRouter from "./api/request.js";
-import adminRouter from "./admin.js";
+import viewRouter from "./view.js";
+import apiRouter from "./api.js";
 
 const router = new Router();
 
@@ -19,11 +16,8 @@ router.use((err, req, res, next) => {
 })
 
 router
-  .use(viewPlayerRouter)
-  .use(viewRequestRouter)
-  .use(adminRouter)
-  .use(apiPlayerRouter)
-  .use(apiRequestRouter);
+  .use(viewRouter)
+  .use('/api', apiRouter)
 
 
 

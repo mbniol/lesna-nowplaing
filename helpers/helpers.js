@@ -15,8 +15,8 @@ async function fetchWebApi(token, endpoint, method = "GET", body) {
   return await res.json();
 }
 
-function renderView(filename) {
-  return (res) => res.sendFile(path.join(__dirname + "/../views/" + filename));
+function renderView(res, filename) {
+  res.sendFile(path.join(__dirname + "/../views/" + filename));
 }
 
 export { fetchWebApi, renderView };
