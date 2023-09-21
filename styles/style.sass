@@ -254,6 +254,9 @@ html, body
     a
         color: #00c2c9
 
+.preset-header-button
+    user-select: none
+
 .preset-info
     font-size: 1.5rem
 
@@ -270,14 +273,16 @@ html, body
     grid-template-columns: repeat(auto-fit, minmax(16em, 1fr))
     gap: 1em
 
-    
+
 
 .preset-quick-settings
     position: absolute
     translate: -15% -150%
     font-size: 1rem
     display: flex
+    visibility: hidden
     right: 0
+    opacity: 0
     flex-direction: column
     background-color: #00c2c9
     align-items: flex-start
@@ -285,9 +290,15 @@ html, body
     border-radius: 1rem
     gap: 0.5em
     padding: 0.5em
+    transition: opacity 0.2s ease-in-out
     a
         text-decoration: none
         color: $text-base
+
+.visible
+    visibility: visible
+    opacity: 1
+
 .preset-quick-settings:after
     content: ""
     display: block
@@ -321,6 +332,9 @@ html, body
 .edit-preset-main
     font-size: 1.5rem
     grid-area: 2 / 1 / 3 / 2
+    gap: 1em
+    flex-direction: column
+    display: flex
     width: 100%
     height: 100%
     padding: 0 2em
@@ -353,7 +367,7 @@ html, body
     outline: none
     border: 0.125rem solid black
     border-radius: 1rem
-    color: $text-base
+    color: black
     padding: 0.125em 0.25em
     width: 10em
     background-color: white
