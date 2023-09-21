@@ -39,8 +39,8 @@ console.log("elo");
 //   }
 // );
 
-Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
-const token = await Auth.getInstance().getAPIToken();
+// Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
+// const token = await Auth.getInstance().getAPIToken();
 // console.log(
 //   "TEST API QUERY: ",
 //   (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
@@ -51,12 +51,12 @@ app.listen(port, () => {
 });
 {
 }
-import("./models/song.js").then(({ newTruck, vote, votes }) => {
-  //testy pobierania danych piosenki z api
-  const track_id = "2LBqCSwhJGcFQeTHMVGwy3";
-  //console.log(vote(token,track_id))
-  // votes();
-});
+// import("./models/song.js").then(({ newTruck, vote, votes }) => {
+//   //testy pobierania danych piosenki z api
+//   const track_id = "2LBqCSwhJGcFQeTHMVGwy3";
+//   //console.log(vote(token,track_id))
+//   // votes();
+// });
 
 /* console.log(
   'track',track['name']

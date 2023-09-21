@@ -1,6 +1,15 @@
 import Mysql from "../helpers/database.js";
 
 export default class Model {
+  static async getOne(id) {
+    const pool = Mysql.getPromiseInstance();
+    const [rows] = await pool.query(
+      `
+				SELECT name, alarm_offset, active FROM patterns WHERE id=?`,
+      [id]
+    );
+    return rows[0];
+  }
   static async getMany() {
     const pool = Mysql.getPromiseInstance();
     const [rows] = await pool.query(
@@ -22,26 +31,25 @@ export default class Model {
       throw e;
     }
   }
-	static async delete(id) {
+  static async delete(id) {
     const pool = Mysql.getPromiseInstance();
     try {
-      await pool.query(
-        `DELETE FROM patterns WHERE id = ?`,
-        [id]
-      );
+      await pool.query(`DELETE FROM patterns WHERE id=?`, [id]);
     } catch (e) {
       throw e;
     }
   }
-	static async makeActive(id) {
+  static async toggleActive(id) {
     const pool = Mysql.getPromiseInstance();
+    console.log(id);
     try {
       await pool.query(
-        `UPDATE patterns SET active = 1 WHERE id = ?`,
+        `UPDATE patterns SET active=0 WHERE active=1 AND id!=?`,
         [id]
       );
-			await pool.query(
-        `UPDATE patterns SET active = 0 WHERE active = 1`
+      await pool.query(
+        `UPDATE patterns SET active=IF(active=1,0,1) WHERE id=?`,
+        [id]
       );
     } catch (e) {
       throw e;
