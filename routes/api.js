@@ -30,4 +30,16 @@ router.post("/pattern", async (req, res) => {
   res.sendStatus(200);
 });
 
+router.delete("/pattern/:id", async (req, res) => {
+  const id = req.params.id
+  await patternModel.delete(id);
+  res.sendStatus(200);
+});
+
+router.put("/pattern/:id/active", async (req, res) => {
+  const id = req.params.id
+  await patternModel.makeActive(id);
+  res.sendStatus(200);
+});
+
 export default router;
