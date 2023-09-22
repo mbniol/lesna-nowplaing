@@ -21,9 +21,22 @@ router.get("/token/sdk", async (req, res) => {
 
 router.get("/pattern/:pattern_id/break", async (req, res) => {
   const pattern_id = req.params.pattern_id;
-  const breaks = await breakModel.getMany(pattern_id);
+  console.log(req.body);
+  const breaks = await breakModel.getMany(pattern_id, req.body);
   res.json(breaks);
 });
+
+router.put("/pattern/:pattern_id/break", async (req, res) => {
+  const pattern_id = req.params.pattern_id;
+  await breakModel.replace(pattern_id, req.body);
+  res.sendStatus(200);
+});
+
+// router.delete("/pattern/:pattern_id/break/:id", async (req, res) => {
+//   const { id, pattern_id } = req.params;
+//   await breakModel.delete(id, pattern_id);
+//   res.sendStatus(200);
+// });
 
 router.post("/pattern/:pattern_id/break", async (req, res) => {
   const pattern_id = req.params.pattern_id;

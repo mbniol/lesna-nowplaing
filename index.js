@@ -15,6 +15,7 @@ const client_id = "405c695fe40447e5870aa2e44101c5a7";
 const client_secret = "1f89010e9b5749cb89947602fd2443f3";
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(session({ secret: "sekret", cookie: { maxAge: 60000 } }));
 app.use(
   helmet({
