@@ -1,0 +1,81 @@
+<div class="container" data-position="0">
+  Drop Zone
+  <p class="dragable" id="p1" draggable="true">
+    przerwa 1
+  </p>
+</div>
+<div class="container" data-position="1">
+  Drop Zone
+  <p class="dragable" id="p2" draggable="true">
+    przerwa 2
+  </p>
+</div>
+<div class="container" data-position="2">
+  Drop Zone
+  <p class="dragable" id="p3" draggable="true">
+    przerwa 3
+  </p>
+</div>
+<div class="container" data-position="3">
+  Drop Zone
+  <p class="dragable" id="p4" draggable="true">
+    przerwa 4
+  </p>
+</div>
+<div class="container" data-position="4">
+  Drop Zone
+  <p class="dragable" id="p5" draggable="true">
+    przerwa 5
+  </p>
+</div>
+<div class="container" data-position="5">
+  Drop Zone
+  <p class="dragable" id="p6" draggable="true">
+    przerwa 6
+  </p>
+</div>
+<script>
+  const dragableElements = document.querySelectorAll('.dragable')
+  const containers = document.querySelectorAll('.container')
+
+  dragableElements.forEach(element=>{
+    element.addEventListener('dragstart', e=>{
+      console.log(e.target.parentElement.dataset.position)
+      e.dataTransfer.setData("parent-position", e.target.parentElement.dataset.position);
+      e.dataTransfer.setData("dragged-id", e.target.id);
+      e.dataTransfer.effectAllowed = "move";
+    })
+  })
+
+  containers.forEach(element=>{
+    element.addEventListener('dragover', e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    })
+
+    element.addEventListener('drop', e=>{
+      const target = e.currentTarget;
+      e.preventDefault();
+      const data = e.dataTransfer.getData("dragged-id");
+      const prev = target.previousSibling
+      const currentPosition = +target.dataset.position
+      console.log(currentPosition);
+      const prevPosition = +e.dataTransfer.getData("parent-position");
+      const positionDiff = currentPosition - prevPosition
+      const absoluteDiff = Math.abs(positionDiff);
+      if(positionDiff > 0){
+        for(let i = prevPosition + 1; i <= currentPosition; i++){
+          console.log(containers[i].children[0])
+          containers[i-1].appendChild(containers[i].children[0])
+        }
+      }else if(positionDiff < 0){
+        console.log(prevPosition, currentPosition)
+        for(let i = prevPosition - 1; currentPosition <= i; i--){
+          console.log(containers[i].children[0])
+          containers[i + 1].appendChild(containers[i].children[0])
+        }
+      }
+      target.appendChild(document.getElementById(data));
+    })
+  })
+</script>
