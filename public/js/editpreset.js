@@ -18,34 +18,21 @@ async function updatePatternForm() {
   activeInput.checked = Boolean(active);
 }
 
-(async () => {
-  const breaksContainer = document.querySelector(".edit-preset-breaks");
-  await updatePatternForm();
+async function getBreaksData() {
   const result = await fetch(`/api/pattern/${patternID}/break`);
-  const json = await result.json();
-  json.forEach((row) => {
+  return await result.json();
+}
+
+async function populateBreaksContainer() {
+  const breaksContainer = document.querySelector(".edit-preset-breaks");
+  const breaks = await getBreaksData();
+  breaks.forEach((row) => {
     breaksContainer.innerHTML += generateElement(row);
   });
-})();
+}
 
-const new_break_form = document.querySelector("#new-break-form");
-console.log(new_break_form);
-const button = new_break_form.querySelector("button");
-
-button.addEventListener("click", async (e) => {
-  e.preventDefault();
-  const params = new FormData(new_break_form);
-  console.log(params, `/api/pattern/${patternID}/break`);
-  await fetch(`/api/pattern/${patternID}/break`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      // "Content-Type": "multipart/form-data",
-    },
-    body: new URLSearchParams(params),
-  });
-  // location.reload();
-});
+updatePatternForm();
+populateBreaksContainer();
 
 function generateElement({ id, name, position, start, end, for_requested }) {
   return `
@@ -78,3 +65,47 @@ function generateElement({ id, name, position, start, end, for_requested }) {
   </div>
   </div>`;
 }
+
+const newBreakForm = document.querySelector("#new-break-form");
+const newBreakSubmit = newBreakForm.querySelector("button");
+
+newBreakSubmit.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const params = new FormData(newBreakForm);
+  console.log(params, `/api/pattern/${patternID}/break`);
+  await fetch(`/api/pattern/${patternID}/break`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      // "Content-Type": "multipart/form-data",
+    },
+    body: new URLSearchParams(params),
+  });
+  location.reload();
+});
+
+const patternEditForm = document.querySelector("#pattern-form");
+const patternEditSubmit = patternEditForm.querySelector("#saveChanges");
+const patternDeleteButton = patternEditForm.querySelector("#deletePreset");
+
+patternEditSubmit.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const params = new FormData(patternEditForm);
+  await fetch(`/api/pattern/${patternID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      // "Content-Type": "multipart/form-data",
+    },
+    body: new URLSearchParams(params),
+  });
+  location.reload();
+});
+
+patternDeleteButton.addEventListener("click", async (e) => {
+  e.preventDefault();
+  await fetch(`/api/pattern/${patternID}`, {
+    method: "DELETE",
+  });
+  location.replace("/admin");
+});

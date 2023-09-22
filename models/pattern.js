@@ -55,4 +55,21 @@ export default class Model {
       throw e;
     }
   }
+  static async edit(id, offset, name, is_active) {
+    const pool = Mysql.getPromiseInstance();
+    try {
+      if (is_active) {
+        await pool.query(
+          `UPDATE patterns SET active=0 WHERE active=1 AND id!=?`,
+          [id]
+        );
+      }
+      await pool.query(
+        `UPDATE patterns SET name=?, alarm_offset=?, active=? WHERE id=?`,
+        [name, offset, is_active, id]
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
 }

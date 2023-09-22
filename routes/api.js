@@ -57,6 +57,13 @@ router.delete("/pattern/:id", async (req, res) => {
   res.sendStatus(200);
 });
 
+router.put("/pattern/:id", async (req, res) => {
+  const id = req.params.id;
+  const { offset, name, is_active } = req.body;
+  await patternModel.edit(id, offset, name, +Boolean(is_active));
+  res.sendStatus(200);
+});
+
 router.put("/pattern/:id/active", async (req, res) => {
   const id = req.params.id;
   await patternModel.toggleActive(id);

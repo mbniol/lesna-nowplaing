@@ -11,28 +11,28 @@
       <div class="edit-preset-wrapper">
         <div class="edit-preset-title">Szablon 1</div>
         <div class="edit-preset-main">
-          <div class="edit-preset-main-box" id="pattern-form">
+          <form class="edit-preset-main-box" id="pattern-form">
             <div class="edit-preset-main-box-item">
               <label for="presetName">Nazwa</label>
-              <input type="text" name="presetName" id="presetName" />
+              <input type="text" name="name" id="presetName" />
             </div>
             <div class="edit-preset-main-box-item">
               <label for="presetOffset">Przesunięcie dzwonka w sekundach</label>
-              <input type="number" name="presetOffset" id="presetOffset" />
+              <input type="number" name="offset" id="presetOffset" />
             </div>
             <div class="edit-preset-main-box-button">
               <button id="saveChanges">Zapisz zmiany</button>
             </div>
             <div class="edit-preset-main-box-settings">
               <div>
-                <input type="checkbox" name="isActive" id="isActive" />
+                <input type="checkbox" name="is_active" id="isActive" />
                 <label for="isActive">aktywny</label>
               </div>
               <div>
                 <button id="deletePreset">Usuń</button>
               </div>
             </div>
-          </div>
+          </form>
           <form class="edit-preset-main-box" id="new-break-form">
             <div class="edit-preset-main-box-item">Dodaj przerwe</div>
             <div class="edit-preset-main-box-item">
