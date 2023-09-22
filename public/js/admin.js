@@ -23,7 +23,7 @@ button.addEventListener("click", async (e) => {
   json.forEach((row) => {
     adminWrapper.innerHTML += generateElement(row);
   });
-  console.log(json);
+
   const removeButtons = document.querySelectorAll(".preset-remove-button");
   const makeActiveButtons = document.querySelectorAll(
     ".preset-make-active-button"
@@ -84,7 +84,9 @@ function generateElement({ id, name, alarm_offset, active, breaks_count }) {
   <div class="preset-box">
     <div class="preset-quick-settings">
       <button class="preset-remove-button" data-id="${id}">Usuń</button>
-      <button class="preset-make-active-button" data-id="${id}">Ustaw jako aktywny</button>
+      <button class="preset-make-active-button" data-id="${id}">Ustaw jako ${
+    active ? "nieaktywny" : "aktywny"
+  }</button>
     </div>
     <div class="preset-header">
       <a href="/admin/pattern/${id}"
@@ -94,8 +96,8 @@ function generateElement({ id, name, alarm_offset, active, breaks_count }) {
     </div>
     <div class="preset-info">Liczba przerw: ${breaks_count}</div>
     <div class="preset-info">Przesunięcie przerw: ${alarm_offset}s</div>
-    <div class="preset-isselected preset-selected">${
-      active ? "Aktywne" : "Nieaktywne"
-    }</div>
+    <div class="preset-isselected ${active ? "preset-selected" : ""}">${
+    active ? "Aktywne" : "Nieaktywne"
+  }</div>
   </div>`;
 }
