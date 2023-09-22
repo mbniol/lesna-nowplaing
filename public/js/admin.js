@@ -101,3 +101,22 @@ function generateElement({ id, name, alarm_offset, active, breaks_count }) {
   }</div>
   </div>`;
 }
+
+const addPresetButton = document.getElementsByClassName("add-preset-button")[0];
+const closeAddPresetButton = document.getElementsByClassName(
+  "add-preset-close-btn"
+)[0];
+const addPresetBox = document.getElementsByClassName("add-preset")[0];
+const addPresetBackground = document.getElementsByClassName(
+  "add-preset-background"
+)[0];
+
+addPresetButton.addEventListener("click", (e) => {
+  addPresetBox.classList.add("visible");
+  addPresetBackground.classList.add("visible");
+});
+
+closeAddPresetButton.addEventListener("click", (e) => {
+  addPresetBox.classList.remove("visible");
+  addPresetBackground.classList.remove("visible");
+});

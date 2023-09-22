@@ -12,12 +12,22 @@
     <div class="root">
       <div class="add-preset-button">+</div>
       <div class="add-preset">
+        <div class="add-preset-close-btn">x</div>
+        <div class="add-preset-top">
+          <div>Dodaj szablon</div>
+        </div>
         <form action="/api/pattern" method="post" id="pattern_form">
-          <input type="text" name="name" id="name" placeholder="imie" />
-          <input type="number" name="offset" id="offset" placeholder="s" />
-          <button type="submit">aaaaaaaaaaaa</button>
+          <input type="text" name="name" id="name" placeholder="Nazwa" />
+          <input
+            type="number"
+            name="offset"
+            id="offset"
+            placeholder="Przesunięcie"
+          />
+          <button type="submit">Dodaj</button>
         </form>
       </div>
+      <div class="add-preset-background"></div>
       <div class="admin-wrapper">
         <div class="admin-title">Szablony</div>
         <div class="admin-presets"></div>

@@ -11,6 +11,13 @@ $padding-grid: 10em
     justify-content: center
     align-items: center
     
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+  -webkit-appearance: none
+  margin: 0
+
+input[type=number]
+  -moz-appearance: textfield
 
 html, body
     margin: 0
@@ -291,13 +298,17 @@ html, body
     gap: 0.5em
     padding: 0.5em
     transition: opacity 0.2s ease-in-out
-    a
-        text-decoration: none
+    button
+        background: none
         color: $text-base
+        font-family: inherit
+        border: none
+        font-size: 1rem
 
-.visible
-    visibility: visible
-    opacity: 1
+#deletePreset, #deleteBreak
+    background-color: red
+    border-color: red
+
 
 .preset-quick-settings:after
     content: ""
@@ -338,6 +349,14 @@ html, body
     width: 100%
     height: 100%
     padding: 0 2em
+    button
+        font-size: 1.5rem
+        outline: none
+        border: 0.125rem solid black
+        border-radius: 1rem
+        color: $text-base
+        padding: 0.125em 0.25em
+        background-color: black
 .edit-preset-breaks
     grid-area: 2 / 2 / 3 / 3
 
@@ -388,19 +407,46 @@ html, body
     display: flex
     flex-direction: row
     border-radius: 1rem
+    input
+        font-size: 1rem
+        outline: none
+        border: 0.125rem solid black
+        border-radius: 1rem
+        color: black
+        padding: 0.125em 0.25em
+        background-color: white
 
 .break-number
     @include flexCenter()
     flex: 0 1 2em
+
+.break-time
+    input
+        width: 5em
+
+.break-name
+    input
+        font-size: 1.5rem
+        
 
 .break-delete
     display: flex
     align-items: flex-start
     justify-content: center
     flex: 0 1 3em
+    button
+        outline: none
+        border: 0.125rem solid black
+        border-radius: 1rem
+        color: $text-base
+        padding: 0.125em 0.25em
+        background-color: black
 
 .break-main
     flex: 1 1 auto
+    gap: 0.25em
+    display: flex
+    flex-direction: column
 
 .add-preset-button
     position: fixed
@@ -417,3 +463,65 @@ html, body
 
 .add-preset
     position: fixed
+    display: flex
+    flex-direction: column
+    visibility: hidden
+    opacity: 0
+    color: black
+    font-size: 2rem
+    border-radius: 1rem
+    gap: 1em
+    z-index: 100
+    background-color: white
+    box-shadow: 0 0 0.25rem black
+    top: 50%
+    padding: 3em
+    left: 50%
+    translate: -50% -50%
+    form
+        display: flex
+        flex-direction: column
+        gap: 1em
+        input
+            font-size: 1.5rem
+        button
+            font-size: 1.5rem
+            outline: none
+            border: 0.125rem solid black
+            border-radius: 1rem
+            color: $text-base
+            padding: 0.125em 0.25em
+            background-color: black
+
+
+.add-preset-top
+    display: flex
+    flex-direction: row
+    justify-content: flex-start
+    text-align: center
+.add-preset-close-btn
+    position: absolute
+    right: 0.5em
+    top: 0
+
+.add-preset input[type="text"], .add-preset input[type="number"]
+    font-size: 1.5rem
+    outline: none
+    border: 0.125rem solid black
+    border-radius: 1rem
+    color: black
+    padding: 0.125em 0.25em
+    background-color: white
+
+.add-preset-background
+    width: 100%
+    height: 100%
+    opacity: 0
+    visibility: hidden
+    z-index: 50
+    position: fixed
+
+
+.visible
+    visibility: visible
+    opacity: 1
