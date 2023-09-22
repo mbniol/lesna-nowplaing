@@ -187,19 +187,19 @@ ALTER TABLE `votes`
 -- Constraints for table `artists_tracks`
 --
 ALTER TABLE `artists_tracks`
-  ADD CONSTRAINT `artists_tracks_ibfk_1` FOREIGN KEY (`artists_id`) REFERENCES `artists` (`id`);
+  ADD CONSTRAINT `artists_tracks_ibfk_1` FOREIGN KEY (`artists_id`) REFERENCES `artists` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `breaks`
 --
 ALTER TABLE `breaks`
-  ADD CONSTRAINT `breaks_ibfk_1` FOREIGN KEY (`pattern_id`) REFERENCES `patterns` (`id`);
+  ADD CONSTRAINT `breaks_ibfk_1` FOREIGN KEY (`pattern_id`) REFERENCES `patterns` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `votes`
 --
 ALTER TABLE `votes`
-  ADD CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `tracks` (`id`);
+  ADD CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `tracks` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
