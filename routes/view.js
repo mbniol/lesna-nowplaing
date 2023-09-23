@@ -28,4 +28,8 @@ router.get("/admin/pattern/:id", (req, res) => {
   renderView(res, "admin/editpreset.html");
 });
 
+router.get("/", (req, res) => {
+  renderView(res, "voting.html");
+});
+
 export default router;
