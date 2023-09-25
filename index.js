@@ -7,6 +7,7 @@ import mainRouter from "./routes/router.js";
 import bodyParser from "body-parser";
 import session from "express-session";
 import Mysql from "./helpers/database.js";
+import { votes, vote } from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const app = express();
@@ -24,13 +25,31 @@ app.use(
   })
 );
 app.use(mainRouter);
-Mysql.setInstance(
-  process.env.DB_HOST || "localhost",
-  process.env.DB_USER || "root",
-  process.env.DB_PASSWORD || "",
-  process.env.DB_NAME || "lesna-radiowezel"
+//ustawienie połączenia z baza danych
+try {
+  await Mysql.setInstance(
+    process.env.DB_HOST || "localhost",
+    process.env.DB_USER || "root",
+    process.env.DB_PASSWORD || "",
+    process.env.DB_NAME || "radio"
+  );
+
+  console.log("Połączenie z bazą danych zostało ustanowione.");
+} catch (error) {
+  console.error("Błąd przy ustanawianiu połączenia:", error);
+}
+//ustawienie połączenia z api spotify
+Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
+const token = await Auth.getInstance().getAPIToken();
+
+console.log(
+  await vote(
+    Mysql,
+    token,
+    "https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw"
+  )
 );
-console.log("elo");
+console.log(await votes(Mysql));
 // Mysql.getInstance().query(
 //   "SELECT * FROM tracks where id = ?",
 //   [1],
@@ -40,8 +59,6 @@ console.log("elo");
 //   }
 // );
 
-// Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
-// const token = await Auth.getInstance().getAPIToken();
 // console.log(
 //   "TEST API QUERY: ",
 //   (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
