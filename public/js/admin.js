@@ -27,18 +27,37 @@ function makeActivityButtonsReactive() {
 function makeMenuButtonsReactive() {
   const buttons = document.querySelectorAll(".preset-header-button");
   const settingBox = document.querySelectorAll(".preset-quick-settings");
+  const timeoutArray = [];
+
+  function hideEveryMenu(but) {
+    settingBox.forEach((element, i) => {
+      console.log(buttons[i]);
+      if (but !== buttons[i]) {
+        timeoutArray[i] = setTimeout(() => {
+          settingBox[i].style.visibility = "hidden";
+        }, 200);
+        element.classList.remove("visible");
+      }
+    });
+  }
 
   buttons.forEach((element, i) => {
+    timeoutArray[i] = undefined;
     element.addEventListener("click", (e) => {
-      settingBox.forEach((element) => {
-        if (element === e.target) element.classList.remove("visible");
-      });
+      console.log("wtf");
       classes = settingBox[i].classList;
-      classes.toggle("visible");
+      clearTimeout(timeoutArray[i]);
+      if (classes.contains("visible")) {
+        hideEveryMenu();
+      } else {
+        classes.add("visible");
+        hideEveryMenu(e.target);
+        settingBox[i].style.visibility = "visible";
+      }
     });
   });
 
-  window.addEventListener("click", (e) => {
+  window.addEventListener("mousedown", (e) => {
     if (
       !(
         e.target.classList.contains("preset-quick-settings") ||
@@ -46,9 +65,7 @@ function makeMenuButtonsReactive() {
         e.target.classList.contains("preset-header-button")
       )
     ) {
-      settingBox.forEach((element) => {
-        element.classList.remove("visible");
-      });
+      hideEveryMenu();
     }
   });
 }
@@ -60,13 +77,14 @@ function makeFormButtonsReactive() {
   const addPresetBackground = document.querySelector(".add-preset-background");
 
   addPresetButton.addEventListener("click", (e) => {
-    addPresetBox.classList.add("visible");
-    addPresetBackground.classList.add("visible");
+    console.log("no hej");
+    addPresetBox.classList.add("show");
+    addPresetBackground.classList.add("show");
   });
 
   closeAddPresetButton.addEventListener("click", (e) => {
-    addPresetBox.classList.remove("visible");
-    addPresetBackground.classList.remove("visible");
+    addPresetBox.classList.remove("show");
+    addPresetBackground.classList.remove("show");
   });
 
   const new_pattern_form = document.querySelector("#pattern_form");
