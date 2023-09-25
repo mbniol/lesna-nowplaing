@@ -1,35 +1,6 @@
-const new_pattern_form = document.querySelector("#pattern_form");
-const button = new_pattern_form.querySelector("button");
-
-button.addEventListener("click", async (e) => {
-  e.preventDefault();
-  const params = new FormData(new_pattern_form);
-  console.log(params);
-  await fetch("/api/pattern", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      // "Content-Type": "multipart/form-data",
-    },
-    body: new URLSearchParams(params),
-  });
-  location.reload();
-});
-
-(async () => {
-  const adminWrapper = document.querySelector(".admin-presets");
-  const result = await fetch("/api/pattern");
-  const json = await result.json();
-  json.forEach((row) => {
-    adminWrapper.innerHTML += generateElement(row);
-  });
-
-  const removeButtons = document.querySelectorAll(".preset-remove-button");
-  const makeActiveButtons = document.querySelectorAll(
-    ".preset-make-active-button"
-  );
-
-  removeButtons.forEach((el) => {
+function makeRemoveButtonsReactive() {
+  const buttons = document.querySelectorAll(".preset-remove-button");
+  buttons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
       await fetch(`/api/pattern/${id}`, {
@@ -38,8 +9,11 @@ button.addEventListener("click", async (e) => {
       location.reload();
     });
   });
+}
 
-  makeActiveButtons.forEach((el) => {
+function makeActivityButtonsReactive() {
+  const buttons = document.querySelectorAll(".preset-make-active-button");
+  buttons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const id = e.target.dataset.id;
       await fetch(`/api/pattern/${id}/active`, {
@@ -48,17 +22,17 @@ button.addEventListener("click", async (e) => {
       location.reload();
     });
   });
+}
 
-  const buttons = [...document.getElementsByClassName("preset-header-button")];
-  const settingBox = [
-    ...document.getElementsByClassName("preset-quick-settings"),
-  ];
-
-  console.log(buttons, document.getElementsByClassName("preset-header-button"));
+function makeMenuButtonsReactive() {
+  const buttons = document.querySelectorAll(".preset-header-button");
+  const settingBox = document.querySelectorAll(".preset-quick-settings");
 
   buttons.forEach((element, i) => {
     element.addEventListener("click", (e) => {
-      console.log(i);
+      settingBox.forEach((element) => {
+        if (element === e.target) element.classList.remove("visible");
+      });
       classes = settingBox[i].classList;
       classes.toggle("visible");
     });
@@ -77,7 +51,58 @@ button.addEventListener("click", async (e) => {
       });
     }
   });
-})();
+}
+
+function makeFormButtonsReactive() {
+  const addPresetButton = document.querySelector(".add-preset-button");
+  const closeAddPresetButton = document.querySelector(".add-preset-close-btn");
+  const addPresetBox = document.querySelector(".add-preset");
+  const addPresetBackground = document.querySelector(".add-preset-background");
+
+  addPresetButton.addEventListener("click", (e) => {
+    addPresetBox.classList.add("visible");
+    addPresetBackground.classList.add("visible");
+  });
+
+  closeAddPresetButton.addEventListener("click", (e) => {
+    addPresetBox.classList.remove("visible");
+    addPresetBackground.classList.remove("visible");
+  });
+
+  const new_pattern_form = document.querySelector("#pattern_form");
+  const button = new_pattern_form.querySelector("button");
+
+  button.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(new_pattern_form);
+    const params = new URLSearchParams(formData);
+    await fetch("/api/pattern", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params,
+    });
+    location.reload();
+  });
+}
+
+function addButtonsFunctionality() {
+  makeRemoveButtonsReactive();
+  makeActivityButtonsReactive();
+  makeMenuButtonsReactive();
+  makeFormButtonsReactive();
+}
+
+async function populatePatternsContainer() {
+  const adminWrapper = document.querySelector(".admin-presets");
+  const result = await fetch("/api/pattern");
+  const json = await result.json();
+  json.forEach((row) => {
+    adminWrapper.innerHTML += generateElement(row);
+  });
+  addButtonsFunctionality();
+}
 
 function generateElement({ id, name, alarm_offset, active, breaks_count }) {
   return `
@@ -102,21 +127,4 @@ function generateElement({ id, name, alarm_offset, active, breaks_count }) {
   </div>`;
 }
 
-const addPresetButton = document.getElementsByClassName("add-preset-button")[0];
-const closeAddPresetButton = document.getElementsByClassName(
-  "add-preset-close-btn"
-)[0];
-const addPresetBox = document.getElementsByClassName("add-preset")[0];
-const addPresetBackground = document.getElementsByClassName(
-  "add-preset-background"
-)[0];
-
-addPresetButton.addEventListener("click", (e) => {
-  addPresetBox.classList.add("visible");
-  addPresetBackground.classList.add("visible");
-});
-
-closeAddPresetButton.addEventListener("click", (e) => {
-  addPresetBox.classList.remove("visible");
-  addPresetBackground.classList.remove("visible");
-});
+populatePatternsContainer();

@@ -8,7 +8,6 @@ let containers;
 function addRemovingFunctionality() {
   const deleteButtons = document.querySelectorAll(".break__delete-button");
   deleteButtons.forEach((el) => {
-    console.log("hej");
     el.addEventListener("click", () => {
       let breakContainer = el.parentElement;
       while (!breakContainer.classList.contains("break-container")) {
