@@ -16,7 +16,7 @@ button.addEventListener("click", async (e) => {
   location.reload();
 });
 
-(async () => {
+button.addEventListener("addSongBtn", async (e) => {})(async () => {
   const adminWrapper = document.querySelector(".admin-presets");
   const result = await fetch("/api/pattern");
   const json = await result.json();
