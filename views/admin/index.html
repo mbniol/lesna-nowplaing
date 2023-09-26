@@ -17,12 +17,19 @@
           <div>Dodaj szablon</div>
         </div>
         <form action="/api/pattern" method="post" id="pattern_form">
-          <input type="text" name="name" id="name" placeholder="Nazwa" />
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Nazwa"
+            required
+          />
           <input
             type="number"
             name="offset"
             id="offset"
             placeholder="Przesunięcie"
+            required
           />
           <button type="submit">Dodaj</button>
         </form>

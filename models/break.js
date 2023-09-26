@@ -9,6 +9,7 @@ export default class Model {
 				FROM breaks WHERE pattern_id=?`,
       [pattern_id]
     );
+    console.log(rows);
     return rows;
   }
   static async add(name, start, end, for_requested, pattern_id) {
@@ -19,6 +20,7 @@ export default class Model {
         SELECT ?, ?, ?, ?, ?, COUNT(*) FROM breaks WHERE pattern_id=?`,
       [name, start, end, for_requested, pattern_id, pattern_id]
     );
+    console.log(rows);
     return rows;
   }
   static async replace(pattern_id, breaks) {

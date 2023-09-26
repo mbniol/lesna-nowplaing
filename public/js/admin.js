@@ -92,16 +92,21 @@ function makeFormButtonsReactive() {
 
   button.addEventListener("click", async (e) => {
     e.preventDefault();
-    const formData = new FormData(new_pattern_form);
-    const params = new URLSearchParams(formData);
-    await fetch("/api/pattern", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params,
-    });
-    location.reload();
+    console.log(new_pattern_form.checkValidity());
+    if (new_pattern_form.checkValidity()) {
+      const formData = new FormData(new_pattern_form);
+      const params = new URLSearchParams(formData);
+      await fetch("/api/pattern", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params,
+      });
+      location.reload();
+    } else {
+      new_pattern_form.reportValidity();
+    }
   });
 }
 
