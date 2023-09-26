@@ -42,14 +42,14 @@ try {
 Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
 const token = await Auth.getInstance().getAPIToken();
 
-console.log(
-  await vote(
-    Mysql,
-    token,
-    "https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw"
-  )
-);
-console.log(await votes(Mysql));
+// console.log(
+//   await vote(
+//     Mysql,
+//     token,
+//     "https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw"
+//   )
+// );
+// console.log(await votes(Mysql));
 // Mysql.getInstance().query(
 //   "SELECT * FROM tracks where id = ?",
 //   [1],
