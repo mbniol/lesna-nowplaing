@@ -83,4 +83,13 @@ router.put("/pattern/:id/active", async (req, res) => {
   res.sendStatus(200);
 });
 
+router.post("/login", async (req, res) => {
+  const password = req.body.password;
+  if (password !== process.env.ADMIN_PASS) {
+    res.sendStatus(403);
+  }
+  req.session.loggedIn = true;
+  res.sendStatus(200);
+});
+
 export default router;
