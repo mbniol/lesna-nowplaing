@@ -1,6 +1,15 @@
-export default function (req, res, next) {
+function checkAdmin(req, res, next) {
   if (!req.session.loggedIn) {
-    res.sendStatus(403);
+    return res.redirect("/admin/login");
   }
   next();
 }
+
+function checkNotAdmin(req, res, next) {
+  if (req.session.loggedIn) {
+    return res.redirect("/admin");
+  }
+  next();
+}
+
+export { checkAdmin, checkNotAdmin };

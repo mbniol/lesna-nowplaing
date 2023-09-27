@@ -55,8 +55,8 @@ CREATE TABLE `breaks` (
   `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) DEFAULT NULL,
   `position` int(11) DEFAULT NULL,
-  `start` varchar(255) DEFAULT NULL,
-  `end` varchar(255) DEFAULT NULL,
+  `start` TIME DEFAULT NULL,
+  `end` TIME DEFAULT NULL,
   `for_requested` tinyint(1) DEFAULT NULL,
   `pattern_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

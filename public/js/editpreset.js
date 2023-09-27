@@ -32,32 +32,37 @@ function addRemovingFunctionality() {
 }
 
 submitChangesButton.addEventListener("click", (e) => {
-  const breakElements = document.querySelectorAll(".break");
-  const breaksData = [];
-  breakElements.forEach((el, i) => {
-    const container = el.parentElement;
-    const position = container.dataset.position;
-    const nameInput = el.querySelector(".break__name-input");
-    const startInput = el.querySelector(".break__start-input");
-    const endInput = el.querySelector(".break__end-input");
-    const forRequestedInput = el.querySelector(".break__requested-checkbox");
-    breaksData.push({
-      name: nameInput.value,
-      position,
-      start: startInput.value,
-      end: endInput.value,
-      forRequested: forRequestedInput.checked,
+  if (breaksContainer.checkValidity()) {
+    const breakElements = document.querySelectorAll(".break");
+    const breaksData = [];
+    breakElements.forEach((el, i) => {
+      const container = el.parentElement;
+      const position = container.dataset.position;
+      const nameInput = el.querySelector(".break__name-input");
+      const startInput = el.querySelector(".break__start-input");
+      const endInput = el.querySelector(".break__end-input");
+      const forRequestedInput = el.querySelector(".break__requested-checkbox");
+      breaksData.push({
+        name: nameInput.value,
+        position,
+        start: startInput.value + ":00",
+        end: endInput.value + ":00",
+        forRequested: forRequestedInput.checked,
+      });
     });
-  });
-  fetch(`/api/pattern/${patternID}/break`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      // "Content-Type": "multipart/form-data",
-    },
-    body: JSON.stringify(breaksData),
-  });
-  console.log(breaksData);
+    validateBreaks(breaksData);
+    fetch(`/api/pattern/${patternID}/break`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        // "Content-Type": "multipart/form-data",
+      },
+      body: JSON.stringify(breaksData),
+    });
+    console.log(breaksData);
+  } else {
+    breaksContainer.reportValidity();
+  }
 });
 
 function addDragability() {
@@ -156,8 +161,8 @@ async function populateBreaksContainer() {
       id,
       name,
       position,
-      start,
-      end,
+      start.slice(0, -3),
+      end.slice(0, -3),
       for_requested
     );
   });
@@ -182,11 +187,12 @@ function generateElement(index, id, name, position, start, end, for_requested) {
             name="breakName"
             id="breakName"
             value="${name}"
+            required
           />
         </div>
         <div class="break__time">
-          Od:<input class="break__start-input" type="number" name="breakFrom" id="breakFrom" value="${start}" /> Do:
-          <input class="break__end-input" type="number" name="breakTo" id="breakTo" value="${end}" />
+          Od:<input required class="break__start-input" type="time" name="breakFrom" id="breakFrom" value="${start}" /> Do:
+          <input required class="break__end-input" type="time" name="breakTo" id="breakTo" value="${end}" />
         </div>
         <div class="break__settings">
           <input
@@ -208,19 +214,64 @@ function generateElement(index, id, name, position, start, end, for_requested) {
 const newBreakForm = document.querySelector("#new-break-form");
 const newBreakSubmit = newBreakForm.querySelector("button");
 
+function addSeconds(formdata, ...attrs) {
+  attrs.forEach((attr) => {
+    const paramsWithSeconds = formdata.get(attr) + ":00";
+    formdata.set(attr, paramsWithSeconds);
+  });
+}
+
+function convertIntoTimestamp(clock) {
+  if (clock.length === 5) {
+    clock += ":00";
+  }
+  const date = new Date(`January 1, 1970 ${clock}`);
+  console.log(clock);
+  return date.getTime();
+}
+
+function validateBreak(start, end) {
+  if (convertIntoTimestamp(start) >= convertIntoTimestamp(end)) {
+    throw new Error(`${start} jest większe od ${end}`);
+    return false;
+  }
+  return true;
+}
+
+function validateBreaks(breaks) {
+  breaks.forEach((singleBreak) =>
+    validateBreak(singleBreak.start, singleBreak.end)
+  );
+  for (let i = 1; i < breaks.length; i++) {
+    const previousBreak = breaks[i - 1];
+    const currentBreak = breaks[i];
+    const minStart = previousBreak.end;
+    if (
+      convertIntoTimestamp(minStart) >= convertIntoTimestamp(currentBreak.start)
+    ) {
+      throw new Error(`przerwa nr. ${i} nachodzi się z przerwą nr. ${i + 1}`);
+    }
+  }
+}
+
 newBreakSubmit.addEventListener("click", async (e) => {
   e.preventDefault();
-  const params = new FormData(newBreakForm);
-  console.log(params, `/api/pattern/${patternID}/break`);
-  await fetch(`/api/pattern/${patternID}/break`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      // "Content-Type": "multipart/form-data",
-    },
-    body: new URLSearchParams(params),
-  });
-  location.reload();
+  if (newBreakForm.checkValidity()) {
+    const params = new FormData(newBreakForm);
+    validateBreak(params.get("start"), params.get("end"));
+    addSeconds(params, "end", "start");
+    await fetch(`/api/pattern/${patternID}/break`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        // "Content-Type": "multipart/form-data",
+      },
+      body: new URLSearchParams(params),
+    });
+    location.reload();
+  } else {
+    newBreakForm.reportValidity();
+  }
 });
 
 const patternEditForm = document.querySelector("#pattern-form");
@@ -229,16 +280,20 @@ const patternDeleteButton = patternEditForm.querySelector("#deletePreset");
 
 patternEditSubmit.addEventListener("click", async (e) => {
   e.preventDefault();
-  const params = new FormData(patternEditForm);
-  await fetch(`/api/pattern/${patternID}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      // "Content-Type": "multipart/form-data",
-    },
-    body: new URLSearchParams(params),
-  });
-  location.reload();
+  if (patternEditForm.checkValidity()) {
+    const params = new FormData(patternEditForm);
+    await fetch(`/api/pattern/${patternID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        // "Content-Type": "multipart/form-data",
+      },
+      body: new URLSearchParams(params),
+    });
+    location.reload();
+  } else {
+    patternEditForm.reportValidity();
+  }
 });
 
 patternDeleteButton.addEventListener("click", async (e) => {
