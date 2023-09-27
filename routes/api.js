@@ -2,6 +2,7 @@ import { Router } from "express";
 import Auth from "../helpers/auth.js";
 import patternModel from "../models/pattern.js";
 import breakModel from "../models/break.js";
+import { vote } from "../models/song.js";
 
 const router = new Router();
 
@@ -90,6 +91,15 @@ router.post("/login", async (req, res) => {
   }
   req.session.loggedIn = true;
   res.sendStatus(200);
+});
+
+router.post("/votes", async (req, res) => {
+  console.log("elo");
+  console.log(req.body.spotifyLink);
+  if (req.body.spotifyLink != undefined) {
+    await vote(req.body.spotifyLink);
+    // console.log(vote(req.body.spotifyLink));
+  }
 });
 
 export default router;

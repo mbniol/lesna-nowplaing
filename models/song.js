@@ -1,14 +1,16 @@
-//import Mysql from "../helpers/database.js";
-import { fetchWebApi } from "../helpers/helpers.js";
+import Mysql from "../helpers/database.js";
+import { fetchWebApi, new_token } from "../helpers/helpers.js";
 
-export async function vote(Mysql, token, track_link) {
+export async function vote(track_link) {
+  const token = await new_token();
   //przeksztalcenie linku na track id
   const track_id = await get_id(track_link);
   if (track_id) {
     const track = await fetchWebApi(token, "tracks/" + track_id);
     if (track["error"] != undefined) {
-      console.log("wystapil blad przy odczycie piosenki");
+      return "wystapil blad przy odczycie piosenki";
     } else {
+      console.log("cos");
       //piosenka jest niecenzuralna
       if (track["explicit"] == true) {
         return "piosenka jest nieodpowiednia";

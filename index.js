@@ -43,11 +43,7 @@ Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
 const token = await Auth.getInstance().getAPIToken();
 
 // console.log(
-//   await vote(
-//     Mysql,
-//     token,
-//     "https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw"
-//   )
+//   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );
 // console.log(await votes(Mysql));
 // Mysql.getInstance().query(
