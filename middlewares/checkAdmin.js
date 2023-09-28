@@ -1,4 +1,5 @@
 function checkAdmin(req, res, next) {
+  console.log(req.session);
   if (!req.session.loggedIn) {
     return res.redirect("/admin/login");
   }

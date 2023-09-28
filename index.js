@@ -17,7 +17,14 @@ const client_secret = "1f89010e9b5749cb89947602fd2443f3";
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({ secret: "sekret", cookie: { maxAge: 60000 } }));
+app.use(
+  session({
+    secret: "sekret",
+    ookie: { maxAge: 60000, httpOnly: true },
+    // resave: false,
+    // saveUninitialized: false,
+  })
+);
 app.use(
   helmet({
     contentSecurityPolicy: false,

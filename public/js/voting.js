@@ -31,3 +31,17 @@ add_song.addEventListener("click", async (e) => {
   });
   //location.reload();
 });
+
+const votingButtons = document.querySelectorAll(".voting-vote-btn");
+votingButtons.forEach((el) => {
+  el.addEventListener("click", async (e) => {
+    const trackID = el.dataset.trackId;
+    await fetch(`/api/votes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ spotifyLink: trackID }),
+    });
+  });
+});

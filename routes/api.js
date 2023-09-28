@@ -3,6 +3,8 @@ import Auth from "../helpers/auth.js";
 import patternModel from "../models/pattern.js";
 import breakModel from "../models/break.js";
 import { checkAdmin, checkNotAdmin } from "../middlewares/checkAdmin.js";
+import { checkVoteRight } from "../middlewares/voting.js";
+import { vote } from "../models/song.js";
 
 const router = new Router();
 
@@ -92,6 +94,20 @@ router.post("/login", checkNotAdmin, async (req, res) => {
   req.session.loggedIn = true;
   // console.log(req.header("Referer"));
   res.redirect("/admin");
+});
+
+router.post("/votes", checkVoteRight, async (req, res) => {
+  console.log(await vote(req.body.spotifyLink));
+  res.sendStatus(200);
+  // console.log(req.session);
+  // console.log(currentDate);
+  // req.session.lastVote =
+  // if (password !== process.env.ADMIN_PASS) {
+  //   return res.sendStatus(403);
+  // }
+  // req.session.loggedIn = true;
+  // // console.log(req.header("Referer"));
+  // res.redirect("/admin");
 });
 
 export default router;
