@@ -96,7 +96,7 @@ router.post("/login", checkNotAdmin, async (req, res) => {
   res.redirect("/admin");
 });
 
-router.get("/track_list", checkNotAdmin, async (req, res) => {
+router.get("/track_list", async (req, res) => {
   const track_list = await votes();
   //console.log(track_list);
   res.json(track_list);

@@ -30,6 +30,7 @@ export async function vote(track_link) {
           await newTruck(
             track_id,
             track["album"]["images"][0]["url"],
+            track["artists"][1]["name"],
             track["duration_ms"],
             track["name"]
           );
@@ -46,13 +47,13 @@ export async function vote(track_link) {
   }
 }
 //dodanie nowej piosenki do bazy danych
-export async function newTruck(id, cover, length, name) {
+export async function newTruck(id, cover, artist, length, name) {
   const pool = Mysql.getPromiseInstance();
   await pool.query(
     `
-    INSERT INTO tracks (id, cover, length, name, banned) VALUES (?, ?, ?, ?, ?)
+    INSERT INTO tracks (id, cover, artist , length, name, banned) VALUES (?, ?, ?, ?, ?, ?)
     `,
-    [id, cover, length, name, 0]
+    [id, cover, artist, length, name, 0]
   );
 }
 //dodanie głosu na pisonekę z aktualną datą
@@ -71,7 +72,7 @@ export async function votes() {
   //zapytanie co wyciąga sume głosów z danego dnia i połowę glosów z dnia poprzedniego
   try {
     const result = await pool.query(`
-    SELECT tracks.id, tracks.cover, tracks.name, count(main_votes.id)+
+    SELECT tracks.id, tracks.cover, tracks.name, tracks.artist, count(main_votes.id)+
       (if(/*sprawdzenie czy wartość połowy głosów nie jest null*/
         (SELECT count(votes.id)/2 as count
         FROM votes join tracks on votes.track_id = tracks.id 
