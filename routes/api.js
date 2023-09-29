@@ -4,7 +4,7 @@ import patternModel from "../models/pattern.js";
 import breakModel from "../models/break.js";
 import { checkAdmin, checkNotAdmin } from "../middlewares/checkAdmin.js";
 import { checkVoteRight } from "../middlewares/voting.js";
-import { vote } from "../models/song.js";
+import { vote, votes } from "../models/song.js";
 
 const router = new Router();
 
@@ -94,6 +94,12 @@ router.post("/login", checkNotAdmin, async (req, res) => {
   req.session.loggedIn = true;
   // console.log(req.header("Referer"));
   res.redirect("/admin");
+});
+
+router.get("/track_list", checkNotAdmin, async (req, res) => {
+  const track_list = await votes();
+  //console.log(track_list);
+  res.json(track_list);
 });
 
 router.post("/votes", checkVoteRight, async (req, res) => {

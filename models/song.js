@@ -2,6 +2,7 @@ import Mysql from "../helpers/database.js";
 import { fetchWebApi, new_token } from "../helpers/helpers.js";
 
 export async function vote(track_link) {
+  const pool = Mysql.getPromiseInstance();
   const token = await new_token();
   //przeksztalcenie linku na track id
   const track_id = await get_id(track_link);
@@ -10,33 +11,32 @@ export async function vote(track_link) {
     if (track["error"] != undefined) {
       return "wystapil blad przy odczycie piosenki";
     } else {
-      console.log("cos");
       //piosenka jest niecenzuralna
       if (track["explicit"] == true) {
         return "piosenka jest nieodpowiednia";
       } else {
         //pobranie danych o piosence z bazy
-        const rows = await Mysql.executeQuery(
+        const rows = await pool.query(
           `SELECT count(*) as count, banned FROM tracks where id=?`,
           [track_id]
         );
+        console.log(rows[0][0]);
         //piosenka została zbanowana przez admina
-        if (rows[0]["banned"] == 1) {
+        if (rows[0][0]["banned"] == 1) {
           return "piosenka zostala zabanowan przez administracje";
         }
         //piosenki nie ma w bazie danych
-        else if (rows[0]["count"] == 0) {
-          newTruck(
-            Mysql,
+        else if (rows[0][0]["count"] == 0) {
+          await newTruck(
             track_id,
             track["album"]["images"][0]["url"],
             track["duration_ms"],
             track["name"]
           );
-          addVote(Mysql, track_id);
+          await addVote(track_id);
           return "dodano piosenkę i głos";
         } else {
-          addVote(Mysql, track_id);
+          addVote(track_id);
           return "dodano głos";
         }
       }
@@ -46,8 +46,9 @@ export async function vote(track_link) {
   }
 }
 //dodanie nowej piosenki do bazy danych
-export async function newTruck(Mysql, id, cover, length, name) {
-  await Mysql.executeQuery(
+export async function newTruck(id, cover, length, name) {
+  const pool = Mysql.getPromiseInstance();
+  await pool.query(
     `
     INSERT INTO tracks (id, cover, length, name, banned) VALUES (?, ?, ?, ?, ?)
     `,
@@ -55,19 +56,21 @@ export async function newTruck(Mysql, id, cover, length, name) {
   );
 }
 //dodanie głosu na pisonekę z aktualną datą
-export async function addVote(Mysql, id) {
-  await Mysql.executeQuery(
+export async function addVote(id) {
+  const pool = Mysql.getPromiseInstance();
+  await pool.query(
     `
     INSERT INTO votes (id, track_id, date_added) VALUES (NULL, ?, current_timestamp())
-    `,
+`,
     [id]
   );
 }
 //sprawdzanie aktualnej listy głosów
-export async function votes(Mysql) {
+export async function votes() {
+  const pool = Mysql.getPromiseInstance();
   //zapytanie co wyciąga sume głosów z danego dnia i połowę glosów z dnia poprzedniego
   try {
-    const result = await Mysql.executeQuery(`
+    const result = await pool.query(`
     SELECT tracks.id, tracks.cover, tracks.name, count(main_votes.id)+
       (if(/*sprawdzenie czy wartość połowy głosów nie jest null*/
         (SELECT count(votes.id)/2 as count
@@ -84,8 +87,7 @@ export async function votes(Mysql) {
     WHERE main_votes.date_added=CURRENT_DATE()
     group by tracks.id
     order by count DESC;`);
-    //console.log(result);
-    return result;
+    return result[0];
   } catch (error) {
     console.error("Błąd zapytania:", error);
     return false;

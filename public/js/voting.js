@@ -29,13 +29,14 @@ add_song.addEventListener("click", async (e) => {
     },
     body: params,
   });
-  //location.reload();
+  location.reload();
 });
 
 const votingButtons = document.querySelectorAll(".voting-vote-btn");
 votingButtons.forEach((el) => {
   el.addEventListener("click", async (e) => {
     const trackID = el.dataset.trackId;
+    console.log("test");
     await fetch(`/api/votes`, {
       method: "POST",
       headers: {
