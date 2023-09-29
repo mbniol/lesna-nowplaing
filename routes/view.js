@@ -42,4 +42,15 @@ router.get("/", (req, res) => {
   renderView(res, "voting.html");
 });
 
+router.get("/displayLogin", (req, res) => {
+  Auth.getInstance().loginUserDisplay(res);
+});
+
+router.get("/display", (req, res) => {
+  // const code = req.query.code;
+  // const token = await Auth.getInstance().getSDKToken(code);
+  // req.session.logged_in = true;
+  renderView(res, "index.html");
+});
+
 export default router;

@@ -111,6 +111,13 @@ export default class Auth {
     );
   }
 
+  async loginUserDisplay(res) {
+    const localParams = this.#authorizationParams.replace("login", "display");
+    console.log(localParams);
+    // localParams.set("redirect_uri", "http://localhost:3000/display");
+    res.redirect("https://accounts.spotify.com/authorize/?" + localParams);
+  }
+
   async getSDKToken(code) {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
@@ -118,8 +125,8 @@ export default class Auth {
       const tokenOptions = this.#getSDKTokenOptions(code);
       await this.#setSDKToken(tokenOptions);
     } else if (
-      this.#tokens.sdk.expiration_date <
-      currentTimestamp + 1000 * 60 * 1 && this.#tokens.refresh !== undefined
+      this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
+      this.#tokens.refresh !== undefined
     ) {
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
@@ -128,7 +135,7 @@ export default class Auth {
   }
 
   async #setSDKToken(tokenOptions) {
-    try{
+    try {
       const response = await fetch(
         "https://accounts.spotify.com/api/token",
         tokenOptions
@@ -141,10 +148,10 @@ export default class Auth {
         access: jsonResponse.access_token,
         refresh: jsonResponse.refresh_token,
       };
-    }catch(e){
+      console.log(jsonResponse);
+    } catch (e) {
       console.error(e);
     }
-
   }
 
   async #setAPIToken() {

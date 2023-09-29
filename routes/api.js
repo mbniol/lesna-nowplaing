@@ -15,12 +15,12 @@ router.get("/token/sdk", checkAdmin, async (req, res) => {
   });
 });
 
-router.get("/token/sdk", checkAdmin, async (req, res) => {
-  const token = await Auth.getInstance().getSDKToken();
-  res.json({
-    token,
-  });
-});
+// router.get("/token/sdk", checkAdmin, async (req, res) => {
+//   const token = await Auth.getInstance().getSDKToken();
+//   res.json({
+//     token,
+//   });
+// });
 
 router.get("/pattern/:pattern_id/break", checkAdmin, async (req, res) => {
   const pattern_id = req.params.pattern_id;
@@ -96,7 +96,7 @@ router.post("/login", checkNotAdmin, async (req, res) => {
   res.redirect("/admin");
 });
 
-router.get("/track_list", checkNotAdmin, async (req, res) => {
+router.get("/track_list", async (req, res) => {
   const track_list = await votes();
   //console.log(track_list);
   res.json(track_list);
