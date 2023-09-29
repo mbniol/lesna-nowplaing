@@ -53,7 +53,7 @@ async function show_votes() {
     });
   });
 }
-function add_track({ id, name, count, cover }) {
+function add_track({ id, name, artist, count, cover }) {
   return `
   <div class="voting-item">
   <div class="voting-song-cover">
@@ -61,7 +61,7 @@ function add_track({ id, name, count, cover }) {
   </div>
   <div class="voting-song-info-wrapper">
     <div class="voting-title">${name}</div>
-    <div class="voting-artist"></div>
+    <div class="voting-artist">${artist}</div>
     <div class="voting-votecount-wrapper">
       Głosów: <span class="voting-votecount-count">${count}</span>
     </div>
