@@ -32,17 +32,46 @@ add_song.addEventListener("click", async (e) => {
   location.reload();
 });
 
-const votingButtons = document.querySelectorAll(".voting-vote-btn");
-votingButtons.forEach((el) => {
-  el.addEventListener("click", async (e) => {
-    const trackID = el.dataset.trackId;
-    console.log("test");
-    await fetch(`/api/votes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ spotifyLink: trackID }),
+async function show_votes() {
+  const result = await fetch("/api/track_list");
+  const json = await result.json();
+  json.forEach((row) => {
+    document.getElementById("voting-list").innerHTML += add_track(row);
+  });
+  const votingButtons = document.querySelectorAll(".voting-vote-btn");
+  votingButtons.forEach((el) => {
+    el.addEventListener("click", async (e) => {
+      console.log("test");
+      const trackID = el.dataset.trackId;
+      await fetch(`/api/votes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ spotifyLink: trackID }),
+      });
     });
   });
-});
+}
+function add_track({ id, name, count, cover }) {
+  return `
+  <div class="voting-item">
+  <div class="voting-song-cover">
+    <img src="${cover}" alt="" srcset="" />
+  </div>
+  <div class="voting-song-info-wrapper">
+    <div class="voting-title">${name}</div>
+    <div class="voting-artist"></div>
+    <div class="voting-votecount-wrapper">
+      Głosów: <span class="voting-votecount-count">${count}</span>
+    </div>
+  </div>
+  <button
+    class="voting-vote-btn"
+    data-track-id="${id}"
+  >
+    Zagłosuj
+  </button>
+</div>`;
+}
+show_votes();
