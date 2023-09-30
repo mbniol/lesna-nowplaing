@@ -46,7 +46,7 @@ try {
   console.error("Błąd przy ustanawianiu połączenia:", error);
 }
 //ustawienie połączenia z api spotify
-Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
+Auth.setInstance(client_id, client_secret);
 const token = await Auth.getInstance().getAPIToken();
 
 // console.log(

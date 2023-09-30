@@ -14,23 +14,23 @@ export default class Auth {
   #APITokenOptions;
   #authorizationParams;
   #credentialsBase64;
-  #redirect_uri;
+  // #sdk_redirect_uri;
   static #instance;
 
-  constructor(client_id, client_secret, redirect_uri) {
+  constructor(client_id, client_secret /*redirect_uri*/) {
     const credentials = client_id + ":" + client_secret;
     const credentialsBuffer = Buffer.alloc(credentials.length, credentials);
     this.#credentialsBase64 = credentialsBuffer.toString("base64");
-    this.#redirect_uri = redirect_uri;
+    // this.#sdk_redirect_uri = redirect_uri;
     this.#setAPITokenOptions();
     this.#setAuthorizationParams(client_id);
   }
 
-  #getSDKTokenOptions(code) {
+  #getSDKTokenOptions(code, uri) {
     const queryParams = new URLSearchParams({
       code: code,
       grant_type: "authorization_code",
-      redirect_uri: this.#redirect_uri,
+      redirect_uri: uri,
     });
     return {
       method: "POST",
@@ -75,14 +75,19 @@ export default class Auth {
   }
 
   #setAuthorizationParams(client_id) {
-    const queryParams = new URLSearchParams({
+    const params = new URLSearchParams({
       response_type: "code",
       client_id: client_id,
       scope: "streaming  user-read-email  user-read-private",
-      redirect_uri: this.#redirect_uri,
     });
 
-    this.#authorizationParams = queryParams.toString();
+    this.#authorizationParams = params.toString();
+  }
+
+  #getAutorizationParams(redirect) {
+    const temporaryParams = new URLSearchParams(this.#authorizationParams);
+    temporaryParams.append("redirect_uri", redirect);
+    return temporaryParams.toString();
   }
 
   static setInstance(client_id, client_secret, redirect_uri) {
@@ -105,24 +110,21 @@ export default class Auth {
     return this.#tokens.api.access;
   }
 
-  async loginUser(res) {
+  async loginUser(res, redirect) {
     res.redirect(
-      "https://accounts.spotify.com/authorize/?" + this.#authorizationParams
+      "https://accounts.spotify.com/authorize/?" +
+        this.#getAutorizationParams(redirect)
     );
   }
 
-  async loginUserDisplay(res) {
-    const localParams = this.#authorizationParams.replace("login", "display");
-    console.log(localParams);
-    // localParams.set("redirect_uri", "http://localhost:3000/display");
-    res.redirect("https://accounts.spotify.com/authorize/?" + localParams);
-  }
-
-  async getSDKToken(code) {
+  async getSDKToken(code, uri) {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
-    if (this.#tokens.sdk.access === undefined && code) {
-      const tokenOptions = this.#getSDKTokenOptions(code);
+    if (
+      (this.#tokens.sdk.access === undefined || this.#tokens.sdk.refresh) &&
+      code
+    ) {
+      const tokenOptions = this.#getSDKTokenOptions(code, uri);
       await this.#setSDKToken(tokenOptions);
     } else if (
       this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&

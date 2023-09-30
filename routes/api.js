@@ -2,14 +2,21 @@ import { Router } from "express";
 import Auth from "../helpers/auth.js";
 import patternModel from "../models/pattern.js";
 import breakModel from "../models/break.js";
-import { checkAdmin, checkNotAdmin } from "../middlewares/checkAdmin.js";
+import {
+  checkAdmin,
+  checkNotAdmin,
+  loginSpotify,
+} from "../middlewares/checkAdmin.js";
 import { checkVoteRight } from "../middlewares/voting.js";
 import { vote, votes } from "../models/song.js";
 
 const router = new Router();
 
 router.get("/token/sdk", checkAdmin, async (req, res) => {
-  const token = await Auth.getInstance().getSDKToken();
+  const token = await Auth.getInstance().getSDKToken(
+    req.session.code,
+    "http://localhost:3000/player"
+  );
   res.json({
     token,
   });
@@ -92,8 +99,11 @@ router.post("/login", checkNotAdmin, async (req, res) => {
     return res.sendStatus(403);
   }
   req.session.loggedIn = true;
+  const redirect = req.session.redirect;
+  req.session.redirect = null;
+  console.log(redirect);
   // console.log(req.header("Referer"));
-  res.redirect("/admin");
+  res.redirect(redirect);
 });
 
 router.get("/track_list", async (req, res) => {
