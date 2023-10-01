@@ -124,13 +124,71 @@ router.post("/votes", checkVoteRight, async (req, res) => {
   // res.redirect("/admin");
 });
 
+router.put("/play", async (req, res) => {
+  const token = await Auth.getInstance().getSDKToken(
+    req.session.code,
+    "http://localhost:3000/player"
+  );
+  await fetchWebApi(token, "me/player/play", "PUT");
+  res.sendStatus(200);
+});
+
+// router.put("/device", async (req, res) => {
+//   const token = await Auth.getInstance().getSDKToken(
+//     req.session.code,
+//     "http://localhost:3000/player"
+//   );
+//   console.log(req.body.device_id);
+//   const dane = await fetchWebApi(token, "me/player", "PUT", {
+//     device_ids: [req.body.device_id],
+//     play: true,
+//   });
+//   console.log(dane);
+//   res.sendStatus(200);
+// });
+
 router.get("/queue", async (req, res) => {
   const token = await Auth.getInstance().getSDKToken(
     req.session.code,
     "http://localhost:3000/player"
   );
-  const dane = await fetchWebApi(token, "me/player/queue");
-  console.log(token, dane);
+  function getTheEssence(track, imageSize) {
+    const image = track.album.images.find(
+      (image) => image.height === imageSize
+    ).url;
+    const artists = track.artists.map((artist) => artist.name).join`, `;
+    const minutes = Math.floor(track.duration_ms / 60000);
+    const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
+    const duration = minutes + ":" + String(seconds).padStart(2, "0");
+    const name = track.name;
+    return { image, artists, duration, name };
+  }
+  const data = await fetchWebApi(token, "me/player/queue");
+  console.log("kurwaaa");
+  if (data.queue && data.currently_playing) {
+    // console.log(data.queue.length);
+    const tracks = data.queue.map((track) => getTheEssence(track, 300));
+    const current_track = getTheEssence(data.currently_playing, 640);
+    res.json({ current_track, queue: tracks });
+  } else {
+    console.log(data);
+  }
+
+  // if (dane.queue?.length > 0) {
+  //   const image = dane.queue[0].album.images[0];
+  //   const artists = dane.queue[0].artists.map((artist) => artist.name).join`, `;
+  //   const minutes = Math.floor(dane.queue[0].duration_ms / 60000);
+  //   const seconds = Math.floor(
+  //     (dane.queue[0].duration_ms - seconds * 60000) / 1000
+  //   );
+  //   const duration = minutes + ":" + seconds.padStart(2, "0");
+  //   const name = dane.queue[0].name;
+  //   console.log(image, artists, duration, name);
+  // }
+  // dane.queue.forEach()
+  // dane.currently_playing.forEach((el) => {
+  //   console.log(el);
+  // });
 
   // const track_list = await votes();
   //

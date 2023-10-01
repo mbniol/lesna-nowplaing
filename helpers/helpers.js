@@ -14,8 +14,15 @@ async function fetchWebApi(token, endpoint, method = "GET", body) {
     method,
     body: JSON.stringify(body),
   });
+
   // console.log(res);
-  return await res.json();
+  // console.log(res);
+  try {
+    return await res.json();
+  } catch (e) {
+    return await res.text();
+  }
+  // return await res.json();
 }
 
 function renderView(res, filename) {

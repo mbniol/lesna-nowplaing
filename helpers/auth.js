@@ -78,7 +78,7 @@ export default class Auth {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: client_id,
-      scope: `streaming user-read-playback-state playlist-modify-private playlist-modify-public user-read-currently-playing user-read-email user-read-private`,
+      scope: `streaming user-modify-playback-state user-read-playback-state playlist-modify-private playlist-modify-public user-read-currently-playing user-read-email user-read-private`,
     });
 
     this.#authorizationParams = params.toString();
