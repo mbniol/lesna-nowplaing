@@ -9,7 +9,7 @@ export default class Model {
 				FROM breaks WHERE pattern_id=?`,
       [pattern_id]
     );
-    console.log(rows);
+
     return rows;
   }
   static async add(name, start, end, for_requested, pattern_id) {
@@ -20,7 +20,7 @@ export default class Model {
         SELECT ?, ?, ?, ?, ?, COUNT(*) FROM breaks WHERE pattern_id=?`,
       [name, start, end, for_requested, pattern_id, pattern_id]
     );
-    console.log(rows);
+
     return rows;
   }
   static async replace(pattern_id, breaks) {
@@ -43,8 +43,8 @@ export default class Model {
   //     ]);
   //     const position = row[0].position;
   //     await pool.query(`DELETE FROM breaks WHERE id=?`, [id]);
-  //     console.log(position, pattern_id);
-  //     console.log(
+  //
+  //
   //       await pool.query(
   //         `UPDATE breaks SET position=position-1 WHERE pattern_id=? AND position>?`,
   //         [pattern_id, position]

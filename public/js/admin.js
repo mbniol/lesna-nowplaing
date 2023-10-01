@@ -31,7 +31,6 @@ function makeMenuButtonsReactive() {
 
   function hideEveryMenu(but) {
     settingBox.forEach((element, i) => {
-      console.log(buttons[i]);
       if (but !== buttons[i]) {
         timeoutArray[i] = setTimeout(() => {
           settingBox[i].style.visibility = "hidden";
@@ -44,7 +43,6 @@ function makeMenuButtonsReactive() {
   buttons.forEach((element, i) => {
     timeoutArray[i] = undefined;
     element.addEventListener("click", (e) => {
-      console.log("wtf");
       classes = settingBox[i].classList;
       clearTimeout(timeoutArray[i]);
       if (classes.contains("visible")) {
@@ -77,7 +75,6 @@ function makeFormButtonsReactive() {
   const addPresetBackground = document.querySelector(".add-preset-background");
 
   addPresetButton.addEventListener("click", (e) => {
-    console.log("no hej");
     addPresetBox.classList.add("show");
     addPresetBackground.classList.add("show");
   });
@@ -92,7 +89,7 @@ function makeFormButtonsReactive() {
 
   button.addEventListener("click", async (e) => {
     e.preventDefault();
-    console.log(new_pattern_form.checkValidity());
+
     if (new_pattern_form.checkValidity()) {
       const formData = new FormData(new_pattern_form);
       const params = new URLSearchParams(formData);

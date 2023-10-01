@@ -78,7 +78,7 @@ export default class Auth {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: client_id,
-      scope: "streaming  user-read-email  user-read-private",
+      scope: `streaming user-read-playback-state playlist-modify-private playlist-modify-public user-read-currently-playing user-read-email user-read-private`,
     });
 
     this.#authorizationParams = params.toString();
@@ -87,6 +87,7 @@ export default class Auth {
   #getAutorizationParams(redirect) {
     const temporaryParams = new URLSearchParams(this.#authorizationParams);
     temporaryParams.append("redirect_uri", redirect);
+    console.log(temporaryParams);
     return temporaryParams.toString();
   }
 
@@ -101,6 +102,7 @@ export default class Auth {
   async getAPIToken() {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
+    // console.log("xD");
     if (
       this.#tokens.api.access == undefined ||
       this.#tokens.api.expiration_date < currentTimestamp + 1000 * 60 * 1
@@ -120,10 +122,7 @@ export default class Auth {
   async getSDKToken(code, uri) {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
-    if (
-      (this.#tokens.sdk.access === undefined || this.#tokens.sdk.refresh) &&
-      code
-    ) {
+    if (this.#tokens.sdk.access === undefined && code) {
       const tokenOptions = this.#getSDKTokenOptions(code, uri);
       await this.#setSDKToken(tokenOptions);
     } else if (
@@ -137,6 +136,7 @@ export default class Auth {
   }
 
   async #setSDKToken(tokenOptions) {
+    // console.log("setuje");
     try {
       const response = await fetch(
         "https://accounts.spotify.com/api/token",
@@ -145,18 +145,20 @@ export default class Auth {
       const jsonResponse = await response.json();
       const currentDate = new Date();
       // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
+      const oldRefreshToken = this.#tokens.sdk.refresh_token;
+      // console.log("respon6s", jsonResponse, tokenOptions);
       this.#tokens.sdk = {
         expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,
         access: jsonResponse.access_token,
-        refresh: jsonResponse.refresh_token,
+        refresh: jsonResponse.refresh_token || oldRefreshToken,
       };
-      console.log(jsonResponse);
     } catch (e) {
       console.error(e);
     }
   }
 
   async #setAPIToken() {
+    // console.log(this.#APITokenOptions);
     const response = await fetch(
       "https://accounts.spotify.com/api/token",
       this.#APITokenOptions

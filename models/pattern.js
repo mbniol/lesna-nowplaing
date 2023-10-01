@@ -41,7 +41,7 @@ export default class Model {
   }
   static async toggleActive(id) {
     const pool = Mysql.getPromiseInstance();
-    console.log(id);
+
     try {
       await pool.query(
         `UPDATE patterns SET active=0 WHERE active=1 AND id!=?`,

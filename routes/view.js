@@ -21,6 +21,7 @@ router.get("/admin/login", checkNotAdmin, async (req, res) => {
 
 router.get("/player", checkAdmin, loginSpotify, async (req, res) => {
   req.session.code = req.query.code;
+
   renderView(res, "player.html");
   return;
 });

@@ -1,7 +1,6 @@
 function checkVoteRight(req, res, next) {
   const [date, formatedDate] = getCurrentDate();
   const lastVote = req.session.lastVote;
-  console.log(lastVote && new Date(formatedDate) >= new Date(lastVote));
 
   if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
     return res.sendStatus(403);

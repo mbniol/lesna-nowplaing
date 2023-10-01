@@ -40,57 +40,56 @@ try {
     process.env.DB_PASSWORD || "",
     process.env.DB_NAME || "radio"
   );
-
-  console.log("Połączenie z bazą danych zostało ustanowione.");
 } catch (error) {
   console.error("Błąd przy ustanawianiu połączenia:", error);
 }
 //ustawienie połączenia z api spotify
 Auth.setInstance(client_id, client_secret);
-const token = await Auth.getInstance().getAPIToken();
+// const token = await Auth.getInstance().getAPIToken();
+// console.log(token);
+// const dane = await fetchWebApi(token, "search?q=choppa&type=track");
+// console.log(dane);
 
-// console.log(
+//
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );
-// console.log(await votes(Mysql));
+//
 // Mysql.getInstance().query(
 //   "SELECT * FROM tracks where id = ?",
 //   [1],
 //   (err, result, fields) => {
 //     if (err) throw err;
-//     console.log("TEST DATABASE QUERY: ", result[0]);
+//
 //   }
 // );
 
-// console.log(
+//
 //   "TEST API QUERY: ",
 //   (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
 // );
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+app.listen(port, () => {});
 {
 }
 // import("./models/song.js").then(({ newTruck, vote, votes }) => {
 //   //testy pobierania danych piosenki z api
 //   const track_id = "2LBqCSwhJGcFQeTHMVGwy3";
-//   //console.log(vote(token,track_id))
+//   //
 //   // votes();
 // });
 
-/* console.log(
+/* 
   'track',track['name']
 )
-console.log(
+
   'typ',track['type']
 )
-console.log(
+
   'exp', track['explicit']
 )
-console.log(
+
   'zdj',track['album']['images'][0]['url']
 )
-console.log(
+
   'czas', Number((track['duration_ms']/1000).toFixed(2)),'s'
 ) */

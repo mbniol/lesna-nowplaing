@@ -41,7 +41,6 @@ async function show_votes() {
   const votingButtons = document.querySelectorAll(".voting-vote-btn");
   votingButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
-      console.log("test");
       const trackID = el.dataset.trackId;
       await fetch(`/api/votes`, {
         method: "POST",

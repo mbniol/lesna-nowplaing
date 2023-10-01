@@ -15,14 +15,14 @@ function addRemovingFunctionality() {
       }
       breakContainer.remove();
       containers = document.querySelectorAll(".break-container");
-      console.log(containers);
+
       containers.forEach((container, i) => {
         container.dataset.position = i;
         const breakNumber = container.querySelector(".break__number");
         const position = +container.dataset.position + 1;
         breakNumber.textContent = position;
       });
-      //   console.log("hej");
+      //
       //   await fetch(`/api/pattern/${patternID}/break/${el.dataset.id}`, {
       //     method: "DELETE",
       //   });
@@ -59,7 +59,6 @@ submitChangesButton.addEventListener("click", (e) => {
       },
       body: JSON.stringify(breaksData),
     });
-    console.log(breaksData);
   } else {
     breaksContainer.reportValidity();
   }
@@ -71,7 +70,6 @@ function addDragability() {
 
   dragableElements.forEach((element) => {
     element.addEventListener("dragstart", (e) => {
-      console.log(e.target, e.currentTarget);
       const target = e.currentTarget;
       e.dataTransfer.setData(
         "parent-position",
@@ -98,13 +96,10 @@ function addDragability() {
       const positionDiff = currentPosition - prevPosition;
       if (positionDiff > 0) {
         for (let i = prevPosition + 1; i <= currentPosition; i++) {
-          console.log(containers[i].children[0]);
           containers[i - 1].appendChild(containers[i].children[0]);
         }
       } else if (positionDiff < 0) {
-        console.log(prevPosition, currentPosition);
         for (let i = prevPosition - 1; currentPosition <= i; i--) {
-          console.log(containers[i].children[0]);
           containers[i + 1].appendChild(containers[i].children[0]);
         }
       }
@@ -226,7 +221,7 @@ function convertIntoTimestamp(clock) {
     clock += ":00";
   }
   const date = new Date(`January 1, 1970 ${clock}`);
-  console.log(clock);
+
   return date.getTime();
 }
 

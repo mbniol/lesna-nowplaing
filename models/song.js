@@ -20,7 +20,7 @@ export async function vote(track_link) {
           `SELECT count(*) as count, banned FROM tracks where id=?`,
           [track_id]
         );
-        console.log(rows[0][0]);
+
         //piosenka została zbanowana przez admina
         if (rows[0][0]["banned"] == 1) {
           return "piosenka zostala zabanowan przez administracje";
@@ -96,7 +96,7 @@ export async function votes() {
 
   /*   //wypisanie listy głosów
   rows.forEach((element) => {
-    console.log(element["name"] + " " + element["count"]);
+    
   }); */
 }
 async function get_id(value) {
