@@ -9,3 +9,21 @@
   display: flex
   justify-content: center
   align-items: center
+
+.now-playing
+  z-index: 0
+  position: absolute
+  transition: opacity .5s ease-in-out, transform .5s ease-in-out
+  &--go
+    z-index: 1
+    transform: translateX(-100%)
+    opacity: 0
+
+
+.queue-item
+  display: grid
+  grid-template-columns: 60px auto
+  height: 60px
+
+  &-image
+    height: 100%

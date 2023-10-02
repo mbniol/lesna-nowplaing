@@ -162,7 +162,9 @@ router.get("/queue", async (req, res) => {
     const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
     const duration = minutes + ":" + String(seconds).padStart(2, "0");
     const name = track.name;
-    return { image, artists, duration, name };
+    const id = track.id;
+    // console.log(track);
+    return { image, artists, duration, name, id };
   }
   const data = await fetchWebApi(token, "me/player/queue");
   console.log("kurwaaa");
