@@ -43,13 +43,14 @@ try {
 } catch (error) {
   console.error("Błąd przy ustanawianiu połączenia:", error);
 }
+
 //ustawienie połączenia z api spotify
 Auth.setInstance(client_id, client_secret);
-// const token = await Auth.getInstance().getAPIToken();
-// console.log(token);
+const token = await Auth.getInstance().getAPIToken();
+//console.log(token);
 // const dane = await fetchWebApi(token, "search?q=choppa&type=track");
 // console.log(dane);
-
+await fetchWebApi(token, "playlists/0TPpEJxe1NNP6jArvunMRh/tracks");
 //
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );

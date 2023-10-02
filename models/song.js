@@ -1,9 +1,10 @@
+import Auth from "../helpers/auth.js";
 import Mysql from "../helpers/database.js";
 import { fetchWebApi, new_token } from "../helpers/helpers.js";
 
 export async function vote(track_link) {
   const pool = Mysql.getPromiseInstance();
-  const token = await new_token();
+  const token = await Auth.getInstance().getAPIToken();
   //przeksztalcenie linku na track id
   const track_id = await get_id(track_link);
   if (track_id) {

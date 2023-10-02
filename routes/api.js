@@ -113,6 +113,7 @@ router.get("/track_list", async (req, res) => {
 
 router.post("/votes", checkVoteRight, async (req, res) => {
   res.sendStatus(200);
+  console.log(await vote(req.body.spotifyLink));
   //
   //
   // req.session.lastVote =
