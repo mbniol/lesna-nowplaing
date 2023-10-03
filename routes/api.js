@@ -10,6 +10,7 @@ import {
 import { checkVoteRight } from "../middlewares/voting.js";
 import { vote, votes } from "../models/song.js";
 import { fetchWebApi } from "../helpers/helpers.js";
+import { randomUUID } from "crypto";
 
 const router = new Router();
 
@@ -125,6 +126,50 @@ router.post("/votes", checkVoteRight, async (req, res) => {
   // res.redirect("/admin");
 });
 
+let clients = [];
+
+router.get("/player", checkAdmin, (req, res, next) => {
+  const headers = {
+    "Content-Type": "text/event-stream",
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache",
+  };
+  res.writeHead(200, headers);
+
+  // const data = `data: ${JSON.stringify(facts)}\n\n`;
+
+  // response.write(data);
+
+  const clientId = randomUUID();
+
+  const newClient = {
+    id: clientId,
+    response: res,
+  };
+
+  clients.push(newClient);
+
+  req.on("close", () => {
+    console.log(`${clientId} Connection closed`);
+    clients = clients.filter((client) => client.id !== clientId);
+  });
+});
+
+function sendEventsToAll(newFact) {
+  console.log(clients);
+  clients.forEach((client) => {
+    console.log(newFact, client.response);
+    client.response.write(`data: ${JSON.stringify(newFact)}\n\n`);
+  });
+}
+
+router.post("/player", checkAdmin, async (req, res, next) => {
+  const data = req.body;
+  // console.log(data);
+  sendEventsToAll(data);
+  res.sendStatus(200);
+});
+
 router.put("/play", async (req, res) => {
   const token = await Auth.getInstance().getSDKToken(
     req.session.code,
@@ -160,11 +205,19 @@ router.get("/queue", async (req, res) => {
     const artists = track.artists.map((artist) => artist.name).join`, `;
     const minutes = Math.floor(track.duration_ms / 60000);
     const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
-    const duration = minutes + ":" + String(seconds).padStart(2, "0");
+    const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
+    // const duration = Math.ceil(track.duration_ms / 1000);
     const name = track.name;
     const id = track.id;
     // console.log(track);
-    return { image, artists, duration, name, id };
+    return {
+      image,
+      artists,
+      duration: track.duration_ms,
+      duration_human,
+      name,
+      id,
+    };
   }
   const data = await fetchWebApi(token, "me/player/queue");
   console.log("kurwaaa");

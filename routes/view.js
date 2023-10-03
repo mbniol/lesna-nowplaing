@@ -30,6 +30,10 @@ router.get("/admin", checkAdmin, (req, res) => {
   renderView(res, "admin/index.html");
 });
 
+router.get("/display", checkAdmin, (req, res) => {
+  renderView(res, "admin/display.html");
+});
+
 router.get("/admin/pattern/:id", checkAdmin, (req, res) => {
   renderView(res, "admin/editpreset.html");
 });
