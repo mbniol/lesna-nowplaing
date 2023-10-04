@@ -11,6 +11,7 @@ import { checkVoteRight } from "../middlewares/voting.js";
 import { vote, votes } from "../models/song.js";
 import { fetchWebApi } from "../helpers/helpers.js";
 import { randomUUID } from "crypto";
+import { make_playlist } from "../helpers/playlist_creator.js";
 
 const router = new Router();
 
@@ -176,6 +177,16 @@ router.put("/play", async (req, res) => {
     "http://localhost:3000/player"
   );
   await fetchWebApi(token, "me/player/play", "PUT");
+  res.sendStatus(200);
+});
+
+router.get("/playlist", async (req, res) => {
+  console.log();
+  const token = await Auth.getInstance().getSDKToken(
+    req.session.code,
+    "http://localhost:3000/player"
+  );
+  await make_playlist(token);
   res.sendStatus(200);
 });
 
