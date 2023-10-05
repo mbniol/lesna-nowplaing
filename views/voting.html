@@ -8,30 +8,26 @@
   </head>
   <body>
     <div class="root">
-      <div class="add-song-floating-btn">+</div>
+      <div class="add-song-floating-btn"><span>+</span></div>
       <div class="add-song">
         <div class="add-song-step1">
           <div class="add-song-header">
             <div class="add-song-header-close"></div>
             <span>Dodaj utwór</span>
             <div class="add-song-header-close" id="closeBtn">x</div>
-            <form action="" method="post" id="spotifyForm">
-              <label for="spotifyLink">Link do Spotify</label>
-              <input type="url" name="spotifyLink" id="spotifyLink" />
-              <button type="button" id="addSongBtn">Dodaj</button>
-            </form>
           </div>
+          <form action="" method="post" id="spotifyForm">
+            <label for="spotifyLink">Link do Spotify</label>
+            <input type="url" name="spotifyLink" id="spotifyLink" />
+            <div class="error">error</div>
+            <button type="button" id="addSongBtn">Dodaj</button>
+          </form>
         </div>
         <div class="add-song-step2">
-          <div class="add-song-header">
-            <div class="add-song-header-close"></div>
-            <span>Dodaj utwór</span>
-            <div class="add-song-header-close"></div>
-          </div>
           <div class="add-song-step2-song">
             <div class="add-song-header">
               <div class="add-song-header-close"></div>
-              <span>Dodaj utwór</span>
+              <span>Potwierdź wybrany utwór</span>
               <div class="add-song-header-close"></div>
             </div>
             <div class="step2-song-cover">
