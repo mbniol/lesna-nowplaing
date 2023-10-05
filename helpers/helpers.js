@@ -20,8 +20,7 @@ async function fetchWebApi(token, endpoint, method = "GET", body) {
   try {
     return await res.json();
   } catch (e) {
-    console.error("cant convert the response to json");
-    // return await res.text();
+    return await res.text();
   }
   // return await res.json();
 }

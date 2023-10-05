@@ -7,6 +7,7 @@ import {
   checkNotAdmin,
   loginSpotify,
 } from "../middlewares/checkAdmin.js";
+import { make_playlist } from "../helpers/playlist_creator.js";
 
 const router = new Router();
 
