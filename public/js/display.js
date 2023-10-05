@@ -12,142 +12,146 @@ function convertToHumanTime(wholeSeconds) {
 
 const events = new EventSource("http://localhost:3000/api/player");
 let progressInterval;
+const background = document.querySelector(".background");
 const nowPlayingContainer = document.querySelector(".main-left");
 let queryList = document.querySelector(".queue-list");
 const queryListContainer = document.querySelector(".queue-list-container");
 
 // events.onmessage =
 
+function newQueue(tracks, scopeQueryList = queryList) {
+  let queryListNewContent = "";
+  tracks.forEach((track) => {
+    queryListNewContent += `<div class="queue-item" data-id="${track.id}">
+        <img class="queue-item-image" src="${track.image}" />
+        <div class="queue-item-text">
+          <div class="queue-item-title">${track.name}</div>
+          <div class="queue-item-artist">
+          ${track.artists}
+          </div>
+          <div class="song-timestamp">${track.duration_human}</div>
+        </div>
+      </div>`;
+  });
+  scopeQueryList.innerHTML = queryListNewContent;
+}
+
+function createNowPlaying(id, position, duration, image, name, artists) {
+  const nowPlaying =
+    document.createElementFromString(`<div class="now-playing" data-id="${id}"><div class="cover-art">
+    <progress
+      class="song-progress-bar"
+      value="${position.seconds}"
+      max="${duration.seconds}"
+    ></progress>
+    <img src="${image}" width="100%" />
+  </div>
+  <div class="song-title-container">
+    <div class="song-title">${name}</div>
+    <div class="song-artist">${artists}</div>
+    <div class="song-position">${position.human}</div>
+    <div class="song-timestamp">${duration.human}</div>
+  </div></div>`);
+  nowPlayingContainer.appendChild(nowPlaying);
+}
+
+function getCounterElements() {
+  const progressBar = document.querySelector(
+    ".now-playing:not(.now-playing--go) .song-progress-bar"
+  );
+  const positionDiv = document.querySelector(
+    ".now-playing:not(.now-playing--go) .song-position"
+  );
+  return { progressBar, positionDiv };
+}
+
+function updateTime(position) {
+  const { progressBar, positionDiv } = getCounterElements();
+  progressBar.value = position;
+  positionDiv.innerText = convertToHumanTime(position);
+}
+
+function runCounter(position) {
+  const { progressBar, positionDiv } = getCounterElements();
+  progressInterval = setInterval(() => {
+    if (progressBar.value < progressBar.max) {
+      progressBar.value++;
+      position++;
+      positionDiv.innerText = convertToHumanTime(position);
+    }
+  }, 1000);
+}
+
+function fadeOutPlaying() {
+  const playedEarlier = document.querySelector(".now-playing");
+  playedEarlier.classList.add("now-playing--go");
+  setTimeout(() => playedEarlier.remove(), 500);
+}
+
+function updateBackground(imageSrc) {
+  const backgroundImage = document.querySelector(".background img");
+  const newBackgroundImage = document.createElement("img");
+  newBackgroundImage.src = imageSrc;
+  background.appendChild(newBackgroundImage);
+  newBackgroundImage.classList.add("background__image");
+  backgroundImage.classList.add("background__image--fade-out");
+  // debugger;
+  setTimeout(() => {
+    backgroundImage.remove();
+  }, 500);
+}
+
 const xd = (event) => {
   const { current_track, queue, position, paused, action } = JSON.parse(
     event.data
   );
-  console.log(event.data);
   let position_s = Math.ceil(position / 1000);
   const duration_s = Math.ceil(current_track.duration / 1000);
   clearInterval(progressInterval);
   switch (action) {
     case "init_song": {
-      const position_human = convertToHumanTime(position_s);
-      const nowPlaying =
-        document.createElementFromString(`<div class="now-playing" data-id="${current_track.id}"><div class="cover-art">
-        <progress
-          class="song-progress-bar"
-          value="${position_s}"
-          max="${duration_s}"
-        ></progress>
-        <img src="${current_track.image}" width="100%" />
-      </div>
-      <div class="song-title-container">
-        <div class="song-title">${current_track.name}</div>
-        <div class="song-artist">${current_track.artists}</div>
-        <div class="song-position">${position_human}</div>
-        <div class="song-timestamp">${current_track.duration_human}</div>
-      </div></div>`);
-      nowPlayingContainer.appendChild(nowPlaying);
+      updateBackground(current_track.image);
+      position_human = convertToHumanTime(position_s);
+      createNowPlaying(
+        current_track.id,
+        { seconds: position_s, human: position_human },
+        { seconds: duration_s, human: current_track.duration_human },
+        current_track.image,
+        current_track.name,
+        current_track.artists
+      );
       if (!paused) {
-        const progressBar = document.querySelector(
-          ".now-playing:not(.now-playing--go) .song-progress-bar"
-        );
-        const positionDiv = document.querySelector(
-          ".now-playing:not(.now-playing--go) .song-position"
-        );
-        progressInterval = setInterval(() => {
-          if (progressBar.value <= progressBar.max) {
-            progressBar.value++;
-            position_s++;
-            positionDiv.innerText = convertToHumanTime(position_s);
-          }
-        }, 1000);
+        runCounter(position_s);
       }
-      let queryListNewContent = "";
-      queue.forEach((track) => {
-        queryListNewContent += `<div class="queue-item" data-id="${track.id}">
-            <img class="queue-item-image" src="${track.image}" hei />
-            <div class="queue-item-title">${track.name}</div>
-            <div class="queue-item-artist">
-            ${track.artists}
-            </div>
-            <div class="song-timestamp">${track.duration_human}</div>
-          </div>`;
-      });
-      queryList.innerHTML = queryListNewContent;
+      newQueue(queue);
       break;
     }
     case "new_song": {
-      const playedEarlier = document.querySelector(".now-playing");
-      playedEarlier.classList.add("now-playing--go");
-      setTimeout(() => playedEarlier.remove(), 500);
-      const nowPlaying =
-        document.createElementFromString(`<div class="now-playing" data-id="${current_track.id}"><div class="cover-art">
-          <progress
-            class="song-progress-bar"
-            value="${position_s}"
-            max="${duration_s}"
-          ></progress>
-          <img src="${current_track.image}" width="100%" />
-        </div>
-        <div class="song-title-container">
-          <div class="song-title">${current_track.name}</div>
-          <div class="song-artist">${current_track.artists}</div>
-          <div class="song-position">00:00</div>
-          <div class="song-timestamp">${current_track.duration_human}</div>
-        </div></div>`);
-      nowPlayingContainer.appendChild(nowPlaying);
-      const progressBar = document.querySelector(
-        ".now-playing:not(.now-playing--go) .song-progress-bar"
+      updateBackground(current_track.image);
+      fadeOutPlaying();
+      createNowPlaying(
+        current_track.id,
+        { seconds: 0, human: "00:00" },
+        { seconds: duration_s, human: current_track.duration_human },
+        current_track.image,
+        current_track.name,
+        current_track.artists
       );
-      const positionDiv = document.querySelector(
-        ".now-playing:not(.now-playing--go) .song-position"
-      );
+      // runCounter(position)
       if (!paused) {
-        const progressBar = document.querySelector(
-          ".now-playing:not(.now-playing--go) .song-progress-bar"
-        );
-        const positionDiv = document.querySelector(
-          ".now-playing:not(.now-playing--go) .song-position"
-        );
-        progressInterval = setInterval(() => {
-          if (progressBar.value <= progressBar.max) {
-            progressBar.value++;
-            position_s++;
-            positionDiv.innerText = convertToHumanTime(position_s);
-          }
-        }, 1000);
+        runCounter(position_s);
       }
       if (queryList.firstElementChild.dataset.id === current_track.id) {
         queryList.classList.add("queue-list--song-change");
         setTimeout(() => {
-          let queryListNewContent = "";
-          queue.forEach((track) => {
-            queryListNewContent += `<div class="queue-item" data-id="${track.id}">
-              <img class="queue-item-image" src="${track.image}" hei />
-              <div class="queue-item-title">${track.name}</div>
-              <div class="queue-item-artist">
-              ${track.artists}
-              </div>
-              <div class="song-timestamp">${track.duration_human}</div>
-            </div>`;
-          });
+          newQueue(queue);
           queryList.classList.remove("queue-list--song-change");
-          queryList.innerHTML = queryListNewContent;
         }, 650);
       } else {
         queryList.classList.add("queue-list--queue-change");
         const newQueryList = document.createElement("div");
         newQueryList.classList.add("queue-list");
-        let queryListNewContent = "";
-        queue.forEach((track) => {
-          queryListNewContent += `<div class="queue-item" data-id="${track.id}">
-  <img class="queue-item-image" src="${track.image}" hei />
-  <div class="queue-item-title">${track.name}</div>
-  <div class="queue-item-artist">
-  ${track.artists}
-  </div>
-  <div class="song-timestamp">${track.duration_human}</div>
-</div>`;
-        });
-        newQueryList.innerHTML = queryListNewContent;
+        newQueue(queue, newQueryList);
         queryListContainer.appendChild(newQueryList);
         setTimeout(() => {
           queryList.remove();
@@ -157,34 +161,14 @@ const xd = (event) => {
       break;
     }
     case "pause": {
-      const progressBar = document.querySelector(
-        ".now-playing:not(.now-playing--go) .song-progress-bar"
-      );
-      const positionDiv = document.querySelector(
-        ".now-playing:not(.now-playing--go) .song-position"
-      );
-      progressBar.value = position_s;
-      positionDiv.innerText = convertToHumanTime(position_s);
+      updateTime(position_s);
       break;
     }
     case "resume":
     case "position_change":
-      const progressBar = document.querySelector(
-        ".now-playing:not(.now-playing--go) .song-progress-bar"
-      );
-      const positionDiv = document.querySelector(
-        ".now-playing:not(.now-playing--go) .song-position"
-      );
-      progressBar.value = position_s;
-      positionDiv.innerText = convertToHumanTime(position_s);
+      updateTime(position_s);
       if (!paused) {
-        progressInterval = setInterval(() => {
-          if (progressBar.value <= progressBar.max) {
-            progressBar.value++;
-            position_s++;
-            positionDiv.innerText = convertToHumanTime(position_s);
-          }
-        }, 1000);
+        runCounter(position_s);
       }
       break;
   }
