@@ -70,8 +70,18 @@
     height: 100%
     background-color: white
     z-index: 20
-    opacity: 0
-    visibility: hidden
+  
+.add-song.forceHide
+  transform: translateX(100%)
+
+.add-song.visible
+  animation: dupa 0.5s forwards
+
+.add-song.hide
+  animation: dupa 0.5s
+  animation-direction: reverse
+  animation-fill-mode: forwards
+  // transform: translateX(0%)
 
 .add-song-step1
     height: 100%
@@ -95,9 +105,12 @@
     opacity: 1
 
 
-.add-song.visible
-    visibility: visible
-    opacity: 1
+
+@keyframes dupa
+  0%
+    transform: translateX(100%)
+  100%
+    transform: translateX(0%)
 
 .add-song-header
     font-size: 2rem
@@ -112,6 +125,8 @@
     width: 1em
     @include core.flexCenter()
     font-weight: 200
+    overflow: hidden
+    color: white
 
 #spotifyForm
     display: flex
@@ -142,3 +157,11 @@
         padding: 0.25em 0.5em
         color: white
         border-radius: core.$border-radius
+        width: calc(20em/1.5)
+
+#closeBtn
+  border: 0.125rem solid black
+  border-radius: 100%
+  background-color: black
+  span
+    translate: 0 -0.125em
