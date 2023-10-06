@@ -43,4 +43,8 @@ router.get("/", (req, res) => {
   renderView(res, "voting.html");
 });
 
+router.get("/admin/songs", checkAdmin, (req, res) => {
+  renderView(res, "admin/song_control.html");
+});
+
 export default router;

@@ -8,7 +8,7 @@ import {
   loginSpotify,
 } from "../middlewares/checkAdmin.js";
 import { checkVoteRight } from "../middlewares/voting.js";
-import { vote, votes } from "../models/song.js";
+import { vote, votes, getSongs, changeSongStatus } from "../models/song.js";
 import { fetchWebApi } from "../helpers/helpers.js";
 import { randomUUID } from "crypto";
 import { make_playlist } from "../helpers/playlist_creator.js";
@@ -260,6 +260,23 @@ router.get("/queue", async (req, res) => {
   // const track_list = await votes();
   //
   // res.json(track_list);
+});
+
+router.get("/songs", checkAdmin, async (req, res) => {
+  console.log("hej");
+  const songs = await getSongs();
+  console.log(songs);
+  res.json(songs);
+});
+
+router.put("/songs_banned", checkAdmin, async (req, res) => {
+  // console.log(req.body);
+  const songs = req.body;
+  for (const id in songs) {
+    const status = songs[id];
+    await changeSongStatus(id, status);
+  }
+  res.sendStatus(200);
 });
 
 export default router;

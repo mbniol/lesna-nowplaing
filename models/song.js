@@ -117,3 +117,18 @@ async function get_id(value) {
     }
   }
 }
+export async function getSongs() {
+  const pool = Mysql.getPromiseInstance();
+  const [rows] = await pool.query(
+    `
+      SELECT id, name, cover, artist, length, banned
+      FROM tracks`
+  );
+  return rows;
+}
+
+export async function changeSongStatus(id, status) {
+  const pool = Mysql.getPromiseInstance();
+  await pool.query(`UPDATE tracks SET banned=? WHERE id=?`, [status, id]);
+  return true;
+}
