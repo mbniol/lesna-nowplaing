@@ -6,7 +6,7 @@ const submitChangesButton = document.querySelector("#submit-changes");
 let containers;
 
 function addRemovingFunctionality() {
-  const deleteButtons = document.querySelectorAll(".break__delete-button");
+  const deleteButtons = document.querySelectorAll(".break-delete-button");
   deleteButtons.forEach((el) => {
     el.addEventListener("click", () => {
       let breakContainer = el.parentElement;
@@ -18,7 +18,7 @@ function addRemovingFunctionality() {
 
       containers.forEach((container, i) => {
         container.dataset.position = i;
-        const breakNumber = container.querySelector(".break__number");
+        const breakNumber = container.querySelector(".break-number");
         const position = +container.dataset.position + 1;
         breakNumber.textContent = position;
       });
@@ -38,10 +38,10 @@ submitChangesButton.addEventListener("click", (e) => {
     breakElements.forEach((el, i) => {
       const container = el.parentElement;
       const position = container.dataset.position;
-      const nameInput = el.querySelector(".break__name-input");
-      const startInput = el.querySelector(".break__start-input");
-      const endInput = el.querySelector(".break__end-input");
-      const forRequestedInput = el.querySelector(".break__requested-checkbox");
+      const nameInput = el.querySelector(".break-name-input");
+      const startInput = el.querySelector(".break-start-input");
+      const endInput = el.querySelector(".break-end-input");
+      const forRequestedInput = el.querySelector(".break-requested-checkbox");
       breaksData.push({
         name: nameInput.value,
         position,
@@ -105,7 +105,7 @@ function addDragability() {
       }
       target.appendChild(document.getElementById(data));
       containers.forEach((container) => {
-        const breakNumber = container.querySelector(".break__number");
+        const breakNumber = container.querySelector(".break-number");
         const position = +container.dataset.position + 1;
         breakNumber.textContent = position;
       });
@@ -173,11 +173,11 @@ function generateElement(index, id, name, position, start, end, for_requested) {
   return `
   <div class="break-container" data-position="${index}">
     <div class="break" id="break-${id}" data-id="${id}" draggable="true">
-      <div class="break__number">${position + 1}</div>
-      <div class="break__main">
-        <div class="break__name">
+      <div class="break-number">${position + 1}</div>
+      <div class="break-main">
+        <div class="break-name">
           <input
-            class="break__name-input"
+            class="break-name-input"
             type="text"
             name="breakName"
             id="breakName"
@@ -185,13 +185,13 @@ function generateElement(index, id, name, position, start, end, for_requested) {
             required
           />
         </div>
-        <div class="break__time">
-          Od:<input required class="break__start-input" type="time" name="breakFrom" id="breakFrom" value="${start}" /> Do:
-          <input required class="break__end-input" type="time" name="breakTo" id="breakTo" value="${end}" />
+        <div class="break-time">
+          Od:<input required class="break-start-input" type="time" name="breakFrom" id="breakFrom" value="${start}" /> Do:
+          <input required class="break-end-input" type="time" name="breakTo" id="breakTo" value="${end}" />
         </div>
-        <div class="break__settings">
+        <div class="break-settings">
           <input
-            class="break__requested-checkbox"
+            class="break-requested-checkbox"
             type="checkbox"
             name="onDemandSongs"
             id="onDemandSongs"
@@ -199,8 +199,8 @@ function generateElement(index, id, name, position, start, end, for_requested) {
           /><label for="onDemandSongs">piosenki na żądanie</label>
         </div>
       </div>
-      <div class="break__delete">
-        <button class="break__delete-button" data-id="${id}">Usun</button>
+      <div class="break-delete">
+        <button class="break-delete-button" data-id="${id}">Usun</button>
       </div>
     </div>
   </div>`;

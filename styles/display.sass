@@ -1,3 +1,26 @@
+@use 'core.sass'
+
+.main-grid
+    display: grid
+    grid-template-columns: repeat(2, 1fr)
+    grid-template-rows: 1fr 6fr 1fr
+    grid-column-gap: 0px
+    grid-row-gap: 0px
+    height: 100%
+    width: 100%
+    z-index: 1
+    position: absolute
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, transparent 25%, transparent 50%, transparent 75%, rgba(0,0,0,1) 100%)
+
+.title,.main-left,.main-right
+    @include core.flexCenter()
+    
+.title
+    grid-area: 1 / 1 / 2 / 3
+    font-size: 3rem
+    text-align: center
+    text-shadow: 0px 0px 4px black
+
 .enforcer
   position: absolute
   width: 100%
@@ -18,7 +41,6 @@
     z-index: 1
     transform: translateX(-100%)
     opacity: 0
-
 
 .queue-item
   display: grid
@@ -80,8 +102,16 @@
     -webkit-mask-image: linear-gradient(180deg, #000 75%, transparent)
 
 .background
+  position: absolute
+  width: 100%
+  height: 100%
+  overflow: hidden
+  filter: blur(10px)
 
   &__image
+    object-fit: cover
+    height: 100%
+    width: 100%
     top: 0
     position: absolute
     z-index: 1
@@ -91,7 +121,137 @@
       z-index: 2
       opacity: 0
 
-// .queue-item-text
+    
+.main-left
+    grid-area: 2 / 1 / 3 / 2
+    padding-left: core.$padding-grid
+
+.cover-art
+    width: 25em
+    aspect-ratio: 1/1
+    overflow: hidden
+    position: relative
+    isolation: isolate
+    box-shadow: 0px 0px 10px black
+    border-top-right-radius: core.$border-radius
+    border-top-left-radius: core.$border-radius
+    img
+        object-fit: cover
+        position: relative
+        z-index: 1
+
+.cover-art::after
+    content: ''
+    background: linear-gradient(180deg, black, transparent)
+    display: block
+    width: 25em
+    height: 8em
+    filter: blur(10px)
+    translate: 0em -1em
+    position: fixed
+    z-index: 0
+
+.song-title-container
+    @include core.flexCenter()
+    z-index: 2
+    position: relative
+    flex-direction: column
+    font-weight: 200
+    width: 25em
+    text-align: left
+    padding: 0 1em
+    text-shadow: 0px 0px 4px black
+
+
+.song-title,.song-artist
+    font-size: 2rem
+    width: 100%
+    overflow: hidden
+    -webkit-mask-image: linear-gradient(90deg, #000 75%, transparent)
+.song-artist
+    font-size: 1.5rem
+    font-weight: 600
+    color: core.$text-darker
+    
+
+.main-right
+    grid-area: 2 / 2 / 3 / 3
+    padding-right: core.$padding-grid
+.qr
+    grid-area: 3 / 1 / 4 / 2
+    height: 100%
+    overflow: hidden
+    padding: 1em
+    justify-content: flex-start
+    align-items: center
+.info
+    grid-area: 3 / 2 / 4 / 3
+    display: flex
+    padding: 0.5em
+    justify-content: flex-end
+    align-items: flex-end
+    font-weight: 200
+    opacity: 0.5
+    text-align: right
+
+.queue
+    width: 25em
+    height: 29.3em
+    z-index: 3
+    display: flex
+    flex-direction: column
+    text-shadow: 0px 0px 4px black
+    overflow: hidden
+    display: flex
+    align-items: center
+
+.queue::before
+    content: ''
+    background: black
+    display: block
+    width: 25em
+    height: 29.3em
+    opacity: 0.2
+    position: fixed
+    z-index: -1
+    border-radius: core.$border-radius
+
+.queue-title
+    font-size: 2rem
+    width: 10em
+    text-align: center
+    flex: 0 1 auto
+    padding: 0.25em
+    border-bottom: 0.1rem solid white
+    box-shadow: 0 4px 10px -10px black
+
+.queue-item
+    width: 100%
+
+.queue-item-title
+    font-size: 1.5rem
+    font-weight: 200
+
+.queue-item-artist
+    display: flex
+    flex-direction: row
+    gap: 0.5em
+    color: core.$text-darker
+    :first-child
+            font-weight: 600
+
+.song-progress-bar
+    width: 25em
+    height: 0.25rem
+    background: red
+    bottom: 0em
+    // border-radius: core.$border-radius
+    position: absolute
+    z-index: 10
+
+.song-progress-bar::-webkit-progress-value
+    background: core.$text-base
+    // transition: width 1s ease-in-out
 
 
 @keyframes aaa

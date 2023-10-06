@@ -4,11 +4,16 @@ const addSongPanel = document.getElementsByClassName("add-song")[0];
 const addSongBtn = document.getElementById("addSongBtn");
 
 openBtn.addEventListener("click", async (e) => {
-  addSongPanel.classList.add("visible");
+  addSongPanel.classList.remove("hide");
+  setTimeout(() => addSongPanel.classList.add("visible"), 0);
+  setTimeout(() => addSongPanel.classList.remove("forceHide"), 500);
+  //XDDDDDDDDD
 });
 
 closeBtn.addEventListener("click", async (e) => {
   addSongPanel.classList.remove("visible");
+  setTimeout(() => addSongPanel.classList.add("hide"), 0);
+  setTimeout(() => addSongPanel.classList.add("forceHide"), 500);
 });
 
 addSongBtn.addEventListener("click", async (e) => {
