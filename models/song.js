@@ -31,7 +31,7 @@ export async function vote(track_link) {
           await newTruck(
             track_id,
             track["album"]["images"][0]["url"],
-            track["artists"][1]["name"],
+            track.artists[0].name,
             track["duration_ms"],
             track["name"]
           );
