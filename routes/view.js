@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { renderView } from "../helpers/helpers.js";
-import { votes, vote } from "../models/song.js";
 import Auth from "../helpers/auth.js";
 import {
   checkAdmin,

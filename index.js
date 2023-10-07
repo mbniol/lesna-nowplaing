@@ -7,7 +7,6 @@ import mainRouter from "./routes/router.js";
 import bodyParser from "body-parser";
 import session from "express-session";
 import Mysql from "./helpers/database.js";
-import { votes, vote } from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const app = express();
