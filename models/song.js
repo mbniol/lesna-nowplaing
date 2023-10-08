@@ -18,13 +18,9 @@ export async function vote(track_link) {
         return "piosenka jest nieodpowiednia";
       } else {
         //pobranie danych o piosence z bazy
-        const rows = sql.get_song(track_id)
-        //piosenka została zbanowana przez admina
-        if (rows[0][0]["banned"] === 1) {
-          return "piosenka zostala zabanowan przez administracje";
-        }
+        const rows = await sql.get_song(track_id)
         //piosenki nie ma w bazie danych
-        else if (rows[0][0]["count"] === 0) {
+        if (rows[0][0] === undefined) {
           sql.add_track(
             track_id,
             track["album"]["images"][0]["url"],
@@ -34,7 +30,11 @@ export async function vote(track_link) {
           );
           sql.add_vote(track_id);
           return "dodano piosenkę i głos";
-        } else {
+        } //piosenka została zbanowana przez admina
+        else if (rows[0][0]["banned"] === 1) {
+          return "piosenka zostala zabanowan przez administracje";
+        }
+        else {
           sql.add_vote(track_id);
           return "dodano głos";
         }
@@ -49,7 +49,7 @@ export async function vote(track_link) {
 export async function votes() {
   sql.pool=Mysql.getPromiseInstance();
   try {
-    return await sql.get_track_ranking();
+    return sql.get_track_ranking();
   } catch (error) {
     console.error("Błąd zapytania:", error);
     return false;
@@ -58,13 +58,13 @@ export async function votes() {
 }
 async function get_id(value) {
   //sprawdzenie czy podany ciąg jest id poprzez weryfikacje długości oraz czy zawiera spacje
-  if (value.indexOf(" ") == -1 && value.length == 22) {
+  if (value.indexOf(" ") === -1 && value.length === 22) {
     return value;
   } else {
     //dzielenie ciągu na tablice
     let string = value.split("/");
     //weryfikacja czy link jest prawidłowy
-    if (string[3] == "track" && string[4].length == 22) {
+    if (string[3] === "track" && string[4].length === 22) {
       return string["4"];
     }
     //dany ciąg nie pasuje do kryteriów przez co prawdopodobnie jest to tytuł
@@ -75,12 +75,12 @@ async function get_id(value) {
 }
 export async function getSongs() {
   const pool = Mysql.getPromiseInstance();
-  const [rows] = await sql.get_songs();
+  const [rows] = sql.get_songs();
   return rows;
 }
 
 export async function changeSongStatus(id, status) {
   const pool = Mysql.getPromiseInstance();
-  await pool.query(sql.ban_track(status,id));
+  sql.ban_track(status,id);
   return true;
 }

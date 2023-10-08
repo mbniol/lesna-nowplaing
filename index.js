@@ -7,6 +7,7 @@ import mainRouter from "./routes/router.js";
 import bodyParser from "body-parser";
 import session from "express-session";
 import Mysql from "./helpers/database.js";
+import {vote} from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const app = express();
@@ -93,3 +94,28 @@ app.listen(port, () => {});
 
   'czas', Number((track['duration_ms']/1000).toFixed(2)),'s'
 ) */
+function votingtest(){
+    vote("https://open.spotify.com/track/0fYVliAYKHuPmECRs1pbRf");
+    vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
+    vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
+    vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
+    vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
+    vote("https://open.spotify.com/track/3K00Ib1shkOEiAXU5pec6e");
+    vote("https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3");
+    vote("https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3");
+    vote("https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3");
+    vote("https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b");
+    vote("https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b");
+    vote("https://open.spotify.com/track/0OI7AFifLSoGzpb8bdBLLV");
+    vote("https://open.spotify.com/track/54ipXppHLA8U4yqpOFTUhr");
+    vote("https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw");
+    vote("https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw");
+    vote("https://open.spotify.com/track/7lGKEWMXVWWTt3X71Bv44I");
+    vote("https://open.spotify.com/track/0fYVliAYKHuPmECRs1pbRf");
+    vote("https://open.spotify.com/track/4h9wh7iOZ0GGn8QVp4RAOB");
+    vote("https://open.spotify.com/track/4h9wh7iOZ0GGn8QVp4RAOB");
+    vote("https://open.spotify.com/track/4h9wh7iOZ0GGn8QVp4RAOB");
+    vote("https://open.spotify.com/track/07fbDnkKdZGk1gLvknxrns");
+    vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1");
+}
+//votingtest();
