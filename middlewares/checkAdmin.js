@@ -1,10 +1,12 @@
 import Auth from "../helpers/auth.js";
+import { renderView } from "../helpers/helpers.js";
 
 function checkAdmin(req, res, next) {
   req.session.redirect = req.originalUrl;
 
   if (!req.session.loggedIn) {
-    return res.redirect("/admin/login");
+    return renderView(res, "admin/login.html");
+    // return res.redirect("/admin/login");
   }
   next();
 }

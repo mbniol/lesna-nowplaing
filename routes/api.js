@@ -100,11 +100,9 @@ router.post("/login", checkNotAdmin, async (req, res) => {
     return res.sendStatus(403);
   }
   req.session.loggedIn = true;
-  const redirect = req.session.redirect;
-  req.session.redirect = null;
 
   //
-  res.redirect(redirect);
+  res.redirect(req.body.pathname);
 });
 
 router.get("/track_list", async (req, res) => {

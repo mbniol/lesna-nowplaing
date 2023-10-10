@@ -8,7 +8,12 @@
   <body>
     <form action="/api/login" method="post">
       <input type="password" name="password" id="" />
+      <input type="hidden" name="pathname" id="pathnameInput" />
       <button>login</button>
     </form>
   </body>
+  <script>
+    const pathnameInput = document.querySelector("#pathnameInput");
+    pathnameInput.value = window.location.pathname;
+  </script>
 </html>
