@@ -1,10 +1,10 @@
 import Auth from "../helpers/auth.js";
 import Mysql from "../helpers/database.js";
 import { fetchWebApi, new_token } from "../helpers/helpers.js";
-import {sql} from "../helpers/sql_queries.js";
+import { sql } from "../helpers/sql_queries.js";
 
 export async function vote(track_link) {
-  sql.pool=Mysql.getPromiseInstance();
+  sql.pool = Mysql.getPromiseInstance();
   const token = await Auth.getInstance().getAPIToken();
   //przeksztalcenie linku na track id
   const track_id = await get_id(track_link);
@@ -18,7 +18,7 @@ export async function vote(track_link) {
         return "piosenka jest nieodpowiednia";
       } else {
         //pobranie danych o piosence z bazy
-        const rows = await sql.get_song(track_id)
+        const rows = await sql.get_song(track_id);
         //piosenki nie ma w bazie danych
         if (rows[0][0] === undefined) {
           sql.add_track(
@@ -33,8 +33,7 @@ export async function vote(track_link) {
         } //piosenka została zbanowana przez admina
         else if (rows[0][0]["banned"] === 1) {
           return "piosenka zostala zabanowan przez administracje";
-        }
-        else {
+        } else {
           sql.add_vote(track_id);
           return "dodano głos";
         }
@@ -47,14 +46,13 @@ export async function vote(track_link) {
 
 //sprawdzanie aktualnej listy głosów
 export async function votes() {
-  sql.pool=Mysql.getPromiseInstance();
+  sql.pool = Mysql.getPromiseInstance();
   try {
     return sql.get_track_ranking();
   } catch (error) {
     console.error("Błąd zapytania:", error);
     return false;
   }
-
 }
 async function get_id(value) {
   //sprawdzenie czy podany ciąg jest id poprzez weryfikacje długości oraz czy zawiera spacje
@@ -75,12 +73,15 @@ async function get_id(value) {
 }
 export async function getSongs() {
   const pool = Mysql.getPromiseInstance();
-  const [rows] = sql.get_songs();
+  const [rows] = await pool.query(
+    "SELECT id, name, cover, artist, length, banned FROM tracks"
+  );
   return rows;
 }
 
 export async function changeSongStatus(id, status) {
   const pool = Mysql.getPromiseInstance();
-  sql.ban_track(status,id);
+  await pool.query("UPDATE tracks SET banned=? WHERE id=?", [status, id]);
+  await pool.query("DELETE FROM votes WHERE track_id=?", [status, id]);
   return true;
 }
