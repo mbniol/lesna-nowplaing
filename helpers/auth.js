@@ -87,7 +87,7 @@ export default class Auth {
   #getAutorizationParams(redirect) {
     const temporaryParams = new URLSearchParams(this.#authorizationParams);
     temporaryParams.append("redirect_uri", redirect);
-    console.log(temporaryParams);
+    // console.log(temporaryParams);
     return temporaryParams.toString();
   }
 

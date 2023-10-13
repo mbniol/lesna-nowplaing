@@ -7,7 +7,6 @@ Document.prototype.createElementFromString = function (str) {
 let playerChanges = 0;
 let connectEnforcer;
 let progressInterval;
-let requestNumber = 0;
 function addConnectEnforcer() {
   connectEnforcer = document.createElement("div");
   connectEnforcer.classList.add("enforcer");
@@ -50,8 +49,8 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
 
   player.addListener("ready", ({ device_id }) => {
     addConnectEnforcer();
-    console.log("The Web Playback SDK is ready to play music!");
-    console.log("Device ID", device_id);
+    // console.log("The Web Playback SDK is ready to play music!");
+    // console.log("Device ID", device_id);
   });
 
   let lastId = undefined;
@@ -83,6 +82,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
         previous_tracks: event_previous_tracks,
       },
     }) => {
+      console.log(event_current_track);
       // let nextValue = myGenerator.next();
       // while (
       //   !nextValue.done &&
@@ -109,29 +109,13 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
         };
         let fetch_current_track = {},
           fetch_queue;
+        // console.log(event_current_track);
         while (fetch_current_track.id !== event_current_track.id) {
           const response = await fetch("/api/queue");
           const json = await response.json();
           ({ current_track: fetch_current_track, queue: fetch_queue } = json);
         }
-        requestNumber++;
         lastRequest.queue = fetch_queue;
-        console.log(event_previous_tracks, lastRequestArchive);
-        if (requestNumber === 1) {
-          return fetch("/api/player", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              current_track: fetch_current_track,
-              queue: fetch_queue,
-              position,
-              paused,
-              action: "init_song",
-            }),
-          });
-        }
         if (
           lastRequestArchive.id === event_current_track.id &&
           // lastRequestArchive.position === position &&
@@ -193,7 +177,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
           position,
           paused,
         };
-        console.log(lastRequest);
+        // console.log(lastRequest);
         fetch("/api/player", {
           method: "POST",
           headers: {
@@ -297,7 +281,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
 };
 
 function addClickEnforcer() {
-  console.log(connectEnforcer);
+  // console.log(connectEnforcer);
   connectEnforcer.remove();
   const clickEnforcer = document.createElement("div");
   clickEnforcer.classList.add("enforcer");

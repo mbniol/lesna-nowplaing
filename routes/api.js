@@ -113,7 +113,7 @@ router.get("/track_list", async (req, res) => {
 
 router.post("/votes", checkVoteRight, async (req, res) => {
   res.sendStatus(200);
-  console.log(await vote(req.body.spotifyLink));
+  // console.log(await vote(req.body.spotifyLink));
   //
   //
   // req.session.lastVote =
@@ -149,21 +149,22 @@ router.get("/player", checkAdmin, (req, res, next) => {
   clients.push(newClient);
 
   req.on("close", () => {
-    console.log(`${clientId} Connection closed`);
+    // console.log(`${clientId} Connection closed`);
     clients = clients.filter((client) => client.id !== clientId);
   });
 });
 
 function sendEventsToAll(newFact) {
-  console.log(clients);
+  // console.log(clients);
   clients.forEach((client) => {
-    console.log(newFact, client.response);
+    // console.log(newFact, client.response);
     client.response.write(`data: ${JSON.stringify(newFact)}\n\n`);
   });
 }
 
 router.post("/player", checkAdmin, async (req, res, next) => {
   const data = req.body;
+  // console.log("plaer");
   // console.log(data);
   sendEventsToAll(data);
   res.sendStatus(200);
@@ -179,7 +180,7 @@ router.put("/play", async (req, res) => {
 });
 
 router.get("/playlist", async (req, res) => {
-  console.log();
+  // console.log();
   const token = await Auth.getInstance().getSDKToken(
     req.session.code,
     "http://localhost:3000/player"
@@ -207,36 +208,61 @@ router.get("/queue", async (req, res) => {
     req.session.code,
     "http://localhost:3000/player"
   );
+  // console.log("xD");
   function getTheEssence(track, imageSize) {
-    const image = track.album.images.find(
-      (image) => image.height === imageSize
-    ).url;
-    const artists = track.artists.map((artist) => artist.name).join`, `;
-    const minutes = Math.floor(track.duration_ms / 60000);
-    const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
-    const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
-    // const duration = Math.ceil(track.duration_ms / 1000);
-    const name = track.name;
-    const id = track.id;
-    // console.log(track);
-    return {
-      image,
-      artists,
-      duration: track.duration_ms,
-      duration_human,
-      name,
-      id,
-    };
+    // console.log(track.type);
+    if (track.type === "track") {
+      const image = track.album.images.find(
+        (image) => image.height === imageSize
+      ).url;
+      const artists = track.artists.map((artist) => artist.name).join`, `;
+      const minutes = Math.floor(track.duration_ms / 60000);
+      const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
+      const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
+      // const duration = Math.ceil(track.duration_ms / 1000);
+      const name = track.name;
+      const id = track.id;
+      // console.log(track);
+      return {
+        image,
+        artists,
+        duration: track.duration_ms,
+        duration_human,
+        name,
+        id,
+      };
+    } else if (track.type === "episode") {
+      const image = track.images.find(
+        (image) => image.height === imageSize
+      ).url;
+      const artists = track.show.publisher;
+      const minutes = Math.floor(track.duration_ms / 60000);
+      const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
+      const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
+      // const duration = Math.ceil(track.duration_ms / 1000);
+      const name = track.show.name;
+      const id = track.id;
+      // console.log(track);
+      return {
+        image,
+        artists,
+        duration: track.duration_ms,
+        duration_human,
+        name,
+        id,
+      };
+    }
   }
   const data = await fetchWebApi(token, "me/player/queue");
-  console.log("kurwaaa");
+  // console.log("kurwaaa");
   if (data.queue && data.currently_playing) {
-    // console.log(data.queue.length);
     const tracks = data.queue.map((track) => getTheEssence(track, 300));
+    // console.log(tracks);
     const current_track = getTheEssence(data.currently_playing, 640);
+    console.log(current_track);
     res.json({ current_track, queue: tracks });
   } else {
-    console.log(data);
+    // console.log(data);
   }
 
   // if (dane.queue?.length > 0) {
@@ -261,9 +287,9 @@ router.get("/queue", async (req, res) => {
 });
 
 router.get("/songs", checkAdmin, async (req, res) => {
-  console.log("hej");
+  // console.log("hej");
   const songs = await getSongs();
-  console.log(songs);
+  // console.log(songs);
   res.json(songs);
 });
 
