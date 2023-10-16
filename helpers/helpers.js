@@ -44,6 +44,10 @@ async function new_connect() {
   return Mysql;
 }
 
+function renderViewChainable(filename) {
+  return (req, res) => renderView(res, filename);
+}
+
 async function new_token() {
   // const client_id = "405c695fe40447e5870aa2e44101c5a7";
   // const client_secret = "1f89010e9b5749cb89947602fd2443f3";
@@ -52,4 +56,4 @@ async function new_token() {
   // return token;
 }
 
-export { fetchWebApi, renderView, new_connect, new_token };
+export { renderViewChainable, fetchWebApi, renderView, new_connect, new_token };

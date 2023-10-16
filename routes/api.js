@@ -1,306 +1,55 @@
 import { Router } from "express";
-import Auth from "../helpers/auth.js";
-import patternModel from "../models/pattern.js";
-import breakModel from "../models/break.js";
-import {
-  checkAdmin,
-  checkNotAdmin,
-  loginSpotify,
-} from "../middlewares/checkAdmin.js";
+import { checkAdmin, checkNotAdmin } from "../middlewares/checkAdmin.js";
+import AuthController from "../controllers/auth.js";
+import BreakController from "../controllers/break.js";
+import PatternController from "../controllers/pattern.js";
+import PlayerController from "../controllers/player.js";
+import PlaylistController from "../controllers/playlist.js";
+import SongController from "../controllers/song.js";
 import { checkVoteRight } from "../middlewares/voting.js";
-import { vote, votes, getSongs, changeSongStatus } from "../models/song.js";
-import { fetchWebApi } from "../helpers/helpers.js";
-import { randomUUID } from "crypto";
-import { make_playlist } from "../helpers/playlist_creator.js";
 
 const router = new Router();
 
-router.get("/token/sdk", checkAdmin, async (req, res) => {
-  const token = await Auth.getInstance().getSDKToken(
-    req.session.code,
-    "http://localhost:3000/player"
-  );
-  res.json({
-    token,
-  });
-});
+router.get("/token/sdk", checkAdmin, AuthController.getSDKToken);
 
-// router.get("/token/sdk", checkAdmin, async (req, res) => {
-//   const token = await Auth.getInstance().getSDKToken();
-//   res.json({
-//     token,
-//   });
-// });
+router.get("/pattern/:pattern_id/break", checkAdmin, BreakController.getMany);
 
-router.get("/pattern/:pattern_id/break", checkAdmin, async (req, res) => {
-  const pattern_id = req.params.pattern_id;
-  const breaks = await breakModel.getMany(pattern_id, req.body);
-  res.json(breaks);
-});
+router.put(
+  "/pattern/:pattern_id/break",
+  checkAdmin,
+  BreakController.updateMany
+);
 
-router.put("/pattern/:pattern_id/break", checkAdmin, async (req, res) => {
-  const pattern_id = req.params.pattern_id;
-  await breakModel.replace(pattern_id, req.body);
-  res.sendStatus(200);
-});
+router.post("/pattern/:pattern_id/break", checkAdmin, BreakController.add);
 
-// router.delete("/pattern/:pattern_id/break/:id", async (req, res) => {
-//   const { id, pattern_id } = req.params;
-//   await breakModel.delete(id, pattern_id);
-//   res.sendStatus(200);
-// });
+router.get("/pattern", checkAdmin, PatternController.getMany);
 
-router.post("/pattern/:pattern_id/break", checkAdmin, async (req, res) => {
-  const pattern_id = req.params.pattern_id;
-  const { name, start, end, forRequested } = req.body;
+router.get("/pattern/:id", checkAdmin, PatternController.get);
 
-  await breakModel.add(name, start, end, +Boolean(forRequested), pattern_id);
-  res.sendStatus(200);
-});
+router.post("/pattern", checkAdmin, PatternController.add);
 
-router.get("/pattern", checkAdmin, async (req, res) => {
-  const patterns = await patternModel.getMany();
-  res.json(patterns);
-});
+router.delete("/pattern/:id", checkAdmin, PatternController.delete);
 
-router.get("/pattern/:id", checkAdmin, async (req, res) => {
-  const id = req.params.id;
-  const patterns = await patternModel.getOne(id);
-  res.json(patterns);
-});
+router.put("/pattern/:id", checkAdmin, PatternController.update);
 
-router.post("/pattern", checkAdmin, async (req, res) => {
-  const { offset, name } = req.body;
-  await patternModel.add(name, offset);
-  res.sendStatus(200);
-});
+router.put("/pattern/:id/active", checkAdmin, PatternController.makeActive);
 
-router.delete("/pattern/:id", checkAdmin, async (req, res) => {
-  const id = req.params.id;
-  await patternModel.delete(id);
-  res.sendStatus(200);
-});
+router.post("/login", checkNotAdmin, AuthController.loginAdmin);
 
-router.put("/pattern/:id", checkAdmin, async (req, res) => {
-  const id = req.params.id;
-  const { offset, name, is_active } = req.body;
-  await patternModel.edit(id, offset, name, +Boolean(is_active));
-  res.sendStatus(200);
-});
+router.post("/votes", checkVoteRight, SongController.vote);
 
-router.put("/pattern/:id/active", checkAdmin, async (req, res) => {
-  const id = req.params.id;
-  await patternModel.toggleActive(id);
-  res.sendStatus(200);
-});
+router.get("/track_list", SongController.votes);
 
-router.post("/login", checkNotAdmin, async (req, res) => {
-  const password = req.body.password;
-  if (password !== process.env.ADMIN_PASS) {
-    return res.sendStatus(403);
-  }
-  req.session.loggedIn = true;
+router.get("/player", checkAdmin, PlayerController.addNewClient);
 
-  //
-  res.redirect(req.body.pathname);
-});
+router.post("/player", checkAdmin, PlayerController.sendDataToClients);
 
-router.get("/track_list", async (req, res) => {
-  const track_list = await votes();
-  //
-  res.json(track_list);
-});
+router.get("/playlist", checkAdmin, PlaylistController.make);
 
-router.post("/votes", checkVoteRight, async (req, res) => {
-  res.sendStatus(200);
-  // console.log(await vote(req.body.spotifyLink));
-  //
-  //
-  // req.session.lastVote =
-  // if (password !== process.env.ADMIN_PASS) {
-  //   return res.sendStatus(403);
-  // }
-  // req.session.loggedIn = true;
-  // //
-  // res.redirect("/admin");
-});
+router.get("/queue", checkAdmin, PlayerController.getQueue);
 
-let clients = [];
+router.get("/songs", checkAdmin, SongController.getMany);
 
-router.get("/player", checkAdmin, (req, res, next) => {
-  const headers = {
-    "Content-Type": "text/event-stream",
-    Connection: "keep-alive",
-    "Cache-Control": "no-cache",
-  };
-  res.writeHead(200, headers);
-
-  // const data = `data: ${JSON.stringify(facts)}\n\n`;
-
-  // response.write(data);
-
-  const clientId = randomUUID();
-
-  const newClient = {
-    id: clientId,
-    response: res,
-  };
-
-  clients.push(newClient);
-
-  req.on("close", () => {
-    // console.log(`${clientId} Connection closed`);
-    clients = clients.filter((client) => client.id !== clientId);
-  });
-});
-
-function sendEventsToAll(newFact) {
-  // console.log(clients);
-  clients.forEach((client) => {
-    // console.log(newFact, client.response);
-    client.response.write(`data: ${JSON.stringify(newFact)}\n\n`);
-  });
-}
-
-router.post("/player", checkAdmin, async (req, res, next) => {
-  const data = req.body;
-  // console.log("plaer");
-  // console.log(data);
-  sendEventsToAll(data);
-  res.sendStatus(200);
-});
-
-router.put("/play", async (req, res) => {
-  const token = await Auth.getInstance().getSDKToken(
-    req.session.code,
-    "http://localhost:3000/player"
-  );
-  await fetchWebApi(token, "me/player/play", "PUT");
-  res.sendStatus(200);
-});
-
-router.get("/playlist", async (req, res) => {
-  // console.log();
-  const token = await Auth.getInstance().getSDKToken(
-    req.session.code,
-    "http://localhost:3000/player"
-  );
-  await make_playlist(token);
-  res.sendStatus(200);
-});
-
-// router.put("/device", async (req, res) => {
-//   const token = await Auth.getInstance().getSDKToken(
-//     req.session.code,
-//     "http://localhost:3000/player"
-//   );
-//   console.log(req.body.device_id);
-//   const dane = await fetchWebApi(token, "me/player", "PUT", {
-//     device_ids: [req.body.device_id],
-//     play: true,
-//   });
-//   console.log(dane);
-//   res.sendStatus(200);
-// });
-
-router.get("/queue", async (req, res) => {
-  const token = await Auth.getInstance().getSDKToken(
-    req.session.code,
-    "http://localhost:3000/player"
-  );
-  // console.log("xD");
-  function getTheEssence(track, imageSize) {
-    // console.log(track.type);
-    if (track.type === "track") {
-      const image = track.album.images.find(
-        (image) => image.height === imageSize
-      ).url;
-      const artists = track.artists.map((artist) => artist.name).join`, `;
-      const minutes = Math.floor(track.duration_ms / 60000);
-      const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
-      const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
-      // const duration = Math.ceil(track.duration_ms / 1000);
-      const name = track.name;
-      const id = track.id;
-      // console.log(track);
-      return {
-        image,
-        artists,
-        duration: track.duration_ms,
-        duration_human,
-        name,
-        id,
-      };
-    } else if (track.type === "episode") {
-      const image = track.images.find(
-        (image) => image.height === imageSize
-      ).url;
-      const artists = track.show.publisher;
-      const minutes = Math.floor(track.duration_ms / 60000);
-      const seconds = Math.floor((track.duration_ms - minutes * 60000) / 1000);
-      const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
-      // const duration = Math.ceil(track.duration_ms / 1000);
-      const name = track.show.name;
-      const id = track.id;
-      // console.log(track);
-      return {
-        image,
-        artists,
-        duration: track.duration_ms,
-        duration_human,
-        name,
-        id,
-      };
-    }
-  }
-  const data = await fetchWebApi(token, "me/player/queue");
-  // console.log("kurwaaa");
-  if (data.queue && data.currently_playing) {
-    const tracks = data.queue.map((track) => getTheEssence(track, 300));
-    // console.log(tracks);
-    const current_track = getTheEssence(data.currently_playing, 640);
-    console.log(current_track);
-    res.json({ current_track, queue: tracks });
-  } else {
-    // console.log(data);
-  }
-
-  // if (dane.queue?.length > 0) {
-  //   const image = dane.queue[0].album.images[0];
-  //   const artists = dane.queue[0].artists.map((artist) => artist.name).join`, `;
-  //   const minutes = Math.floor(dane.queue[0].duration_ms / 60000);
-  //   const seconds = Math.floor(
-  //     (dane.queue[0].duration_ms - seconds * 60000) / 1000
-  //   );
-  //   const duration = minutes + ":" + seconds.padStart(2, "0");
-  //   const name = dane.queue[0].name;
-  //   console.log(image, artists, duration, name);
-  // }
-  // dane.queue.forEach()
-  // dane.currently_playing.forEach((el) => {
-  //   console.log(el);
-  // });
-
-  // const track_list = await votes();
-  //
-  // res.json(track_list);
-});
-
-router.get("/songs", checkAdmin, async (req, res) => {
-  // console.log("hej");
-  const songs = await getSongs();
-  // console.log(songs);
-  res.json(songs);
-});
-
-router.put("/songs_banned", checkAdmin, async (req, res) => {
-  // console.log(req.body);
-  const songs = req.body;
-  for (const id in songs) {
-    const status = songs[id];
-    await changeSongStatus(id, status);
-  }
-  res.sendStatus(200);
-});
+router.put("/songs_banned", checkAdmin, SongController.ban);
 
 export default router;

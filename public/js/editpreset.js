@@ -134,6 +134,7 @@ async function getPatternData() {
 
 async function updatePatternForm() {
   const { name, alarm_offset, active } = await getPatternData();
+  console.log(name, alarm_offset, active);
   const patternForm = document.querySelector("#pattern-form");
   const nameInput = patternForm.querySelector("#presetName");
   const offsetInput = patternForm.querySelector("#presetOffset");

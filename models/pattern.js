@@ -1,6 +1,15 @@
 import Mysql from "../helpers/database.js";
 
 export default class Model {
+  static async withBreaks() {
+    const pool = Mysql.getPromiseInstance();
+    return await pool.query(
+      `SELECT breaks.id ,round(time_to_sec(TIMEDIFF(end, start))) time, breaks.for_requested as main 
+          FROM breaks join patterns on patterns.id=breaks.pattern_id
+          WHERE patterns.active=1
+          ORDER BY breaks.start;`
+    );
+  }
   static async getOne(id) {
     const pool = Mysql.getPromiseInstance();
     const [rows] = await pool.query(

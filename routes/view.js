@@ -1,49 +1,42 @@
 import { Router } from "express";
-import { renderView } from "../helpers/helpers.js";
-import Auth from "../helpers/auth.js";
+import { renderViewChainable } from "../helpers/helpers.js";
 import {
   checkAdmin,
   checkNotAdmin,
   loginSpotify,
 } from "../middlewares/checkAdmin.js";
-import { make_playlist } from "../helpers/playlist_creator.js";
 
 const router = new Router();
 
-router.get("/admin/login", checkNotAdmin, async (req, res) => {
-  // const code = req.query.code;
-  // const token = await Auth.getInstance().getSDKToken(code);
-  // req.session.logged_in = true;
-  renderView(res, "admin/login.html");
+router.get(
+  "/admin/login",
+  checkNotAdmin,
+  renderViewChainable("admin/login.html")
+);
 
-  // res.redirect("/player");
-});
+router.get(
+  "/player",
+  checkAdmin,
+  loginSpotify,
+  renderViewChainable("player.html")
+);
 
-router.get("/player", checkAdmin, loginSpotify, async (req, res) => {
-  req.session.code = req.query.code;
+router.get("/admin", checkAdmin, renderViewChainable("admin/index.html"));
 
-  renderView(res, "player.html");
-  return;
-});
+router.get("/display", checkAdmin, renderViewChainable("admin/display.html"));
 
-router.get("/admin", checkAdmin, (req, res) => {
-  renderView(res, "admin/index.html");
-});
+router.get(
+  "/admin/pattern/:id",
+  checkAdmin,
+  renderViewChainable("admin/editpreset.html")
+);
 
-router.get("/display", checkAdmin, (req, res) => {
-  renderView(res, "admin/display.html");
-});
+router.get("/", renderViewChainable("voting.html"));
 
-router.get("/admin/pattern/:id", checkAdmin, (req, res) => {
-  renderView(res, "admin/editpreset.html");
-});
-
-router.get("/", (req, res) => {
-  renderView(res, "voting.html");
-});
-
-router.get("/admin/songs", checkAdmin, (req, res) => {
-  renderView(res, "admin/song_control.html");
-});
+router.get(
+  "/admin/songs",
+  checkAdmin,
+  renderViewChainable("admin/song_control.html")
+);
 
 export default router;

@@ -35,7 +35,7 @@ function makeMenuButtonsReactive() {
         timeoutArray[i] = setTimeout(() => {
           settingBox[i].style.visibility = "hidden";
         }, 200);
-        element.classList.remove("visible");
+        element.classList.remove("preset-quick-settings--visible");
       }
     });
   }
@@ -45,10 +45,10 @@ function makeMenuButtonsReactive() {
     element.addEventListener("click", (e) => {
       classes = settingBox[i].classList;
       clearTimeout(timeoutArray[i]);
-      if (classes.contains("visible")) {
+      if (classes.contains("preset-quick-settings--visible")) {
         hideEveryMenu();
       } else {
-        classes.add("visible");
+        classes.add("preset-quick-settings--visible");
         hideEveryMenu(e.target);
         settingBox[i].style.visibility = "visible";
       }
