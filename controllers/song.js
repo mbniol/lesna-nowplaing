@@ -7,7 +7,6 @@ import {fetchWebApi} from "../helpers/helpers.js";
 export default class Controller {
   static async ban(req, res) {
     const songs = req.body;
-    console.log(songs);
     for (const id in songs) {
       const status = songs[id];
       await songModel.changeSongStatus(id, status);
@@ -71,7 +70,6 @@ export default class Controller {
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
     const track_id = get_id(track_link);
-    console.log(track_id)
     if (track_id) {
       const track = await fetchWebApi(token, "tracks/" + track_id);
       if (track["error"] !== undefined) {
@@ -85,7 +83,6 @@ export default class Controller {
           const rows = await songModel.get_song(track_id);
           //piosenki nie ma w bazie danych
           if (rows[0][0] === undefined) {
-            console.log(88)
             res.json({
               id: track_id,
               img: track["album"]["images"][0]["url"],
@@ -104,8 +101,6 @@ export default class Controller {
               time: rows[0][0]['length'],
               name: rows[0][0]['name']
             }
-            console.log(json);
-            console.log(rows[0][0]);
             res.json(json);
           }
         }
