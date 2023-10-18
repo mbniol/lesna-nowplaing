@@ -36,11 +36,14 @@ add_song.addEventListener("click", async (e) => {
   });
   //przypisanie danych z odpowiedzi do json
   const json = await response.json()
+  console.log(json);
   //podmiana danych na otrzymane z bazy w step2
   document.getElementById("step2-song-title").innerHTML = json['name'];
   document.getElementById("step2-song-artist").innerHTML = json['artist'];
   document.getElementById("step2-song-img").setAttribute('src',json['img']) ;
   document.getElementById("voting-vote-btn").setAttribute('data-track-id',json['id']) ;
+  document.getElementById("error").innerHTML = json['error'];
+
 });
 
 async function show_votes() {
