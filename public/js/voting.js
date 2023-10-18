@@ -27,14 +27,20 @@ add_song.addEventListener("click", async (e) => {
   e.preventDefault();
   const formData = new FormData(new_pattern_form);
   const params = new URLSearchParams(formData);
-  await fetch("/api/votes", {
+  const response = await fetch("/api/check_track", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: params,
   });
-  location.reload();
+  //przypisanie danych z odpowiedzi do json
+  const json = await response.json()
+  //podmiana danych na otrzymane z bazy w step2
+  document.getElementById("step2-song-title").innerHTML = json['name'];
+  document.getElementById("step2-song-artist").innerHTML = json['artist'];
+  document.getElementById("step2-song-img").setAttribute('src',json['img']) ;
+  document.getElementById("voting-vote-btn").setAttribute('data-track-id',json['id']) ;
 });
 
 async function show_votes() {
@@ -47,7 +53,7 @@ async function show_votes() {
   votingButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const trackID = el.dataset.trackId;
-      await fetch(`/api/votes`, {
+      const response = await fetch(`/api/votes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

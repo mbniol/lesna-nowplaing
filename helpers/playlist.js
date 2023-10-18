@@ -1,3 +1,5 @@
+import {fetchWebApi} from "./helpers.js";
+
 async function clearPlaylist(token) {
   const current_playlist_tracks = await fetchWebApi(
     token,

@@ -38,6 +38,8 @@ router.post("/login", checkNotAdmin, AuthController.loginAdmin);
 
 router.post("/votes", checkVoteRight, SongController.vote);
 
+router.post("/check_track", SongController.check_track);
+
 router.get("/track_list", SongController.votes);
 
 router.get("/player", checkAdmin, PlayerController.addNewClient);
