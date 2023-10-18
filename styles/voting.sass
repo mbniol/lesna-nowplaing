@@ -85,6 +85,7 @@
 
 .add-song-step1
     height: 100%
+    z-index: 30
     display: flex
     flex-direction: column
     .error
@@ -96,21 +97,36 @@
         
 
 .add-song-step2
+    z-index: 25
     opacity: 0
     height: 100%
     width: 100%
     display: flex
+    position: relative
     flex-direction: column
+    button
+        bottom: 1em
+        left: 50%
+        translate: -50% 0
+        position: absolute
+        background: black
+        border: none
+        font-size: 1.5rem
+        padding: 0.25em 0.5em
+        color: white
+        border-radius: core.$border-radius
+        width: calc(20em/1.5)
 
 .add-song-step2-song
     flex: 1 1 auto
 
-.step2-song-cover
+
+.step2-song-cover, .step2-song-artist
     padding: 0 2em
 
-.step2-song-title, .step2-song-artist
-    font-size: 2rem
-    padding: 0 1em
+.step2-song-title
+    font-size: 1.5rem
+    padding: 0 calc(2em/1.5)
 
 .step2-song-cover
     width: 100%
@@ -134,8 +150,8 @@
     font-size: 2rem
     padding: 0.25em
     text-align: center
-    display: flex
-    flex-direction: row
+    display: grid
+    grid-template-columns: 1em 1fr 1em
     justify-content: space-between
 
 .add-song-header-close
@@ -177,7 +193,7 @@
         border-radius: core.$border-radius
         width: calc(20em/1.5)
 
-#closeBtn
+.closeBtn, #backBtn
   border: 0.125rem solid black
   border-radius: 100%
   background-color: black
@@ -186,6 +202,9 @@
 
 .fadeOut
     animation: fadeOut 0.25s ease-in-out forwards
+    height: 100%
+    opacity: 1
+    overflow: hidden
 
 @keyframes fadeOut
     0%
@@ -195,6 +214,7 @@
     100%
         opacity: 0
         height: 0px
+
 
 .fadeIn
     animation: fadeIn 0.25s ease-in-out 0.5s forwards

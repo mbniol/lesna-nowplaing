@@ -14,7 +14,7 @@
           <div class="add-song-header">
             <div class="add-song-header-close"></div>
             <span>Dodaj utwór</span>
-            <div class="add-song-header-close" id="closeBtn"><span>x</span></div>
+            <div class="add-song-header-close closeBtn"><span>x</span></div>
           </div>
           <form action="" method="post" id="spotifyForm">
             <label for="spotifyLink">Link do Spotify</label>
@@ -26,9 +26,9 @@
         <div class="add-song-step2">
           <div class="add-song-step2-song">
             <div class="add-song-header">
-              <div class="add-song-header-close"></div>
+              <div class="add-song-header-close" id="backBtn"><span>&leftarrow;</span></div>
               <span>Potwierdź wybrany utwór</span>
-              <div class="add-song-header-close"></div>
+              <div class="add-song-header-close closeBtn"><span>x</span></div>
             </div>
             <div class="step2-song-cover">
               <img src="/img/cover-placeholder.png" alt="" srcset="" id="step2-song-img"/>
@@ -36,7 +36,7 @@
             <div class="step2-song-title" id="step2-song-title">Głucha noc</div>
             <div class="step2-song-artist" id="step2-song-artist">Rychu peja</div>
           </div>
-          <button id="voting-vote-btn" data-track-id="a">Potwierdź</button>
+          <button id="voting-vote-btn" class="voting-vote-btn" data-track-id="a">Potwierdź</button>
         </div>
       </div>
       <div class="voting-wrapper">

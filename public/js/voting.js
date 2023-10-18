@@ -1,4 +1,5 @@
-const closeBtn = document.getElementById("closeBtn");
+const closeBtn = document.querySelectorAll(".closeBtn");
+const backBtn = document.getElementById("backBtn");
 const openBtn = document.getElementsByClassName("add-song-floating-btn")[0];
 const addSongPanel = document.getElementsByClassName("add-song")[0];
 const addSongBtn = document.getElementById("addSongBtn");
@@ -10,10 +11,23 @@ openBtn.addEventListener("click", async (e) => {
   //XDDDDDDDDD
 });
 
-closeBtn.addEventListener("click", async (e) => {
-  addSongPanel.classList.remove("visible");
-  setTimeout(() => addSongPanel.classList.add("hide"), 0);
-  setTimeout(() => addSongPanel.classList.add("forceHide"), 500);
+closeBtn.forEach((el) => {
+  el.addEventListener("click", async (e) => {
+    addSongPanel.classList.remove("visible");
+    setTimeout(() => addSongPanel.classList.add("hide"), 0);
+    setTimeout(() => addSongPanel.classList.add("forceHide"), 500);
+  });
+});
+
+backBtn.addEventListener("click", async (e) => {
+  document
+    .getElementsByClassName("add-song-step1")[0]
+    .classList.remove("fadeOut");
+  document
+    .getElementsByClassName("add-song-step2")[0]
+    .classList.remove("fadeIn");
+  document.getElementsByClassName("add-song-step1")[0].classList.add("fadeIn");
+  document.getElementsByClassName("add-song-step2")[0].classList.add("fadeOut");
 });
 
 //dodawanie piosenki
@@ -33,6 +47,7 @@ add_song.addEventListener("click", async (e) => {
   //przypisanie danych z odpowiedzi do json
   const json = await response.json();
   //podmiana danych na otrzymane z bazy w step2
+  document.getElementById("error").innerHTML = "";
   document.getElementById("step2-song-title").innerHTML = json["name"];
   document.getElementById("step2-song-artist").innerHTML = json["artist"];
   document.getElementById("step2-song-img").setAttribute("src", json["img"]);
@@ -41,6 +56,12 @@ add_song.addEventListener("click", async (e) => {
     .setAttribute("data-track-id", json["id"]);
 
   if (json["error"] == undefined) {
+    document
+      .getElementsByClassName("add-song-step1")[0]
+      .classList.remove("fadeIn");
+    document
+      .getElementsByClassName("add-song-step2")[0]
+      .classList.remove("fadeOut");
     document
       .getElementsByClassName("add-song-step1")[0]
       .classList.add("fadeOut");
@@ -61,6 +82,7 @@ async function show_votes() {
   const votingButtons = document.querySelectorAll(".voting-vote-btn");
   votingButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
+      console.log("xD");
       const trackID = el.dataset.trackId;
       const response = await fetch(`/api/votes`, {
         method: "POST",
@@ -69,6 +91,7 @@ async function show_votes() {
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
+      location.reload();
     });
   });
 }
