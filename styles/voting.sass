@@ -97,8 +97,7 @@
 
 .add-song-step2
     opacity: 0
-    visibility: hidden
-
+    height: 100%
 
 .visible
     // visibility: visible
@@ -165,3 +164,26 @@
   background-color: black
   span
     translate: 0 -0.125em
+
+.fadeOut
+    animation: fadeOut 0.25s ease-in-out forwards
+
+@keyframes fadeOut
+    0%
+        opacity: 1
+    99%
+        height: 100%
+    100%
+        opacity: 0
+        height: 0px
+
+.fadeIn
+    animation: fadeIn 0.25s ease-in-out 0.5s forwards
+    height: 100%
+    opacity: 0
+        
+@keyframes fadeIn
+    0%
+        opacity: 0
+    100%
+        opacity: 1
