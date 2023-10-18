@@ -16,10 +16,6 @@ closeBtn.addEventListener("click", async (e) => {
   setTimeout(() => addSongPanel.classList.add("forceHide"), 500);
 });
 
-addSongBtn.addEventListener("click", async (e) => {
-  //przejdz do potwierdzenia
-});
-
 //dodawanie piosenki
 const new_pattern_form = document.querySelector("#spotifyForm");
 const add_song = new_pattern_form.querySelector("#addSongBtn");
@@ -35,15 +31,25 @@ add_song.addEventListener("click", async (e) => {
     body: params,
   });
   //przypisanie danych z odpowiedzi do json
-  const json = await response.json()
-  console.log(json);
+  const json = await response.json();
   //podmiana danych na otrzymane z bazy w step2
-  document.getElementById("step2-song-title").innerHTML = json['name'];
-  document.getElementById("step2-song-artist").innerHTML = json['artist'];
-  document.getElementById("step2-song-img").setAttribute('src',json['img']) ;
-  document.getElementById("voting-vote-btn").setAttribute('data-track-id',json['id']) ;
-  document.getElementById("error").innerHTML = json['error'];
+  document.getElementById("step2-song-title").innerHTML = json["name"];
+  document.getElementById("step2-song-artist").innerHTML = json["artist"];
+  document.getElementById("step2-song-img").setAttribute("src", json["img"]);
+  document
+    .getElementById("voting-vote-btn")
+    .setAttribute("data-track-id", json["id"]);
 
+  if (json["error"] == undefined) {
+    document
+      .getElementsByClassName("add-song-step1")[0]
+      .classList.add("fadeOut");
+    document
+      .getElementsByClassName("add-song-step2")[0]
+      .classList.add("fadeIn");
+  } else {
+    document.getElementById("error").innerHTML = json["error"];
+  }
 });
 
 async function show_votes() {

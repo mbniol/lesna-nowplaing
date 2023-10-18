@@ -12,11 +12,13 @@ function get_id(value) {
     //dany ciąg nie pasuje do kryteriów przez co prawdopodobnie jest to tytuł
     else {
       //wywalenie paramatrów w linku
-      let id = string[4].split("?");
-      if (string[3] === "track" && id[0].length === 22) {
-        return id[0];
-      }else {
-        return false;
+      if (String(string[4]).includes("?")) {
+        let id = string[4].split("?");
+        if (string[3] === "track" && id[0].length === 22) {
+          return id[0];
+        } else {
+          return false;
+        }
       }
     }
   }
