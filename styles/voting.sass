@@ -16,6 +16,7 @@
     overflow-y: auto
     display: flex
     flex: 1 1 auto
+    gap: 0.5em
     flex-direction: column
     padding: 0.5em 1em
 
@@ -24,6 +25,21 @@
     flex-direction: row
     height: 5em
     width: 100%
+    button
+        height: 2em
+        overflow: hidden
+        align-self: center
+        justify-self: center
+        font-family: inherit
+        font-weight: 100
+        font-size: 1.5rem
+        border-radius: core.$border-radius
+        border: none
+        background: core.$main-color
+        color: core.$text-base
+        width: 2em
+        svg
+            fill: core.$text-base
 
 .voting-song-cover
     height: 5em
