@@ -82,16 +82,16 @@ async function show_votes() {
   const votingButtons = document.querySelectorAll(".voting-vote-btn");
   votingButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
-      console.log("xD");
       const trackID = el.dataset.trackId;
-      const response = await fetch(`/api/votes`, {
+      await fetch(`/api/votes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
-      location.reload();
+      //console.log("test");
+      await location.reload();
     });
   });
 }

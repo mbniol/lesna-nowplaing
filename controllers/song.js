@@ -22,7 +22,7 @@ export default class Controller {
     const track_list = await songModel.get_track_ranking();
     res.json(track_list);
   }
-  static async vote(req, res) {
+  static async vote(req, res ) {
     const track_link = req.body.spotifyLink;
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
@@ -30,36 +30,37 @@ export default class Controller {
     if (track_id) {
       const track = await fetchWebApi(token, "tracks/" + track_id);
       if (track["error"] !== undefined) {
-        return "wystapil blad przy odczycie piosenki";
+        res.json({ error: "wystapil blad przy odczycie piosenki"});
       } else {
         //piosenka jest niecenzuralna
         if (track["explicit"] === true) {
-          return "piosenka jest nieodpowiednia";
+          res.json({ error: "piosenka jest nieodpowiednia"});
         } else {
           //pobranie danych o piosence z bazy
           const rows = await songModel.get_song(track_id);
           //piosenki nie ma w bazie danych
           if (rows[0][0] === undefined) {
-            songModel.add_track(
-              track_id,
-              track["album"]["images"][0]["url"],
-              track.artists[0].name,
-              track["duration_ms"],
-              track["name"]
+            await songModel.add_track(
+                track_id,
+                track["album"]["images"][0]["url"],
+                track.artists[0].name,
+                track["duration_ms"],
+                track["name"]
             );
-            songModel.add_vote(track_id);
-            return "dodano piosenkę i głos";
+            await songModel.add_vote(track_id);
+            res.json({ error: "dodano piosenkę i głos"});
           } //piosenka została zbanowana przez admina
           else if (rows[0][0]["banned"] === 1) {
-            return "piosenka zostala zabanowan przez administracje";
+            res.json({ error: "piosenka zostala zabanowan przez administracje"});
           } else {
-            songModel.add_vote(track_id);
-            return "dodano głos";
+            console.log("test");
+            await songModel.add_vote(track_id);
+            res.json({ error: "dodano głos"});
           }
         }
       }
     } else {
-      return "podany link jest nieprawidłowy";
+      res.json({ error: "podany link jest nieprawidłowy"});
     }
   }
 
