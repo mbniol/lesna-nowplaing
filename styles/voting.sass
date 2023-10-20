@@ -135,6 +135,8 @@
 
 .add-song-step2-song
     flex: 1 1 auto
+    overflow: auto
+    padding-bottom: 5em
 
 
 .step2-song-cover, .step2-song-artist
@@ -213,8 +215,15 @@
   border: 0.125rem solid black
   border-radius: 100%
   background-color: black
-  span
-    translate: 0 -0.125em
+  svg
+    width: 1rem
+    height: 1rem
+    fill: core.$text-base
+
+#backBtn
+    svg
+        width: 2rem
+        height: 2rem
 
 .fadeOut
     animation: fadeOut 0.25s ease-in-out forwards
@@ -242,3 +251,13 @@
         opacity: 0
     100%
         opacity: 1
+
+@media only screen and (min-width: 600px)
+    .root
+        display: flex
+        justify-content: center
+    .voting-wrapper
+        width: 50em
+    .add-song-step2-song
+        width: clamp(20em,50%,30em)
+        align-self: center
