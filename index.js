@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(
   session({
     secret: "sekret",
-    ookie: { maxAge: 60000, httpOnly: true },
+    cookie: { maxAge: 1000 * 60 * 60 * 24, httpOnly: true },
     // resave: false,
     // saveUninitialized: false,
   })
