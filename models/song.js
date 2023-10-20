@@ -40,13 +40,13 @@ export default class Model {
     await pool.query("DELETE FROM votes WHERE track_id=?", [status, id]);
     return true;
   }
-  static async add_track(id, cover, artist, length, name) {
+  static async add_track(id, cover, artist, length, name,ban=0) {
     const pool = Mysql.getPromiseInstance();
     pool.query(
       `
             INSERT INTO tracks (id, cover, artist , length, name, banned) VALUES (?, ?, ?, ?, ?, ?)
             `,
-      [id, cover, artist, length, name, 0]
+      [id, cover, artist, length, name, ban]
     );
   }
   static async add_vote(id) {
