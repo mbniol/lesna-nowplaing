@@ -210,6 +210,25 @@
         color: white
         border-radius: core.$border-radius
         width: calc(20em/1.5)
+    button.hidden
+        display: none
+
+.loader
+  border: 0.25em solid #f3f3f3
+  border-top: 0.25em solid core.$main-color
+  border-radius: 50%
+  width: 1.5em
+  height: 1.5em
+  animation: spin 1s ease-in-out infinite
+  bottom: 1em
+  position: absolute
+  z-index: -1
+
+@keyframes spin
+  0%
+      transform: rotate(0deg)
+  100%
+      transform: rotate(360deg)
 
 .closeBtn, #backBtn
   border: 0.125rem solid black

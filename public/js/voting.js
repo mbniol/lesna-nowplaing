@@ -34,6 +34,7 @@ backBtn.addEventListener("click", async (e) => {
 const new_pattern_form = document.querySelector("#spotifyForm");
 const add_song = new_pattern_form.querySelector("#addSongBtn");
 add_song.addEventListener("click", async (e) => {
+  add_song.classList.add("hidden");
   e.preventDefault();
   const formData = new FormData(new_pattern_form);
   const params = new URLSearchParams(formData);
@@ -68,8 +69,12 @@ add_song.addEventListener("click", async (e) => {
     document
       .getElementsByClassName("add-song-step2")[0]
       .classList.add("fadeIn");
+    setTimeout(() => {
+      add_song.classList.remove("hidden");
+    }, 500);
   } else {
     document.getElementById("error").innerHTML = json["error"];
+    add_song.classList.remove("hidden");
   }
 });
 
