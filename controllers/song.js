@@ -2,6 +2,7 @@ import songModel from "../models/song.js";
 import Auth from "../helpers/auth.js";
 import { get_id } from "../helpers/vote.js";
 import { fetchWebApi } from "../helpers/helpers.js";
+import request from 'request';
 
 export default class Controller {
   static async ban(req, res) {
@@ -14,7 +15,6 @@ export default class Controller {
   }
 
   static async getMany(req, res) {
-    const songs = await songModel.getSongs();
     res.json(songs);
   }
 
@@ -27,7 +27,7 @@ export default class Controller {
     const track_link = req.body.spotifyLink;
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
-    const track_id = get_id(track_link);
+    const track_id = await get_id(track_link);
     if (track_id) {
       const rows = await songModel.get_song(track_id);
       if (rows[0][0] === undefined) {
@@ -77,7 +77,7 @@ export default class Controller {
     const track_link = req.body.spotifyLink;
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
-    const track_id = get_id(track_link);
+    const track_id = await get_id(track_link);
     if (track_id) {
       const rows = await songModel.get_song(track_id);
       if (rows[0][0] === undefined) {
@@ -100,6 +100,14 @@ export default class Controller {
           } else {
             //piosenki nie ma w bazie danych
             if (rows[0][0] === undefined) {
+              await songModel.add_track(
+                  track_id,
+                  track["album"]["images"][0]["url"],
+                  track.artists[0].name,
+                  track["duration_ms"],
+                  track["name"],
+                  0
+              );
               res.json({
                 id: track_id,
                 img: track["album"]["images"][0]["url"],
@@ -116,7 +124,6 @@ export default class Controller {
           if (rows[0][0]["banned"] === 1) {
             res.json({error: "piosenka zostala zabanowan przez administracje"});
           } else {
-            console.log("test");
             const json = {
               id: rows[0][0]["id"],
               img: rows[0][0]["cover"],

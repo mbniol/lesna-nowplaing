@@ -1,17 +1,46 @@
-function get_id(value) {
-  //sprawdzenie czy podany ciąg jest id poprzez weryfikacje długości oraz czy zawiera spacje
+import request from 'request';
+
+async function get_id(value) {
+  if (value.length === 32) {
+    try {
+      const finalLocation = await expandShortLink(value);
+      return get(finalLocation);
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    return get(value);
+  }
+}
+
+async function expandShortLink(shortLink) {
+  return new Promise((resolve, reject) => {
+    request(
+        {
+          uri: shortLink,
+          followRedirect: false,
+          rejectUnauthorized: false,
+        },
+        function (err, httpResponse) {
+          if (err) {
+            reject(err);
+          } else {
+            const finalLocation = httpResponse.headers.location || shortLink;
+            resolve(finalLocation);
+          }
+        }
+    );
+  });
+}
+
+function get(value) {
   if (value.indexOf(" ") === -1 && value.length === 22) {
     return value;
   } else {
-    //dzielenie ciągu na tablice
     let string = value.split("/");
-    //weryfikacja czy link jest prawidłowy
     if (string[3] === "track" && string[4].length === 22) {
-      return string["4"];
-    }
-    //dany ciąg nie pasuje do kryteriów przez co prawdopodobnie jest to tytuł
-    else {
-      //wywalenie paramatrów w linku
+      return string[4];
+    } else {
       if (String(string[4]).includes("?")) {
         let id = string[4].split("?");
         if (string[3] === "track" && id[0].length === 22) {
@@ -23,5 +52,4 @@ function get_id(value) {
     }
   }
 }
-
 export { get_id };
