@@ -65,11 +65,11 @@
     position: fixed
     bottom: 0.5em
     right: 0.5em
+    color: inherit
+    border: none
     user-select: none
     @include core.flexCenter()
     overflow: hidden
-    span
-        translate: 0% -0.125em
     line-height: 0.75em
     font-size: 3rem
     text-align: center
@@ -280,3 +280,6 @@
     .add-song-step2-song
         width: clamp(20em,50%,30em)
         align-self: center
+
+button[disabled]
+    filter: grayscale(1)
