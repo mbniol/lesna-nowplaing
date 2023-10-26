@@ -52,6 +52,10 @@ router.get("/queue", checkAdmin, PlayerController.getQueue);
 
 router.get("/songs", checkAdmin, SongController.getMany);
 
-router.put("/songs_banned", checkAdmin, SongController.ban);
+router.post("/songs_banned", checkAdmin, SongController.ban);
+
+router.post("/songs_verify", checkAdmin, SongController.verify);
+
+router.post("/songs_unban", checkAdmin, SongController.unban);
 
 export default router;

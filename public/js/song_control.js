@@ -11,6 +11,7 @@ const originalState = {};
 const changes = {};
 
 async function getSongs() {
+  console.log('test');
   const response = await fetch("/api/songs");
   const json = await response.json();
   let tableRows = "";
@@ -24,15 +25,16 @@ async function getSongs() {
       <td class="table__cell">${convertToHumanTime(
         Math.ceil(length / 1000)
       )}</td>
-      <td class="table__cell"><input class="table__checkbox" type="checkbox" name="" data-id="${id}" ${
-      bannedBoolean ? "checked" : ""
-    }/></td>
+      <td class="table__cell"><button class="track_ban" data-track-id="${id}">ban</button></td>
+      <td class="table__cell"><button class="track_verify" data-track-id="${id}">verify</button></td>
     </tr>
   `;
     originalState[id] = bannedBoolean;
     tableRows += tableRow;
   });
   tableBody.innerHTML = tableRows;
+  waitForBan();
+  waitForVerify();
 }
 
 async function sendChanges() {
@@ -53,6 +55,38 @@ async function sendChanges() {
     body: JSON.stringify(changes),
   });
   // console.log(changes);
+}
+async function waitForBan(){
+  const banButtons = document.querySelectorAll(".track_ban");
+  banButtons.forEach((el) => {
+    el.addEventListener("click", async (e) => {
+      const trackID = el.dataset.trackId;
+      await fetch(`/api/songs_banned`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ spotifyLink: trackID }),
+      });
+      await location.reload();
+    });
+  });
+}
+async function waitForVerify(){
+  const verifyButtons = document.querySelectorAll(".track_verify");
+  verifyButtons.forEach((el) => {
+    el.addEventListener("click", async (e) => {
+      const trackID = el.dataset.trackId;
+      await fetch(`/api/songs_verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ spotifyLink: trackID }),
+      });
+      await location.reload();
+    });
+  });
 }
 
 submitButton.addEventListener("click", sendChanges);

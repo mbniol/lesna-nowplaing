@@ -8,13 +8,28 @@ export default class Controller {
   static async ban(req, res) {
     const songs = req.body;
     for (const id in songs) {
-      const status = songs[id];
-      await songModel.changeSongStatus(id, status);
+      await songModel.ban_song(songs[id]);
+    }
+    res.sendStatus(200);
+  }
+  static async unban(req, res) {
+    const songs = req.body;
+    for (const id in songs) {
+      await songModel.unban_song(songs[id]);
+    }
+    res.sendStatus(200);
+  }
+
+  static async verify(req, res) {
+    const songs = req.body;
+    for (const id in songs) {
+      await songModel.verify_song(songs[id]);
     }
     res.sendStatus(200);
   }
 
   static async getMany(req, res) {
+    const songs =await  songModel.getSongs();
     res.json(songs);
   }
 

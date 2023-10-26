@@ -8,6 +8,37 @@ export default class Model {
       id
     );
   }
+
+  static async ban_song(id) {
+    const pool = Mysql.getPromiseInstance();
+    pool.query(
+        "UPDATE tracks SET banned = 1 WHERE id =?",
+        id
+    );
+    pool.query(
+        "DELETE FROM votes where track_id = ?",
+        id
+    );
+  }
+  static async unban_song(id) {
+    const pool = Mysql.getPromiseInstance();
+    pool.query(
+        "UPDATE tracks SET banned = 1 WHERE id =?",
+        id
+    );
+    pool.query(
+        "DELETE FROM votes where track_id = ?",
+        id
+    );
+  }
+
+  static async verify_song(id) {
+    const pool = Mysql.getPromiseInstance();
+    return pool.query(
+        "UPDATE tracks SET verified = 1 WHERE id =?",
+        id
+    );
+  }
   static async get_track_ranking(one = 0, two = 1) {
     const pool = Mysql.getPromiseInstance();
     const result = await pool.query(
@@ -29,7 +60,7 @@ export default class Model {
   static async getSongs() {
     const pool = Mysql.getPromiseInstance();
     const [rows] = await pool.query(
-      "SELECT id, name, cover, artist, length, banned FROM tracks"
+      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = 0 and verified = 0"
     );
     return rows;
   }
