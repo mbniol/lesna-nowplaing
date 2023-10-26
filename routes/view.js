@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { renderViewChainable } from "../helpers/helpers.js";
+import { renderViewChainable, renderView } from "../helpers/helpers.js";
 import {
   checkAdmin,
   checkNotAdmin,
@@ -38,5 +38,7 @@ router.get(
   checkAdmin,
   renderViewChainable("admin/song_control.html")
 );
+
+router.get("*", renderViewChainable("404.html"));
 
 export default router;
