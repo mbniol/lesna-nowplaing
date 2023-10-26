@@ -12,7 +12,7 @@ export default class Model {
   static async ban_song(id) {
     const pool = Mysql.getPromiseInstance();
     pool.query(
-        "UPDATE tracks SET banned = 1 WHERE id =?",
+        "UPDATE tracks SET banned = 1, verified = 1 WHERE id =?",
         id
     );
     pool.query(
@@ -23,11 +23,7 @@ export default class Model {
   static async unban_song(id) {
     const pool = Mysql.getPromiseInstance();
     pool.query(
-        "UPDATE tracks SET banned = 1 WHERE id =?",
-        id
-    );
-    pool.query(
-        "DELETE FROM votes where track_id = ?",
+        "UPDATE tracks SET banned = 0, verified = 1 WHERE id =?",
         id
     );
   }
@@ -57,10 +53,10 @@ export default class Model {
     return result[0];
   }
 
-  static async getSongs() {
+  static async getSongs(banned=0, verified=0) {
     const pool = Mysql.getPromiseInstance();
     const [rows] = await pool.query(
-      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = 0 and verified = 0"
+      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?",[banned,verified]
     );
     return rows;
   }

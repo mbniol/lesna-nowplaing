@@ -12,6 +12,13 @@ export default class Controller {
     }
     res.sendStatus(200);
   }
+  static async verifiedBan(req, res) {
+    const songs = req.body;
+    for (const id in songs) {
+      await songModel.ban_song(songs[id]);
+    }
+    res.sendStatus(200);
+  }
   static async unban(req, res) {
     const songs = req.body;
     for (const id in songs) {
@@ -30,6 +37,14 @@ export default class Controller {
 
   static async getMany(req, res) {
     const songs =await  songModel.getSongs();
+    res.json(songs);
+  }
+  static async getBannedTracks(req, res) {
+    const songs =await  songModel.getSongs(1,1);
+    res.json(songs);
+  }
+  static async getVerifiedTracks(req, res) {
+    const songs =await  songModel.getSongs(0,1);
     res.json(songs);
   }
 

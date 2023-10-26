@@ -6,18 +6,33 @@ function convertToHumanTime(wholeSeconds) {
 
 const tableBody = document.querySelector(".table__body");
 const submitButton = document.querySelector(".submit-button");
+//wygenerowanie widoku do unbana
+const bannetTracksBtn = document.querySelector("#banned_tracks");
+bannetTracksBtn.addEventListener("click", async (e) => {
+  await getSongs("/api/banned_tracks", 1);
+});
+//wygenerowanie widoku do banowania zweryfikowanych piosenek
+const verifiedTracksBtn = document.querySelector("#verified_tracks");
+verifiedTracksBtn.addEventListener("click", async (e) => {
+  await getSongs("/api/verified_tracks", 2);
+});
+//wygenerowanie widoku do weryfikacji piosenek
+const verifyTracksBtn = document.querySelector("#verify_tracks");
+verifyTracksBtn.addEventListener("click", async (e) => {
+  await getSongs();
+});
 
 const originalState = {};
 const changes = {};
 
-async function getSongs() {
+async function getSongs(api="/api/songs",mode=0) {
   console.log('test');
-  const response = await fetch("/api/songs");
+  const response = await fetch(api);
   const json = await response.json();
   let tableRows = "";
   json.forEach(({ cover, name, artist, length, id, banned }) => {
     const bannedBoolean = Boolean(banned);
-    const tableRow = `
+    let tableRow = `
     <tr class="table__body-row">
       <td class="table__cell"><img src="${cover}" alt=""></td>
       <td class="table__cell">${name}</td>
@@ -25,16 +40,33 @@ async function getSongs() {
       <td class="table__cell">${convertToHumanTime(
         Math.ceil(length / 1000)
       )}</td>
-      <td class="table__cell"><button class="track_ban" data-track-id="${id}">ban</button></td>
-      <td class="table__cell"><button class="track_verify" data-track-id="${id}">verify</button></td>
+     `;
+    if(mode ===0) {//domyślny widok-nowe piosenki
+      tableRow += `
+        <td class="table__cell"><button class="track_ban" data-track-id="${id}">ban</button></td>
+        <td class="table__cell"><button class="track_verify" data-track-id="${id}">verify</button></td>
+      </tr>
+    `;
+    }else if(mode ===1){//piosenki zbanowane
+      tableRow+=`
+      <td class="table__cell"><button class="track_unban" data-track-id="${id}">unban</button></td>
     </tr>
   `;
+    }else if(mode ===2){//piosenki zwryfikowane do zbanowania
+      tableRow+=`
+      <td class="table__cell"><button class="verified_track_ban" data-track-id="${id}">ban</button></td>
+    </tr>
+  `;
+    }
+
     originalState[id] = bannedBoolean;
     tableRows += tableRow;
   });
   tableBody.innerHTML = tableRows;
   waitForBan();
   waitForVerify();
+  waitForUnBan();
+  waitForVerifyBan();
 }
 
 async function sendChanges() {
@@ -61,14 +93,46 @@ async function waitForBan(){
   banButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const trackID = el.dataset.trackId;
-      await fetch(`/api/songs_banned`, {
+      await fetch(`/api/songs_ban`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
-      await location.reload();
+      getSongs();
+    });
+  });
+}
+async function waitForVerifyBan(){
+  const verifiedBanButtons = document.querySelectorAll(".verified_track_ban");
+  verifiedBanButtons.forEach((el) => {
+    el.addEventListener("click", async (e) => {
+      const trackID = el.dataset.trackId;
+      await fetch(`/api/songs_ban`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ spotifyLink: trackID }),
+      });
+      await getSongs("/api/verified_tracks", 2);
+    });
+  });
+}
+async function waitForUnBan(){
+  const banButtons = document.querySelectorAll(".track_unban");
+  banButtons.forEach((el) => {
+    el.addEventListener("click", async (e) => {
+      const trackID = el.dataset.trackId;
+      await fetch(`/api/songs_unban`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ spotifyLink: trackID }),
+      });
+      await getSongs("/api/banned_tracks", 1);
     });
   });
 }
@@ -84,7 +148,7 @@ async function waitForVerify(){
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
-      await location.reload();
+      getSongs();
     });
   });
 }

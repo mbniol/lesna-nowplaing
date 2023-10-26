@@ -52,7 +52,13 @@ router.get("/queue", checkAdmin, PlayerController.getQueue);
 
 router.get("/songs", checkAdmin, SongController.getMany);
 
-router.post("/songs_banned", checkAdmin, SongController.ban);
+router.get("/verified_tracks", checkAdmin, SongController.getVerifiedTracks);
+
+router.get("/banned_tracks", checkAdmin, SongController.getBannedTracks);
+
+router.post("/songs_ban", checkAdmin, SongController.ban);
+
+router.post("/verified_songs_ban", checkAdmin, SongController.verifiedBan);
 
 router.post("/songs_verify", checkAdmin, SongController.verify);
 
