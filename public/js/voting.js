@@ -123,4 +123,12 @@ function add_track({ id, name, artist, count, cover }) {
   </button>
 </div>`;
 }
+
+function disableVoting() {
+  const buttons = document.querySelectorAll("button");
+  console.log(buttons);
+  buttons.forEach((e) => {
+    e.disabled = true;
+  });
+}
 show_votes();
