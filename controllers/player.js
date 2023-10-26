@@ -3,7 +3,7 @@ import Auth from "../helpers/auth.js";
 
 class Controller {
   static #clients = [];
-  static async addNewClient(res, req) {
+  static async addNewClient(req, res) {
     const headers = {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
