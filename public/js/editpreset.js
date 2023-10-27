@@ -254,15 +254,67 @@ newBreakSubmit.addEventListener("click", async (e) => {
   e.preventDefault();
   if (newBreakForm.checkValidity()) {
     const params = new FormData(newBreakForm);
-    validateBreak(params.get("start"), params.get("end"));
+    const breakElements = document.querySelectorAll(".break");
+    const breaksData = [];
+    breakElements.forEach((el, i) => {
+      const container = el.parentElement;
+      const position = container.dataset.position;
+      const nameInput = el.querySelector(".break-name-input");
+      const startInput = el.querySelector(".break-start-input");
+      const endInput = el.querySelector(".break-end-input");
+      const forRequestedInput = el.querySelector(".break-requested-checkbox");
+      breaksData.push({
+        name: nameInput.value,
+        position,
+        start: startInput.value + ":00",
+        end: endInput.value + ":00",
+        forRequested: forRequestedInput.checked,
+      });
+    });
+    console.log(breaksData);
     addSeconds(params, "end", "start");
+    const end = params.get("end");
+    // const start = params.get("end");
+    const nextBreakIndex = breaksData.findIndex((oneBreak) => {
+      return convertIntoTimestamp(end) <= convertIntoTimestamp(oneBreak.start);
+    });
+    if (nextBreakIndex === -1) {
+      breaksData.push({
+        name: params.get("name"),
+        start: params.get("start"),
+        end: params.get("end"),
+        forRequested: Boolean(params.get("forRequested")),
+      });
+    } else {
+      breaksData.splice(nextBreakIndex, 0, {
+        name: params.get("name"),
+        start: params.get("start"),
+        end: params.get("end"),
+        forRequested: Boolean(params.get("forRequested")),
+      });
+    }
+    breaksData.forEach((oneBreak, i) => {
+      oneBreak.position = i;
+    });
+    validateBreaks(breaksData);
+    console.log(breaksData);
+    // console.log(params.values(), FormData.keys());
+    //   await fetch(`/api/pattern/${patternID}/break`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/x-www-form-urlencoded",
+    //       // "Content-Type": "multipart/form-data",
+    //     },
+    //     body: new URLSearchParams(params),
+    //   });
+    //   location.reload();
     await fetch(`/api/pattern/${patternID}/break`, {
-      method: "POST",
+      method: "PUT",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
         // "Content-Type": "multipart/form-data",
       },
-      body: new URLSearchParams(params),
+      body: JSON.stringify(breaksData),
     });
     location.reload();
   } else {
