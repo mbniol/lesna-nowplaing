@@ -33,17 +33,12 @@ app.use(
 );
 app.use(mainRouter);
 //ustawienie połączenia z baza danych
-try {
-  await Mysql.setInstance(
-    process.env.DB_HOST || "localhost",
-    process.env.DB_USER || "root",
-    process.env.DB_PASSWORD || "",
-    process.env.DB_NAME || "radio"
-  );
-} catch (error) {
-  console.error("Błąd przy ustanawianiu połączenia:", error);
-}
-
+Mysql.setInstance(
+  process.env.DB_HOST || "localhost",
+  process.env.DB_USER || "root",
+  process.env.DB_PASSWORD || "",
+  process.env.DB_NAME || "radio"
+);
 //ustawienie połączenia z api spotify
 Auth.setInstance(client_id, client_secret);
 const token = await Auth.getInstance().getAPIToken();

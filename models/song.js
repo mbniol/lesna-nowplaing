@@ -11,32 +11,21 @@ export default class Model {
 
   static async ban_song(id) {
     const pool = Mysql.getPromiseInstance();
-    pool.query(
-        "UPDATE tracks SET banned = 1, verified = 1 WHERE id =?",
-        id
-    );
-    pool.query(
-        "DELETE FROM votes where track_id = ?",
-        id
-    );
+    pool.query("UPDATE tracks SET banned = 1, verified = 1 WHERE id =?", id);
+    pool.query("DELETE FROM votes where track_id = ?", id);
   }
   static async unban_song(id) {
     const pool = Mysql.getPromiseInstance();
-    pool.query(
-        "UPDATE tracks SET banned = 0, verified = 1 WHERE id =?",
-        id
-    );
+    pool.query("UPDATE tracks SET banned = 0, verified = 1 WHERE id =?", id);
   }
 
   static async verify_song(id) {
     const pool = Mysql.getPromiseInstance();
-    return pool.query(
-        "UPDATE tracks SET verified = 1 WHERE id =?",
-        id
-    );
+    return pool.query("UPDATE tracks SET verified = 1 WHERE id =?", id);
   }
   static async get_track_ranking(one = 0, two = 1) {
     const pool = Mysql.getPromiseInstance();
+    console.log(pool);
     const result = await pool.query(
       `
         SELECT t.id, t.cover, t.name, t.artist, t.length,
@@ -53,10 +42,11 @@ export default class Model {
     return result[0];
   }
 
-  static async getSongs(banned=0, verified=0) {
+  static async getSongs(banned = 0, verified = 0) {
     const pool = Mysql.getPromiseInstance();
     const [rows] = await pool.query(
-      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?",[banned,verified]
+      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?",
+      [banned, verified]
     );
     return rows;
   }
@@ -67,13 +57,21 @@ export default class Model {
     await pool.query("DELETE FROM votes WHERE track_id=?", [status, id]);
     return true;
   }
-  static async add_track(id, cover, artist, length, name,ban=0,verified=0) {
+  static async add_track(
+    id,
+    cover,
+    artist,
+    length,
+    name,
+    ban = 0,
+    verified = 0
+  ) {
     const pool = Mysql.getPromiseInstance();
     pool.query(
       `
             INSERT INTO tracks (id, cover, artist , length, name, banned,verified) VALUES (?, ?, ?, ?, ?, ?,?)
             `,
-      [id, cover, artist, length, name, ban,verified]
+      [id, cover, artist, length, name, ban, verified]
     );
   }
   static async add_vote(id) {
