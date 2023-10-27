@@ -25,8 +25,8 @@ verifyTracksBtn.addEventListener("click", async (e) => {
 const originalState = {};
 const changes = {};
 
-async function getSongs(api="/api/songs",mode=0) {
-  console.log('test');
+async function getSongs(api = "/api/songs", mode = 0) {
+  console.log("test");
   const response = await fetch(api);
   const json = await response.json();
   let tableRows = "";
@@ -34,26 +34,29 @@ async function getSongs(api="/api/songs",mode=0) {
     const bannedBoolean = Boolean(banned);
     let tableRow = `
     <tr class="table__body-row">
-      <td class="table__cell"><img src="${cover}" alt=""></td>
-      <td class="table__cell">${name}</td>
-      <td class="table__cell">${artist}</td>
+      <td class="table__cell"><div><img src="${cover}" alt=""></div></td>
+      <td class="table__cell"><div>${name}</div></td>
+      <td class="table__cell"><div>${artist}</div></td>
       <td class="table__cell">${convertToHumanTime(
         Math.ceil(length / 1000)
       )}</td>
      `;
-    if(mode ===0) {//domyślny widok-nowe piosenki
+    if (mode === 0) {
+      //domyślny widok-nowe piosenki
       tableRow += `
         <td class="table__cell"><button class="track_ban" data-track-id="${id}">ban</button></td>
         <td class="table__cell"><button class="track_verify" data-track-id="${id}">verify</button></td>
       </tr>
     `;
-    }else if(mode ===1){//piosenki zbanowane
-      tableRow+=`
+    } else if (mode === 1) {
+      //piosenki zbanowane
+      tableRow += `
       <td class="table__cell"><button class="track_unban" data-track-id="${id}">unban</button></td>
     </tr>
   `;
-    }else if(mode ===2){//piosenki zwryfikowane do zbanowania
-      tableRow+=`
+    } else if (mode === 2) {
+      //piosenki zwryfikowane do zbanowania
+      tableRow += `
       <td class="table__cell"><button class="verified_track_ban" data-track-id="${id}">ban</button></td>
     </tr>
   `;
@@ -88,7 +91,7 @@ async function sendChanges() {
   });
   // console.log(changes);
 }
-async function waitForBan(){
+async function waitForBan() {
   const banButtons = document.querySelectorAll(".track_ban");
   banButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
@@ -104,7 +107,7 @@ async function waitForBan(){
     });
   });
 }
-async function waitForVerifyBan(){
+async function waitForVerifyBan() {
   const verifiedBanButtons = document.querySelectorAll(".verified_track_ban");
   verifiedBanButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
@@ -120,7 +123,7 @@ async function waitForVerifyBan(){
     });
   });
 }
-async function waitForUnBan(){
+async function waitForUnBan() {
   const banButtons = document.querySelectorAll(".track_unban");
   banButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
@@ -136,7 +139,7 @@ async function waitForUnBan(){
     });
   });
 }
-async function waitForVerify(){
+async function waitForVerify() {
   const verifyButtons = document.querySelectorAll(".track_verify");
   verifyButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
