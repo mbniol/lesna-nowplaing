@@ -75,6 +75,7 @@ export default class Controller {
                 track.artists[0].name,
                 track["duration_ms"],
                 track["name"],
+                1,
                 1
             );
           } else {
@@ -125,6 +126,7 @@ export default class Controller {
                 track.artists[0].name,
                 track["duration_ms"],
                 track["name"],
+                1,
                 1
             );
           } else {
