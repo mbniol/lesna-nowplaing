@@ -99,6 +99,23 @@ async function show_votes() {
       await location.reload();
     });
   });
+
+
+  const response = await fetch("/api/check_vote_status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
+  //przypisanie danych z odpowiedzi do json
+  const votestatus = await response.json();
+  if(votestatus['vote']){
+    disableVoting();
+  }
+
+
+
+
 }
 function add_track({ id, name, artist, count, cover }) {
   return `
@@ -126,7 +143,7 @@ function add_track({ id, name, artist, count, cover }) {
 
 function disableVoting() {
   const buttons = document.querySelectorAll("button");
-  console.log(buttons);
+  //console.log(buttons);
   buttons.forEach((e) => {
     e.disabled = true;
   });

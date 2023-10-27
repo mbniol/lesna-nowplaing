@@ -52,7 +52,6 @@ export default class Controller {
     const track_list = await songModel.get_track_ranking();
     res.json(track_list);
   }
-
   static async vote(req, res) {
     const track_link = req.body.spotifyLink;
     const token = await Auth.getInstance().getAPIToken();

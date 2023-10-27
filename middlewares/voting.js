@@ -9,6 +9,18 @@ function checkVoteRight(req, res, next) {
   req.session.lastVote = formatedDate;
   next();
 }
+function checkVote(req, res, next) {
+  const [date, formatedDate] = getCurrentDate();
+  const lastVote = req.session.lastVote;
+  if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
+    return res.json({vote:1});
+  }
+  else{
+    return res.json({vote:0});
+  }
+  // res.locals.formatedDate = formatedDate;
+
+}
 
 function getCurrentDate() {
   const date = new Date();
@@ -18,4 +30,5 @@ function getCurrentDate() {
   return [date, formatedDate];
 }
 
-export { checkVoteRight, getCurrentDate };
+
+export { checkVoteRight, getCurrentDate, checkVote};
