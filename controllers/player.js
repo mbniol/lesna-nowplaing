@@ -11,14 +11,14 @@ class Controller {
     };
     res.writeHead(200, headers);
 
-    const clientId = randomUUID();
+    const clientId = process.env.CLIENT_ID;
 
     const newClient = {
       id: clientId,
       response: res,
     };
 
-    this.#clients.push(newClient);
+    Controller.#clients.push(newClient);
 
     req.on("close", () => {
       this.#clients = clients.filter((client) => client.id !== clientId);
