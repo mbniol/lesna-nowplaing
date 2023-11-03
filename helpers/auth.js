@@ -1,3 +1,5 @@
+import { errorHandler } from "./errorHandler.js";
+
 export default class Auth {
   // #expiration_timestamp;
   #tokens = {
@@ -123,47 +125,69 @@ export default class Auth {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
     if (this.#tokens.sdk.access === undefined && code) {
+      console.log("128");
       const tokenOptions = this.#getSDKTokenOptions(code, uri);
       await this.#setSDKToken(tokenOptions);
     } else if (
       this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
       this.#tokens.refresh !== undefined
     ) {
+      console.log("135");
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
     }
+    console.log(this.#tokens);
     return this.#tokens.sdk.access;
   }
 
   async #setSDKToken(tokenOptions) {
-    // console.log("setuje");
-    try {
-      const response = await fetch(
-        "https://accounts.spotify.com/api/token",
-        tokenOptions
-      );
-      const jsonResponse = await response.json();
-      const currentDate = new Date();
-      // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
-      const oldRefreshToken = this.#tokens.sdk.refresh_token;
-      // console.log("respon6s", jsonResponse, tokenOptions);
-      this.#tokens.sdk = {
-        expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,
-        access: jsonResponse.access_token,
-        refresh: jsonResponse.refresh_token || oldRefreshToken,
-      };
-    } catch (e) {
-      console.error(e);
+    const [response, responseErr] = await errorHandler(
+      fetch,
+      null,
+      "https://accounts.spotify.com/api/token",
+      tokenOptions
+    );
+    if (responseErr) {
+      throw new Error("Nie udało się otrzymać tokenu SDK", {
+        cause: responseErr,
+      });
     }
+    const [jsonResponse, jsonErr] = await errorHandler(response.json, response);
+    if (jsonErr) {
+      throw new Error("Nie udało się uzyskać tokenu SDK w formacie JSON", {
+        cause: jsonErr,
+      });
+    }
+    const currentDate = new Date();
+    // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
+    const oldRefreshToken = this.#tokens.sdk.refresh_token;
+    // console.log("respon6s", jsonResponse, tokenOptions);
+    this.#tokens.sdk = {
+      expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,
+      access: jsonResponse.access_token,
+      refresh: jsonResponse.refresh_token || oldRefreshToken,
+    };
   }
 
   async #setAPIToken() {
     // console.log(this.#APITokenOptions);
-    const response = await fetch(
+    const [response, responseErr] = await errorHandler(
+      fetch,
+      null,
       "https://accounts.spotify.com/api/token",
       this.#APITokenOptions
     );
-    const jsonResponse = await response.json();
+    if (responseErr) {
+      throw new Error("Nie udało się otrzymać tokenu API", {
+        cause: responseErr,
+      });
+    }
+    const [jsonResponse, jsonErr] = await errorHandler(response.json, response);
+    if (jsonErr) {
+      throw new Error("Nie udało się uzyskać tokenu API w formacie JSON", {
+        cause: jsonErr,
+      });
+    }
     const currentDate = new Date();
     this.#tokens.api = {
       expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,

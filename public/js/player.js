@@ -33,10 +33,15 @@ function getTheEssence(track, imageSize) {
 
 const nowPlayingContainer = document.querySelector(".main-left");
 
+const params = new URL(document.location).searchParams;
+const code = params.get("code");
+console.log(code);
+
 window.onSpotifyWebPlaybackSDKReady = async () => {
-  const response = await fetch("/api/token/sdk");
+  const response = await fetch("/api/token/sdk?code=" + code);
   const jsonResponse = await response.json();
   const token = jsonResponse.token;
+  console.log(jsonResponse);
   // console.log(token);
 
   const player = new Spotify.Player({

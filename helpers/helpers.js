@@ -1,28 +1,42 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import Auth from "./auth.js";
+import { errorHandler } from "./errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function fetchWebApi(token, endpoint, method = "GET", body) {
-  const res = await fetch(`https://api.spotify.com/v1/${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    method,
-    body: JSON.stringify(body),
-  });
+  const [response, responseErr] = await errorHandler(
+    fetch,
+    null,
+    `https://api.spotify.com/v1/${endpoint}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      method,
+      body: JSON.stringify(body),
+    }
+  );
+  if (responseErr) {
+    throw new Error(
+      `Nie udało się wykonać zapytania do WebAPI na endpoint ${endpoint}`,
 
-  // console.log(res);
-  // console.log(res);
-  try {
-    return await res.json();
-  } catch (e) {
-    return await res.text();
+      { cause: responseErr }
+    );
   }
-  // return await res.json();
+
+  const [jsonResponse, jsonErr] = await errorHandler(response.json, response);
+  if (jsonErr) {
+    throw new Error(
+      `Nie udało się uzyskać danych w formacie JSON z zapytania do WebAPI na endpoint ${endpoint}`,
+
+      { cause: jsonErr }
+    );
+  }
+
+  return jsonResponse;
 }
 
 function renderView(res, filename) {
@@ -31,15 +45,16 @@ function renderView(res, filename) {
 
 async function new_connect() {
   //ustawienie połączenia z baza danych
-  try {
-    await Mysql.setInstance(
-      process.env.DB_HOST || "localhost",
-      process.env.DB_USER || "root",
-      process.env.DB_PASSWORD || "",
-      process.env.DB_NAME || "radio"
-    );
-  } catch (error) {
-    console.error("Błąd przy ustanawianiu połączenia:", error);
+  const [, connectionErr] = await errorHandler(
+    Mysql.setInstance,
+    Mysql,
+    process.env.DB_HOST || "localhost",
+    process.env.DB_USER || "root",
+    process.env.DB_PASSWORD || "",
+    process.env.DB_NAME || "radio"
+  );
+  if (connectionErr) {
+    throw new Error("Błąd przy ustanawianiu połączenia:", { cause: error });
   }
   return Mysql;
 }

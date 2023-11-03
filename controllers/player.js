@@ -1,5 +1,6 @@
 import { sendEventsToAll } from "../helpers/player.js";
 import Auth from "../helpers/auth.js";
+import { fetchWebApi } from "../helpers/helpers.js";
 
 class Controller {
   static #clients = [];
@@ -26,7 +27,7 @@ class Controller {
   }
   static async sendDataToClients(req, res) {
     const data = req.body;
-    sendEventsToAll(data);
+    sendEventsToAll(Controller.#clients, data);
     res.sendStatus(200);
   }
   static async getQueue(req, res) {

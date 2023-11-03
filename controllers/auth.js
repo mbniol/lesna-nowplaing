@@ -2,6 +2,8 @@ import Auth from "../helpers/auth.js";
 
 export default class Controller {
   static async getSDKToken(req, res) {
+    console.log(req.query.code);
+    req.session.code = req.query.code;
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
       "http://localhost:3000/player"
