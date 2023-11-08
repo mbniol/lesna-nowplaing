@@ -10,7 +10,7 @@ function convertToHumanTime(wholeSeconds) {
   return position_minutes + ":" + String(position_seconds).padStart(2, "0");
 }
 
-const events = new EventSource("http://localhost:3000/api/player");
+const events = new EventSource("https://192.168.17.15:3000/api/player");
 let progressInterval;
 const background = document.querySelector(".background");
 const nowPlayingContainer = document.querySelector(".main-left");

@@ -1,4 +1,5 @@
 import Mysql from "../helpers/database.js";
+import {errorHandler} from "../helpers/errorHandler.js";
 
 export default class Model {
   static async get_song(id) {

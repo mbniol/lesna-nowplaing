@@ -48,11 +48,14 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
     name: "Lesna",
     getOAuthToken: (cb) => {
       cb(token);
+	    console.log('authtoken request to api')
     },
     volume: 0.5,
   });
+	console.log('xD')
 
   player.addListener("ready", ({ device_id }) => {
+	  console.log('ready');
     addConnectEnforcer();
     // console.log("The Web Playback SDK is ready to play music!");
     // console.log("Device ID", device_id);
@@ -282,7 +285,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
       }
     }
   );
-  player.connect();
+	player.connect().then(suc=>console.log('succ'));
 };
 
 function addClickEnforcer() {

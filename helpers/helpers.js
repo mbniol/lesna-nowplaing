@@ -66,7 +66,7 @@ function renderViewChainable(filename) {
 async function new_token() {
   // const client_id = "405c695fe40447e5870aa2e44101c5a7";
   // const client_secret = "1f89010e9b5749cb89947602fd2443f3";
-  // Auth.setInstance(client_id, client_secret, "http://localhost:3000/login");
+  // Auth.setInstance(client_id, client_secret, "https://192.168.17.15:3000/login");
   // const token = await Auth.getInstance().getAPIToken();
   // return token;
 }
