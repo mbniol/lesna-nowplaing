@@ -39,6 +39,12 @@ router.get(
   renderViewChainable("admin/song_control.html")
 );
 
+router.get(
+  "/display2",
+  checkNotAdmin,
+  renderViewChainable("admin/display2.html")
+);
+
 router.get("*", renderViewChainable("404.html"));
 
 export default router;
