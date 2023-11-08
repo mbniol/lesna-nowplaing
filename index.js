@@ -7,13 +7,34 @@ import mainRouter from "./routes/router.js";
 import bodyParser from "body-parser";
 import session from "express-session";
 import Mysql from "./helpers/database.js";
+import fs from 'fs';
+import https from 'https';
+
 // import {vote} from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const app = express();
 const port = process.env.PORT || 3000;
-const client_id = "405c695fe40447e5870aa2e44101c5a7";
-const client_secret = "1f89010e9b5749cb89947602fd2443f3";
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
+const client_id = "17f05b5470a14a70924ddd37af00fc5e";
+const client_secret = "42341eb516954cf6898736f93bd010b7";
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -58,15 +79,16 @@ await fetchWebApi(token, "playlists/0TPpEJxe1NNP6jArvunMRh/tracks");
 //
 //   }
 // );
+https.createServer({key: fs.readFileSync('./lesnakey.key'), 
+cert: fs.readFileSync('./lesna.crt')}, app).listen(port, 
+	()=>{console.log('Express' + port)})
+console.log('hej')
 
 //
 //   "TEST API QUERY: ",
 //   (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
 // );
 
-app.listen(port, () => {});
-{
-}
 // import("./models/song.js").then(({ newTruck, vote, votes }) => {
 //   //testy pobierania danych piosenki z api
 //   const track_id = "2LBqCSwhJGcFQeTHMVGwy3";

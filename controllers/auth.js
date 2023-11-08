@@ -6,7 +6,7 @@ export default class Controller {
     req.session.code = req.query.code;
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "http://localhost:3000/player"
+      "https://192.168.17.15:3000/player"
     );
     res.json({
       token,

@@ -22,7 +22,7 @@ class Controller {
     Controller.#clients.push(newClient);
 
     req.on("close", () => {
-      this.#clients = clients.filter((client) => client.id !== clientId);
+      this.#clients = this.#clients.filter((client) => client.id !== clientId);
     });
   }
   static async sendDataToClients(req, res) {
@@ -33,7 +33,7 @@ class Controller {
   static async getQueue(req, res) {
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "http://localhost:3000/player"
+      "https://192.168.17.15:3000/player"
     );
     // console.log("xD");
     function getTheEssence(track, imageSize) {

@@ -21,7 +21,7 @@ function checkNotAdmin(req, res, next) {
 function loginSpotify(req, res, next) {
   if (!req.session.triedLogging) {
     req.session.triedLogging = true;
-    return Auth.getInstance().loginUser(res, "http://localhost:3000/player");
+    return Auth.getInstance().loginUser(res, "https://192.168.17.15:3000/player");
   }
   req.session.triedLogging = false;
   next();
