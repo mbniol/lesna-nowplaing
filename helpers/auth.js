@@ -132,7 +132,6 @@ export default class Auth {
       this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
       this.#tokens.refresh !== undefined
     ) {
-      console.log("135");
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
     }

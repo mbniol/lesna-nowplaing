@@ -9,7 +9,7 @@ export default class Controller {
   static async make(req, res) {
     const SDKToken = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "https://192.168.17.15:3000/player"
+      "https://localhost:3000/player"
     );
     await clearPlaylist(SDKToken);
     const APIToken = await Auth.getInstance().getAPIToken();

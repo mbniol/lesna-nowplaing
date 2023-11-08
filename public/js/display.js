@@ -10,7 +10,7 @@ function convertToHumanTime(wholeSeconds) {
   return position_minutes + ":" + String(position_seconds).padStart(2, "0");
 }
 
-const events = new EventSource("https://192.168.17.15:3000/api/player");
+const events = new EventSource("https://localhost:3000/api/player");
 let progressInterval;
 const background = document.querySelector(".background");
 const nowPlayingContainer = document.querySelector(".main-left");
@@ -18,11 +18,18 @@ let queryList = document.querySelector(".queue-list");
 const queryListContainer = document.querySelector(".queue-list-container");
 
 events.onmessage = (event) => {
-  let { current_track, queue, position, paused, action } = JSON.parse(
+  let { current_track, queue, position, paused, action, type } = JSON.parse(
     event.data
   );
-  let position_s = Math.ceil(position / 1000);
-  const duration_s = Math.ceil(current_track.duration / 1000);
+  let position_s;
+  let duration_s;
+  if (type === "break_change") {
+    const { progressBar } = getCounterElements();
+    position_s = Number(progressBar.value);
+  } else {
+    position_s = Math.ceil(position / 1000);
+    duration_s = Math.floor(current_track.duration / 1000);
+  }
   clearInterval(progressInterval);
   if (queryList.firstChild === null) {
     action = "init_song";
@@ -121,10 +128,10 @@ function createNowPlaying(id, position, duration, image, name, artists) {
     <img src="${image}" width="100%" />
   </div>
   <div class="song-title-container">
+    <div class="playing__position">${position.human}</div>
+    <div class="playing__length">${duration.human}</div>
     <div class="song-title">${name}</div>
     <div class="song-artist">${artists}</div>
-    <div class="song-position">${position.human}</div>
-    <div class="song-timestamp">${duration.human}</div>
   </div></div>`);
   nowPlayingContainer.appendChild(nowPlaying);
 }
@@ -134,7 +141,7 @@ function getCounterElements() {
     ".now-playing:not(.now-playing--go) .song-progress-bar"
   );
   const positionDiv = document.querySelector(
-    ".now-playing:not(.now-playing--go) .song-position"
+    ".now-playing:not(.now-playing--go) .playing__position"
   );
   return { progressBar, positionDiv };
 }

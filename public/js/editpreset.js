@@ -151,6 +151,10 @@ async function getBreaksData() {
 
 async function populateBreaksContainer() {
   const breaks = await getBreaksData();
+  breaks.sort((a, b) => {
+    return a.position - b.position;
+  });
+  console.log(breaks);
   breaks.forEach(({ id, name, position, start, end, for_requested }, i) => {
     breaksContainer.innerHTML += generateElement(
       i,
@@ -245,6 +249,7 @@ function validateBreaks(breaks) {
     if (
       convertIntoTimestamp(minStart) >= convertIntoTimestamp(currentBreak.start)
     ) {
+      console.log(previousBreak, currentBreak);
       throw new Error(`przerwa nr. ${i} nachodzi się z przerwą nr. ${i + 1}`);
     }
   }

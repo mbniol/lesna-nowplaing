@@ -22,7 +22,9 @@ class Controller {
     Controller.#clients.push(newClient);
 
     req.on("close", () => {
-      this.#clients = this.#clients.filter((client) => client.id !== clientId);
+      Controller.#clients = Controller.#clients.filter(
+        (client) => client.id !== clientId
+      );
     });
   }
   static async sendDataToClients(req, res) {
@@ -30,10 +32,32 @@ class Controller {
     sendEventsToAll(Controller.#clients, data);
     res.sendStatus(200);
   }
+  static async sendStateToClients(data) {
+    sendEventsToAll(Controller.#clients, data);
+    const token = await Auth.getInstance().getSDKToken();
+    const { devices } = await fetchWebApi(token, "me/player/devices");
+    console.log(devices, token);
+    const currentDevice = devices.find((device) => device.is_active);
+    console.log(currentDevice, data);
+    if (data.action === "resume") {
+      await fetchWebApi(
+        token,
+        "me/player/play?device_id=" + currentDevice.id,
+        "PUT"
+      );
+    } else if (data.action === "pause") {
+      await fetchWebApi(
+        token,
+        "me/player/pause?device_id=" + currentDevice.id,
+        "PUT"
+      );
+    }
+    // res.sendStatus(200);
+  }
   static async getQueue(req, res) {
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "https://192.168.17.15:3000/player"
+      "https://localhost:3000/player"
     );
     // console.log("xD");
     function getTheEssence(track, imageSize) {

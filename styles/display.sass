@@ -43,6 +43,10 @@
     opacity: 0
 
 .queue-item
+  //ni mom pojencio co robie
+  transition: -webkit-mask-position 1s
+  -webkit-mask-image: linear-gradient(90deg, #000 75%, transparent)
+  -webkit-mask-size: 120% 100%
   display: grid
   grid-template-columns: 60px auto
   height: 70px
@@ -159,14 +163,26 @@
     font-weight: 200
     width: 25em
     text-align: left
-    padding: 0 1em
+    // padding: 0 1em
     text-shadow: 0px 0px 4px black
 
+.playing__position,.playing__length
+  top: 0
+  position: absolute
+
+.playing__position
+  left: 0
+
+.playing__length
+  right: 0
+
+.song-title
+  margin-top: 26px 
 
 .song-title,.song-artist
     font-size: 2rem
     width: 100%
-    overflow: hidden
+    white-space: nowrap
     -webkit-mask-image: linear-gradient(90deg, #000 75%, transparent)
 .song-artist
     font-size: 1.5rem
@@ -184,6 +200,9 @@
     padding: 1em
     justify-content: flex-start
     align-items: center
+
+    &__image
+      border-radius: 15px
 .info
     grid-area: 3 / 2 / 4 / 3
     display: flex
@@ -231,6 +250,11 @@
 .queue-item-title
     font-size: 1.5rem
     font-weight: 200
+
+.queue-item-text
+  -webkit-mask-image: linear-gradient(270deg, #000 98%, transparent)
+  overflow: hidden
+
 
 .queue-item-artist
     display: flex

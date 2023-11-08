@@ -7,8 +7,12 @@ import mainRouter from "./routes/router.js";
 import bodyParser from "body-parser";
 import session from "express-session";
 import Mysql from "./helpers/database.js";
-import fs from 'fs';
-import https from 'https';
+import fs from "fs";
+import https from "https";
+
+import cron from "node-cron";
+import { errorHandler } from "./helpers/errorHandler.js";
+import Controller from "./controllers/player.js";
 
 // import {vote} from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
@@ -16,22 +20,27 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
 
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
+  // Pass to next layer of middleware
+  next();
 });
 const client_id = "17f05b5470a14a70924ddd37af00fc5e";
 const client_secret = "42341eb516954cf6898736f93bd010b7";
@@ -79,10 +88,18 @@ await fetchWebApi(token, "playlists/0TPpEJxe1NNP6jArvunMRh/tracks");
 //
 //   }
 // );
-https.createServer({key: fs.readFileSync('./lesnakey.key'), 
-cert: fs.readFileSync('./lesna.crt')}, app).listen(port, 
-	()=>{console.log('Express' + port)})
-console.log('hej')
+https
+  .createServer(
+    {
+      key: fs.readFileSync("./lesnakey.key"),
+      cert: fs.readFileSync("./lesna.crt"),
+    },
+    app
+  )
+  .listen(port, () => {
+    console.log("Express" + port);
+  });
+console.log("hej");
 
 //
 //   "TEST API QUERY: ",
@@ -136,3 +153,74 @@ function votingtest() {
   vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1");
 }
 //votingtest();
+
+function runAtSpecificTimeOfDay(hour, minutes, seconds, func) {
+  const now = new Date();
+  let eta_ms =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      hour,
+      minutes,
+      seconds,
+      0
+    ).getTime() - now;
+  console.log(eta_ms);
+
+  if (eta_ms > 0) {
+    setTimeout(func, eta_ms);
+  }
+}
+
+const freeDaysCalendar = [
+  {
+    day: undefined,
+    month: undefined,
+  },
+];
+
+const func = async () => {
+  const now = new Date();
+  const day = now.getDate();
+  const month = now.getMonth() + 1;
+  if (
+    freeDaysCalendar.find(
+      ({ freeDay, freeMonth }) => freeDay === day && freeMonth === month
+    )
+  ) {
+    return;
+  }
+  const pool = Mysql.getPromiseInstance();
+  const [data, err] = await errorHandler(
+    pool.query,
+    pool,
+    `SELECT b.id, b.start, b.end 
+        FROM breaks as b join patterns as p on p.id=b.pattern_id
+        WHERE p.active=1
+        ORDER BY b.start;`
+  );
+  const [rows] = data;
+  rows.forEach(({ id, start, end }) => {
+    const startArr = start.split(":");
+    const endArr = end.split(":");
+    const startDate = new Date();
+    const endDate = new Date();
+    startDate.setHours(...startArr);
+    endDate.setHours(...endArr);
+    runAtSpecificTimeOfDay(...startArr, () => {
+      console.log("start");
+      Controller.sendStateToClients({ action: "resume", type: "break_change" });
+    });
+    runAtSpecificTimeOfDay(...endArr, () => {
+      console.log("end");
+      Controller.sendStateToClients({ action: "pause", type: "break_change" });
+    });
+  });
+  const tasks = cron.getTasks();
+  console.log(tasks);
+};
+
+cron.schedule("0 2 * * Monday-Friday", func);
+
+setTimeout(func, 15000);
