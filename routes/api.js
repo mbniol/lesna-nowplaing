@@ -6,6 +6,7 @@ import PatternController from "../controllers/pattern.js";
 import PlayerController from "../controllers/player.js";
 import PlaylistController from "../controllers/playlist.js";
 import SongController from "../controllers/song.js";
+import NewsController from "../controllers/news.js";
 import {checkVoteRight, checkVote} from "../middlewares/voting.js";
 
 const router = new Router();
@@ -43,6 +44,8 @@ router.post("/check_vote_status", checkVote);
 router.post("/check_track", SongController.check_track);
 
 router.get("/track_list", SongController.votes);
+
+router.get("/get_news", NewsController.show_news);
 
 router.get("/player", checkAdmin, PlayerController.addNewClient);
 

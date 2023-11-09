@@ -41,7 +41,7 @@ router.get(
 
 router.get(
   "/display2",
-  checkNotAdmin,
+  checkAdmin,
   renderViewChainable("admin/display2.html")
 );
 
