@@ -209,16 +209,13 @@ const func = async () => {
     startDate.setHours(...startArr);
     endDate.setHours(...endArr);
     runAtSpecificTimeOfDay(...startArr, () => {
-      console.log("start");
       Controller.sendStateToClients({ action: "resume", type: "break_change" });
     });
     runAtSpecificTimeOfDay(...endArr, () => {
-      console.log("end");
       Controller.sendStateToClients({ action: "pause", type: "break_change" });
     });
   });
   const tasks = cron.getTasks();
-  console.log(tasks);
 };
 
 cron.schedule("0 2 * * Monday-Friday", func);

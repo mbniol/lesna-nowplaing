@@ -111,8 +111,10 @@ class Controller {
     const data = await fetchWebApi(token, "me/player/queue");
     // console.log("kurwaaa");
     if (data.queue && data.currently_playing) {
-      const tracks = data.queue.map((track) => getTheEssence(track, 300));
-      // console.log(tracks);
+      const queueTruncated = data.queue.slice(0, 5);
+      // const queueTruncated = data.queue.slice(5);
+      const tracks = queueTruncated.map((track) => getTheEssence(track, 300));
+      console.log(tracks.length);
       const current_track = getTheEssence(data.currently_playing, 640);
       console.log(current_track);
       res.json({ current_track, queue: tracks });

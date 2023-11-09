@@ -100,13 +100,18 @@ events.onmessage = (event) => {
   }
 };
 
+const timeoutArray = [];
+
 function newQueue(tracks, scopeQueryList = queryList) {
+  timeoutArray.forEach((timeout) => clearTimeout(timeout));
   let queryListNewContent = "";
   tracks.forEach((track) => {
     queryListNewContent += `<div class="queue-item" data-id="${track.id}">
         <img class="queue-item-image" src="${track.image}" />
         <div class="queue-item-text">
-          <div class="queue-item-title">${track.name}</div>
+          <div class="queue-item-title-container">
+            <div class="queue-item-title">${track.name}</div>
+          </div>
           <div class="queue-item-artist">
           ${track.artists}
           </div>
@@ -115,6 +120,54 @@ function newQueue(tracks, scopeQueryList = queryList) {
       </div>`;
   });
   scopeQueryList.innerHTML = queryListNewContent;
+  animate();
+}
+
+function animate() {
+  const queueItems = [...document.querySelectorAll(".queue-item")].slice(0, 4);
+  const itemsWithTitles = queueItems.map((item) => {
+    title = item.querySelector(".queue-item-title");
+    return { item, title };
+  });
+
+  const additionalMargin = 10;
+
+  const filteredItemsWithTitles = itemsWithTitles.filter(({ item, title }) => {
+    //dodac tu jakis padding jaki bedzie potem
+    return (
+      title.getBoundingClientRect().right -
+        item.getBoundingClientRect().right -
+        10 >
+      0
+    );
+  });
+
+  filteredItemsWithTitles.forEach(({ item, title }) => {
+    const diff = Math.ceil(
+      title.getBoundingClientRect().right -
+        item.getBoundingClientRect().right +
+        additionalMargin
+    );
+    const transitionLength = diff / 20;
+    title.style.transition = `transform ${transitionLength}s linear`;
+    createTimeout(item, 0, transitionLength * 1000, -diff, true);
+  });
+
+  function createTimeout(item, delay, transitionLength, vector, forward) {
+    const title = item.querySelector(".queue-item-title");
+    timeoutArray.push(
+      setTimeout(() => {
+        title.style.transform = `translateX(${forward ? vector : 0}px)`;
+        timeoutArray.push(
+          setTimeout(
+            () =>
+              createTimeout(item, delay, transitionLength, vector, !forward),
+            transitionLength + 4000
+          )
+        );
+      }, delay)
+    );
+  }
 }
 
 function createNowPlaying(id, position, duration, image, name, artists) {
