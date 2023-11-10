@@ -1,10 +1,12 @@
 import { sendEventsToAll } from "../helpers/player.js";
 import Auth from "../helpers/auth.js";
 import { fetchWebApi } from "../helpers/helpers.js";
+import "dotenv/config";
 
 class Controller {
   static #clients = [];
   static async addNewClient(req, res) {
+    console.log("open");
     const headers = {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
@@ -12,7 +14,7 @@ class Controller {
     };
     res.writeHead(200, headers);
 
-    const clientId = process.env.CLIENT_ID;
+    const clientId = Math.random();
 
     const newClient = {
       id: clientId,
@@ -22,6 +24,7 @@ class Controller {
     Controller.#clients.push(newClient);
 
     req.on("close", () => {
+      console.log("close", clientId);
       Controller.#clients = Controller.#clients.filter(
         (client) => client.id !== clientId
       );
@@ -36,9 +39,7 @@ class Controller {
     sendEventsToAll(Controller.#clients, data);
     const token = await Auth.getInstance().getSDKToken();
     const { devices } = await fetchWebApi(token, "me/player/devices");
-    console.log(devices, token);
     const currentDevice = devices.find((device) => device.is_active);
-    console.log(currentDevice, data);
     if (data.action === "resume") {
       await fetchWebApi(
         token,
@@ -57,7 +58,7 @@ class Controller {
   static async getQueue(req, res) {
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "https://localhost:3000/player"
+      `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
     );
     // console.log("xD");
     function getTheEssence(track, imageSize) {
@@ -114,9 +115,7 @@ class Controller {
       const queueTruncated = data.queue.slice(0, 5);
       // const queueTruncated = data.queue.slice(5);
       const tracks = queueTruncated.map((track) => getTheEssence(track, 300));
-      console.log(tracks.length);
       const current_track = getTheEssence(data.currently_playing, 640);
-      console.log(current_track);
       res.json({ current_track, queue: tracks });
     }
   }

@@ -1,12 +1,12 @@
 import Auth from "../helpers/auth.js";
+import "dotenv/config";
 
 export default class Controller {
   static async getSDKToken(req, res) {
-    console.log(req.query.code);
     req.session.code = req.query.code;
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "https://localhost:3000/player"
+      `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
     );
     res.json({
       token,

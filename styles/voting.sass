@@ -71,6 +71,43 @@
     text-wrap: nowrap
     -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent)
 
+.voting-votecount-wrapper
+    overflow: hidden
+    width: 100%
+
+.voting-votecount-count
+    padding-left: 5px
+    position: absolute
+    display: inline-block
+
+    &--take-position
+        // left: 0
+        position: absolute
+        animation: .5s ease-in-out example1
+
+    &--leave-position
+        // left: 0
+        position: absolute
+        animation: .5s ease-in-out example2
+
+@keyframes example1
+    0%
+        transform: translateY(-100%)
+
+    100%
+        transform: translateY(0%)
+
+@keyframes example2
+    0%
+        transform: translateY(0%)
+        left: 0
+
+    100%
+        position: absolute
+        transform: translateY(100%)
+
+
+
 .voting-vote-btn
     @include core.flexCenter()
     flex-shrink: 0
@@ -94,6 +131,9 @@
     height: 1em
     z-index: 10
     box-shadow: 0 0 0.5rem black
+
+.add-song-floating-btn, .voting-vote-btn
+    transition: .3s filter ease-out
 
 .add-song
     position: fixed

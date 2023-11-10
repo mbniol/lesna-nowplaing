@@ -9,7 +9,6 @@ import session from "express-session";
 import Mysql from "./helpers/database.js";
 import fs from "fs";
 import https from "https";
-
 import cron from "node-cron";
 import { errorHandler } from "./helpers/errorHandler.js";
 import Controller from "./controllers/player.js";
@@ -18,7 +17,7 @@ import Controller from "./controllers/player.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.WEB_PORT || 3000;
 // app.use(function (req, res, next) {
 //   // Website you wish to allow to connect
 //   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -96,10 +95,7 @@ https
     },
     app
   )
-  .listen(port, () => {
-    console.log("Express" + port);
-  });
-console.log("hej");
+  .listen(port);
 
 //
 //   "TEST API QUERY: ",
@@ -166,7 +162,6 @@ function runAtSpecificTimeOfDay(hour, minutes, seconds, func) {
       seconds,
       0
     ).getTime() - now;
-  console.log(eta_ms);
 
   if (eta_ms > 0) {
     setTimeout(func, eta_ms);
@@ -220,4 +215,4 @@ const func = async () => {
 
 cron.schedule("0 2 * * Monday-Friday", func);
 
-setTimeout(func, 15000);
+// setTimeout(func, 15000);

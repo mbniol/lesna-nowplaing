@@ -4,12 +4,13 @@ import {
   get_pattern,
   addToPlaylist,
 } from "../helpers/playlist.js";
+import "dotenv/config";
 
 export default class Controller {
   static async make(req, res) {
     const SDKToken = await Auth.getInstance().getSDKToken(
       req.session.code,
-      "https://localhost:3000/player"
+      `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
     );
     await clearPlaylist(SDKToken);
     const APIToken = await Auth.getInstance().getAPIToken();

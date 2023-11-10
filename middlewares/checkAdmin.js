@@ -1,5 +1,6 @@
 import Auth from "../helpers/auth.js";
 import { renderView } from "../helpers/helpers.js";
+import "dotenv/config";
 
 function checkAdmin(req, res, next) {
   req.session.redirect = req.originalUrl;
@@ -21,7 +22,10 @@ function checkNotAdmin(req, res, next) {
 function loginSpotify(req, res, next) {
   if (!req.session.triedLogging) {
     req.session.triedLogging = true;
-    return Auth.getInstance().loginUser(res, "https://localhost:3000/player");
+    return Auth.getInstance().loginUser(
+      res,
+      `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
+    );
   }
   req.session.triedLogging = false;
   next();

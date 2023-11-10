@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/voting.css" />
     <title>Leśna - głosowanie</title>
+    <script src="/js/fingerprint.js"></script>
   </head>
   <body>
     <div class="root">
@@ -55,7 +56,7 @@
             <div class="step2-song-title" id="step2-song-title">Głucha noc</div>
             <div class="step2-song-artist" id="step2-song-artist">Rychu peja</div>
           </div>
-          <button id="voting-vote-btn" class="voting-vote-btn" data-track-id="a">Potwierdź</button>
+          <button id="voting-vote-btn" class="voting-vote-btn closeBtn" data-track-id="a">Potwierdź</button>
         </div>
       </div>
       <div class="voting-wrapper">
@@ -64,5 +65,21 @@
       </div>
     </div>
     <script src="/js/voting.js" defer></script>
+    <script defer>
+      // Initialize the agent at application startup.
+      var fpPromise = FingerprintJS.load();
+
+      // Analyze the visitor when necessary.
+      setTimeout(() => {
+        fpPromise
+          .then((fp) => {
+            console.log(fp);
+            return fp.get();
+          })
+          .then((result) => console.log(result));
+      }, 0);
+
+      //https://stackoverflow.com/questions/70999961/how-do-i-get-user-geo-location-from-a-node-jsexpress-server
+    </script>
   </body>
 </html>

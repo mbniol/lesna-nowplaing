@@ -1,3 +1,5 @@
+// import "dotenv/config";
+
 Document.prototype.createElementFromString = function (str) {
   const element = new DOMParser().parseFromString(str, "text/html");
   const child = element.documentElement.querySelector("body").firstChild;
@@ -10,7 +12,10 @@ function convertToHumanTime(wholeSeconds) {
   return position_minutes + ":" + String(position_seconds).padStart(2, "0");
 }
 
-const events = new EventSource("https://localhost:3000/api/player");
+const events = new EventSource(
+  // `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
+  `https://localhost:3000/api/player`
+);
 let progressInterval;
 const background = document.querySelector(".background");
 const nowPlayingContainer = document.querySelector(".main-left");
@@ -110,7 +115,7 @@ function newQueue(tracks, scopeQueryList = queryList) {
         <img class="queue-item-image" src="${track.image}" />
         <div class="queue-item-text">
           <div class="queue-item-title-container">
-            <div class="queue-item-title">${track.name}</div>
+            <span class="queue-item-title">${track.name}</span>
           </div>
           <div class="queue-item-artist">
           ${track.artists}
@@ -135,10 +140,7 @@ function animate() {
   const filteredItemsWithTitles = itemsWithTitles.filter(({ item, title }) => {
     //dodac tu jakis padding jaki bedzie potem
     return (
-      title.getBoundingClientRect().right -
-        item.getBoundingClientRect().right -
-        10 >
-      0
+      title.getBoundingClientRect().right > item.getBoundingClientRect().right
     );
   });
 
@@ -150,7 +152,7 @@ function animate() {
     );
     const transitionLength = diff / 20;
     title.style.transition = `transform ${transitionLength}s linear`;
-    createTimeout(item, 0, transitionLength * 1000, -diff, true);
+    createTimeout(item, 4000, transitionLength * 1000, -diff, true);
   });
 
   function createTimeout(item, delay, transitionLength, vector, forward) {
@@ -240,3 +242,9 @@ function updateBackground(imageSrc) {
     backgroundImage.remove();
   }, 500);
 }
+
+window.addEventListener("beforeunload", function (e) {
+  events.close();
+  e.preventDefault();
+  e.returnValue = "";
+});

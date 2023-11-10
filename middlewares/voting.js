@@ -1,25 +1,34 @@
-function checkVoteRight(req, res, next) {
-  const [date, formatedDate] = getCurrentDate();
-  const lastVote = req.session.lastVote;
+import ipaddr from "ipaddr.js";
+import AuthModel from "../models/auth.js";
 
-  if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
+function convertIP(remoteAddress) {
+  if (ipaddr.isValid(remoteAddress)) {
+    const addr = ipaddr.parse(remoteAddress);
+    return addr.kind() === "ipv6" && addr.isIPv4MappedAddress()
+      ? addr.toIPv4Address().toString()
+      : remoteAddress;
+  }
+}
+async function checkVoteRight(req, res, next) {
+  req.convertedIP = convertIP(req.socket.remoteAddress);
+  const hasVoted = await AuthModel.checkTodaysVote(req.convertedIP);
+  if (hasVoted) {
     return res.sendStatus(403);
   }
-  // res.locals.formatedDate = formatedDate;
-  req.session.lastVote = formatedDate;
+  // const lastVote = req.session.lastVote;
+
+  // if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
+  //   return res.sendStatus(403);
+  // }
+  // // res.locals.formatedDate = formatedDate;
+  // req.session.lastVote = formatedDate;
   next();
 }
-function checkVote(req, res, next) {
-  const [date, formatedDate] = getCurrentDate();
-  const lastVote = req.session.lastVote;
-  if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
-    return res.json({vote:1});
-  }
-  else{
-    return res.json({vote:0});
-  }
+async function checkVote(req, res, next) {
+  req.convertedIP = convertIP(req.socket.remoteAddress);
+  const hasVoted = await AuthModel.checkTodaysVote(req.convertedIP);
+  return res.json({ vote: 0 });
   // res.locals.formatedDate = formatedDate;
-
 }
 
 function getCurrentDate() {
@@ -30,5 +39,4 @@ function getCurrentDate() {
   return [date, formatedDate];
 }
 
-
-export { checkVoteRight, getCurrentDate, checkVote};
+export { checkVoteRight, getCurrentDate, checkVote };

@@ -1,5 +1,5 @@
 import Mysql from "../helpers/database.js";
-import {errorHandler} from "../helpers/errorHandler.js";
+import { errorHandler } from "../helpers/errorHandler.js";
 
 export default class Model {
   static async get_song(id) {
@@ -148,16 +148,34 @@ export default class Model {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
   }
-  static async add_vote(id) {
+  static async add_vote(id, ip) {
     const pool = Mysql.getPromiseInstance();
     const [, err] = await errorHandler(
       pool.query,
       pool,
-      "INSERT INTO votes (id, track_id, date_added) VALUES (NULL, ?, current_timestamp())",
-      [id]
+      "INSERT INTO votes (id, track_id, date_added, ip) VALUES (NULL, ?, current_timestamp(), ?)",
+      [id, ip]
     );
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
+  }
+  static async votes_amount(id) {
+    const pool = Mysql.getPromiseInstance();
+    const [data, selectErr] = await errorHandler(
+      pool.query,
+      pool,
+      `SELECT
+      SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 0 DAY) THEN 1 ELSE 0 END) +
+      ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) / 2) AS count
+FROM tracks t
+JOIN votes v ON t.id = v.track_id
+WHERE t.id = ?`,
+      [id]
+    );
+    if (selectErr) {
+      throw new Error("Nie udało isę wykonać zapytania", { cause: err });
+    }
+    return data[0][0].count;
   }
 }

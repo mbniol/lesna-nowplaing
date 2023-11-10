@@ -7,7 +7,7 @@ import PlayerController from "../controllers/player.js";
 import PlaylistController from "../controllers/playlist.js";
 import SongController from "../controllers/song.js";
 import NewsController from "../controllers/news.js";
-import {checkVoteRight, checkVote} from "../middlewares/voting.js";
+import { checkVoteRight, checkVote } from "../middlewares/voting.js";
 
 const router = new Router();
 
@@ -38,6 +38,8 @@ router.put("/pattern/:id/active", checkAdmin, PatternController.makeActive);
 router.post("/login", checkNotAdmin, AuthController.loginAdmin);
 
 router.post("/votes", checkVoteRight, SongController.vote);
+
+router.get("/live_votes", SongController.addNewClient);
 
 router.post("/check_vote_status", checkVote);
 

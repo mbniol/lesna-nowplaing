@@ -104,7 +104,6 @@ export default class Auth {
   async getAPIToken() {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
-    // console.log("xD");
     if (
       this.#tokens.api.access == undefined ||
       this.#tokens.api.expiration_date < currentTimestamp + 1000 * 60 * 1
@@ -125,7 +124,6 @@ export default class Auth {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
     if (this.#tokens.sdk.access === undefined && code) {
-      console.log("128");
       const tokenOptions = this.#getSDKTokenOptions(code, uri);
       await this.#setSDKToken(tokenOptions);
     } else if (
@@ -135,7 +133,6 @@ export default class Auth {
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
     }
-    console.log(this.#tokens);
     return this.#tokens.sdk.access;
   }
 
