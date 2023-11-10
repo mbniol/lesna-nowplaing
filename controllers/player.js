@@ -36,6 +36,7 @@ class Controller {
     res.sendStatus(200);
   }
   static async sendStateToClients(data) {
+    console.log("sendStateToClients");
     sendEventsToAll(Controller.#clients, data);
     const token = await Auth.getInstance().getSDKToken();
     const { devices } = await fetchWebApi(token, "me/player/devices");
@@ -56,6 +57,7 @@ class Controller {
     // res.sendStatus(200);
   }
   static async getQueue(req, res) {
+    console.log("getQueue");
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
       `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
@@ -111,8 +113,9 @@ class Controller {
     }
     const data = await fetchWebApi(token, "me/player/queue");
     // console.log("kurwaaa");
+    // console.log(data.currently_playing);
     if (data.queue && data.currently_playing) {
-      const queueTruncated = data.queue.slice(0, 5);
+      const queueTruncated = data.queue.slice(0, 6);
       // const queueTruncated = data.queue.slice(5);
       const tracks = queueTruncated.map((track) => getTheEssence(track, 300));
       const current_track = getTheEssence(data.currently_playing, 640);

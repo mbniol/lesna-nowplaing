@@ -105,11 +105,12 @@ export default class Auth {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
     if (
-      this.#tokens.api.access == undefined ||
-      this.#tokens.api.expiration_date < currentTimestamp + 1000 * 60 * 1
+      this.#tokens.api.access == undefined
+      // || this.#tokens.api.expiration_date < currentTimestamp + 1000 * 60 * 1
     ) {
       await this.#setAPIToken();
     }
+    console.log("api", currentDate, this.#tokens.api);
     return this.#tokens.api.access;
   }
 
@@ -123,16 +124,20 @@ export default class Auth {
   async getSDKToken(code, uri) {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
+    // console.log(code);
     if (this.#tokens.sdk.access === undefined && code) {
+      // console.log("fresh");
       const tokenOptions = this.#getSDKTokenOptions(code, uri);
       await this.#setSDKToken(tokenOptions);
     } else if (
-      this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
-      this.#tokens.refresh !== undefined
+      // this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
+      this.#tokens.sdk.refresh !== undefined
     ) {
+      // console.log("refresh");
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
     }
+    console.log("sdk", currentDate, this.#tokens);
     return this.#tokens.sdk.access;
   }
 
@@ -154,9 +159,10 @@ export default class Auth {
         cause: jsonErr,
       });
     }
+    // console.log("response", jsonResponse.refresh_token, this.#tokens.sdk);
     const currentDate = new Date();
     // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
-    const oldRefreshToken = this.#tokens.sdk.refresh_token;
+    const oldRefreshToken = this.#tokens.sdk.refresh;
     // console.log("respon6s", jsonResponse, tokenOptions);
     this.#tokens.sdk = {
       expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,

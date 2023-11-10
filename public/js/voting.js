@@ -84,12 +84,20 @@ add_song.addEventListener("click", async (e) => {
   }
 });
 
+async function getVisitorId() {
+  const fp = await FingerprintJS.load();
+  const result = await fp.get();
+  return result.visitorId;
+}
+
 async function show_votes() {
   const result = await fetch("/api/track_list");
   const json = await result.json();
   json.forEach((row) => {
     document.getElementById("voting-list").innerHTML += add_track(row);
   });
+  const visitorId = await getVisitorId();
+  console.log(JSON.stringify({ visitorId }));
   const votingButtons = document.querySelectorAll(".voting-vote-btn");
   votingButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
@@ -99,12 +107,11 @@ async function show_votes() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ spotifyLink: trackID }),
+        body: JSON.stringify({ spotifyLink: trackID, visitorId }),
       });
       disableVoting();
     });
   });
-  console.log("hejka");
   const events = new EventSource(
     // `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
     `https://localhost:3000/api/live_votes`
@@ -145,8 +152,9 @@ async function show_votes() {
   const response = await fetch("/api/check_vote_status", {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({ visitorId }),
   });
   //przypisanie danych z odpowiedzi do json
   const votestatus = await response.json();

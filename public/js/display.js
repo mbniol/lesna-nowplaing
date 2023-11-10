@@ -55,6 +55,7 @@ events.onmessage = (event) => {
         runCounter(position_s);
       }
       newQueue(queue);
+      animate();
       break;
     }
     case "new_song": {
@@ -77,6 +78,7 @@ events.onmessage = (event) => {
         setTimeout(() => {
           newQueue(queue);
           queryList.classList.remove("queue-list--song-change");
+          animate();
         }, 650);
       } else {
         queryList.classList.add("queue-list--queue-change");
@@ -87,6 +89,7 @@ events.onmessage = (event) => {
         setTimeout(() => {
           queryList.remove();
           queryList = newQueryList;
+          animate();
         }, 650);
       }
       break;
@@ -125,7 +128,6 @@ function newQueue(tracks, scopeQueryList = queryList) {
       </div>`;
   });
   scopeQueryList.innerHTML = queryListNewContent;
-  animate();
 }
 
 function animate() {
@@ -143,6 +145,7 @@ function animate() {
       title.getBoundingClientRect().right > item.getBoundingClientRect().right
     );
   });
+  console.log(filteredItemsWithTitles);
 
   filteredItemsWithTitles.forEach(({ item, title }) => {
     const diff = Math.ceil(
@@ -152,6 +155,7 @@ function animate() {
     );
     const transitionLength = diff / 20;
     title.style.transition = `transform ${transitionLength}s linear`;
+    console.log(diff);
     createTimeout(item, 4000, transitionLength * 1000, -diff, true);
   });
 

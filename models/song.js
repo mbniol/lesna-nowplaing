@@ -148,13 +148,13 @@ export default class Model {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
   }
-  static async add_vote(id, ip) {
+  static async add_vote(id, ip, visitorId) {
     const pool = Mysql.getPromiseInstance();
     const [, err] = await errorHandler(
       pool.query,
       pool,
-      "INSERT INTO votes (id, track_id, date_added, ip) VALUES (NULL, ?, current_timestamp(), ?)",
-      [id, ip]
+      "INSERT INTO votes (id, track_id, date_added, ip, visitor_id) VALUES (NULL, ?, current_timestamp(), ?, ?)",
+      [id, ip, visitorId]
     );
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });

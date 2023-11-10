@@ -11,7 +11,15 @@ import { checkVoteRight, checkVote } from "../middlewares/voting.js";
 
 const router = new Router();
 
-router.get("/token/sdk", checkAdmin, AuthController.getSDKToken);
+router.get(
+  "/token/sdk",
+  checkAdmin,
+  (req, res, next) => {
+    console.log("call");
+    next();
+  },
+  AuthController.getSDKToken
+);
 
 router.get("/pattern/:pattern_id/break", checkAdmin, BreakController.getMany);
 
