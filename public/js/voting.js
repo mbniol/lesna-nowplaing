@@ -1,9 +1,3 @@
-Document.prototype.createElementFromString = function (str) {
-  const element = new DOMParser().parseFromString(str, "text/html");
-  const child = element.documentElement.querySelector("body").firstChild;
-  return child;
-};
-
 const closeBtn = document.querySelectorAll(".closeBtn");
 const backBtn = document.getElementById("backBtn");
 const openBtn = document.getElementsByClassName("add-song-floating-btn")[0];
@@ -93,8 +87,14 @@ async function getVisitorId() {
 async function show_votes() {
   const result = await fetch("/api/track_list");
   const json = await result.json();
-  json.forEach((row) => {
-    document.getElementById("voting-list").innerHTML += add_track(row);
+  json.forEach(({ id, name, artist, count, cover }) => {
+    document.getElementById("voting-list").innerHTML += add_track(
+      id,
+      name,
+      artist,
+      count,
+      cover
+    );
   });
   const visitorId = await getVisitorId();
   console.log(JSON.stringify({ visitorId }));
@@ -114,37 +114,61 @@ async function show_votes() {
   });
   const events = new EventSource(
     // `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
-    `https://localhost:3000/api/live_votes`
+    `/api/live_votes`
   );
-  events.onmessage = (event) => {
-    const { track_id, votes } = JSON.parse(event.data);
+  events.onmessage = async (event) => {
+    const { track_id, cover, name, artist, votes } = JSON.parse(event.data);
+    console.log(JSON.parse(event.data));
     const targetElement = document.querySelector("#letterstart" + track_id);
-    console.log(targetElement);
-    const voteCountContainer = targetElement.querySelector(
-      ".voting-votecount-container"
-    );
-    const oldSpan = voteCountContainer.querySelector(".voting-votecount-count");
-    const newSpan = document.createElementFromString(
-      `<span class="voting-votecount-count voting-votecount-count--take-position">${votes}</span>`
-    );
-    voteCountContainer.appendChild(newSpan);
-    // debugger;
-    oldSpan.classList.add("voting-votecount-count--leave-position");
-    // setTimeout(() => {
-    //   newSpan.classList.add("voting-votecount-count");
-    // }, 0);
-    // setTimeout(() => {
-    //   newSpan.classList.add("voting-votecount-count--take-position");
-    // }, 0);
-    // setTimeout(() => {
-    //   newSpan.classList.remove("voting-votecount-count--next");
-    //   oldSpan.classList.add("voting-votecount-count--leave-position");
-    // }, 100);
-    // debugger;
-    setTimeout(() => {
-      newSpan.classList.remove("voting-votecount-count--take-position");
-      oldSpan.remove();
-    }, 500);
+    if (!targetElement) {
+      document.getElementById("voting-list").innerHTML += add_track(
+        track_id,
+        name,
+        artist,
+        votes,
+        cover
+      );
+    } else {
+      const voteCountContainer = targetElement.querySelector(
+        ".voting-votecount-container"
+      );
+      const oldSpan = voteCountContainer.querySelector(
+        ".voting-votecount-count"
+      );
+      const newSpan = document.createElementFromString(
+        `<span class="voting-votecount-count voting-votecount-count--take-position">${votes}</span>`
+      );
+      voteCountContainer.appendChild(newSpan);
+      // debugger;
+      oldSpan.classList.add("voting-votecount-count--leave-position");
+      // setTimeout(() => {
+      //   newSpan.classList.add("voting-votecount-count");
+      // }, 0);
+      // setTimeout(() => {
+      //   newSpan.classList.add("voting-votecount-count--take-position");
+      // }, 0);
+      // setTimeout(() => {
+      //   newSpan.classList.remove("voting-votecount-count--next");
+      //   oldSpan.classList.add("voting-votecount-count--leave-position");
+      // }, 100);
+      // debugger;
+      setTimeout(() => {
+        newSpan.classList.remove("voting-votecount-count--take-position");
+        oldSpan.remove();
+      }, 500);
+    }
+    const response = await fetch("/api/check_vote_status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ visitorId }),
+    });
+    //przypisanie danych z odpowiedzi do json
+    const votestatus = await response.json();
+    if (votestatus["vote"]) {
+      disableVoting();
+    }
   };
   window.addEventListener("beforeunload", function (e) {
     events.close();
@@ -162,7 +186,7 @@ async function show_votes() {
     disableVoting();
   }
 }
-function add_track({ id, name, artist, count, cover }) {
+function add_track(id, name, artist, count, cover) {
   return `
   <div class="voting-item" id="letterstart${id}">
   <div class="voting-song-cover">

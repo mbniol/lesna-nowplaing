@@ -95,7 +95,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
           previous_tracks: event_previous_tracks,
         },
       }) => {
-        console.log(event_current_track);
+        console.log(position, event_previous_tracks, event_current_track);
         // let nextValue = myGenerator.next();
         // while (
         //   !nextValue.done &&
@@ -122,7 +122,10 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
           };
           let fetch_current_track = {},
             fetch_queue;
-          // console.log(event_current_track);
+          const minutes = Math.floor(position / 60000);
+          const seconds = Math.ceil((position - minutes * 60000) / 1000);
+          const position_human =
+            minutes + ":" + String(seconds).padStart(2, "0");
           const eventArtists = event_current_track.artists.map(
             ({ name }) => name
           ).join`, `;
@@ -133,17 +136,6 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
               fetch_current_track.name === event_current_track.name
             )
           ) {
-            console.log(
-              "artysta",
-              fetch_current_track.artists,
-              eventArtists,
-              "długość",
-              fetch_current_track.duration,
-              event_current_track.duration_ms,
-              "nazwa",
-              fetch_current_track.name,
-              event_current_track.name
-            );
             const response = await fetch("/api/queue");
             const json = await response.json();
             ({ current_track: fetch_current_track, queue: fetch_queue } = json);
@@ -164,7 +156,10 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
               body: JSON.stringify({
                 current_track: fetch_current_track,
                 queue: fetch_queue,
-                position,
+                position: {
+                  seconds: Math.ceil(position / 1000),
+                  human: position_human,
+                },
                 paused,
                 action: paused ? "pause" : "resume",
               }),
@@ -184,12 +179,16 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
               body: JSON.stringify({
                 current_track: fetch_current_track,
                 queue: fetch_queue,
-                position,
+                position: {
+                  seconds: Math.ceil(position / 1000),
+                  human: position_human,
+                },
                 paused,
                 action: "position_change",
               }),
             });
-          } else {
+          }
+          if (position === 0) {
             // return console.log("nowa piosenka");
             return fetch("/api/player", {
               method: "POST",
@@ -199,115 +198,15 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
               body: JSON.stringify({
                 current_track: fetch_current_track,
                 queue: fetch_queue,
-                position,
+                position: {
+                  seconds: Math.ceil(position / 1000),
+                  human: position_human,
+                },
                 paused,
                 action: "new_song",
               }),
             });
           }
-          //   const lastRequestArchive = lastRequest;
-          lastRequest = {
-            id: event_current_track.id,
-            position,
-            paused,
-          };
-          // console.log(lastRequest);
-          fetch("/api/player", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              // "Content-Type": "multipart/form-data",
-            },
-            body: JSON.stringify(lastRequest),
-          });
-
-          //   if (playerChanges++ === 0) {
-          //     addClickEnforcer();
-          //   }
-          //   const rzeczy = await fetch("/api/queue");
-          //   const previous_track =
-          //     event_previous_tracks[event_previous_tracks.length - 1];
-          //   const duration_s = Math.ceil(event_current_track.duration_ms / 1000);
-          //   const position_whole_seconds = Math.floor(position / 1000);
-          //   let { current_track: fetch_current_track, queue } = await rzeczy.json();
-          //   console.log(fetch_current_track, queue);
-          //   lastRequest.queue = queue;
-          //   if (
-          //     position === 0 &&
-          //     queue[0].id === event_current_track.id &&
-          //     fetch_current_track.id === previous_track.id
-          //   ) {
-          //     const actualCurrent = queue.shift();
-          //     fetch_current_track = actualCurrent;
-          //   }
-          //   const playedEarlier = document.querySelector(".now-playing");
-          //   if (playedEarlier) {
-          //     console.log(playedEarlier.dataset.id, event_current_track.id);
-          //   }
-
-          //   if (
-          //     (position === 0 && !sameQueue(lastRequestArchive.queue, queue)) ||
-          //     !playedEarlier ||
-          //     playedEarlier.dataset.id !== event_current_track.id
-          //   ) {
-          //     lastId = event_current_track.id;
-          //     if (playedEarlier) {
-          //       playedEarlier.classList.add("now-playing--go");
-          //       setTimeout(() => playedEarlier.remove(), 500);
-          //     }
-          //     const nowPlaying =
-          //       document.createElementFromString(`<div class="now-playing" data-id="${fetch_current_track.id}"><div class="cover-art">
-          //   <progress
-          //     class="song-progress-bar"
-          //     value="${position_whole_seconds}"
-          //     max="${duration_s}"
-          //   ></progress>
-          //   <img src="${fetch_current_track.image}" width="100%" />
-          // </div>
-          // <div class="song-title-container">
-          //   <div class="song-title">${fetch_current_track.name}</div>
-          //   <div class="song-artist">${fetch_current_track.artists}</div>
-          //   <div class="song-position">00:00</div>
-          //   <div class="song-timestamp">${fetch_current_track.duration}</div>
-          // </div></div>`);
-          //     nowPlayingContainer.appendChild(nowPlaying);
-          //   }
-          //   const progressBar = document.querySelector(
-          //     ".now-playing:not(.now-playing--go) .song-progress-bar"
-          //   );
-          //   const positionDiv = document.querySelector(
-          //     ".now-playing:not(.now-playing--go) .song-position"
-          //   );
-          //   positionDiv.innerText = convertToHumanTime(position_whole_seconds);
-          //   progressBar.value = position_whole_seconds;
-          //   progressBar.max = duration_s;
-          //   // console.log(progressBar, paused);
-          //   if (!paused) {
-          //     clearInterval(progressInterval);
-          //     // console.log(progressBar);
-          //     progressInterval = setInterval(() => {
-          //       progressBar.value++;
-          //       const position_converted = convertToHumanTime(progressBar.value);
-          //       positionDiv.innerText = position_converted;
-          //       // console.log(progressBar.value);
-          //     }, 1000);
-          //   } else {
-          //     clearInterval(progressInterval);
-          //   }
-          // const queryList = document.querySelector(".queue-list");
-          // let queryListNewContent = "";
-          // queue.forEach((track) => {
-          //   queryListNewContent += `<div class="queue-item">
-          //     <img class="queue-item-image" src="${track.image}" hei />
-          //     <div class="queue-item-title">${track.name}</div>
-          //     <div class="queue-item-artist">
-          //     ${track.artists}
-          //     </div>
-          //     <div class="song-timestamp">${track.duration}</div>
-          //   </div>`;
-          // });
-          // queryList.innerHTML = queryListNewContent;
-          // }
         }
       }
     );

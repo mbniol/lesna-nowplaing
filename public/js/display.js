@@ -1,10 +1,4 @@
-// import "dotenv/config";
-
-Document.prototype.createElementFromString = function (str) {
-  const element = new DOMParser().parseFromString(str, "text/html");
-  const child = element.documentElement.querySelector("body").firstChild;
-  return child;
-};
+const HardwareAccelerationDelay = 300;
 
 function convertToHumanTime(wholeSeconds) {
   const position_minutes = Math.floor(wholeSeconds / 60);
@@ -12,97 +6,128 @@ function convertToHumanTime(wholeSeconds) {
   return position_minutes + ":" + String(position_seconds).padStart(2, "0");
 }
 
-const events = new EventSource(
-  // `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
-  `https://localhost:3000/api/player`
-);
+const events = new EventSource(`/api/player`);
 let progressInterval;
 const background = document.querySelector(".background");
 const nowPlayingContainer = document.querySelector(".main-left");
-let queryList = document.querySelector(".queue-list");
-const queryListContainer = document.querySelector(".queue-list-container");
+let queueList = document.querySelector(".queue-list");
+const queueListContainer = document.querySelector(".queue-list-container");
+
+function toggleHardwareAcceleration(elements, ...properties) {
+  elements.forEach((el) => {
+    console.log(el.style);
+    el.style.willChange =
+      el.style.willChange === "" ? properties.join(",") : "";
+  });
+}
+
+function initializeSong(current_track, position, queue, paused) {
+  // toggleHardwareAcceleration([...playedEarlier, ...queryItems], "opacity", "transform");
+  updateBackground(current_track.image);
+  createNowPlaying(
+    current_track.id,
+    position,
+    current_track.duration,
+    current_track.image,
+    current_track.name,
+    current_track.artists
+  );
+  if (!paused) {
+    runCounter(position.seconds);
+  }
+  newQueue(queue);
+  animateQueueTitles();
+  setTimeout(animatePlayingTitle, 650);
+}
+
+function removeFirstQueueItem(queue) {
+  queueList.classList.add("queue-list--song-change");
+  setTimeout(() => {
+    toggleHardwareAcceleration(queueList.childNodes);
+    newQueue(queue);
+    queueList.classList.remove("queue-list--song-change");
+    animateQueueTitles();
+  }, 650);
+}
+
+function replaceQueue(queue) {
+  queueList.classList.add("queue-list--queue-change");
+  const newQueueList = document.createElement("div");
+  newQueueList.classList.add("queue-list");
+  newQueue(queue, newQueueList);
+  queueListContainer.appendChild(newQueueList);
+  setTimeout(() => {
+    // toggleHardwareAcceleration(queueList.childNodes);
+    queueList.remove();
+    queueList = newQueueList;
+    animateQueueTitles();
+  }, 650);
+}
+
+function showNewSong(current_track, position, queue, paused) {
+  queueList = document.querySelector(".queue-list");
+  const playedEarlier = document.querySelectorAll(".now-playing");
+  const queryItems = [...queueList.childNodes];
+  toggleHardwareAcceleration(
+    [...playedEarlier, ...queryItems],
+    "opacity",
+    "transform"
+  );
+  updateBackground(current_track.image);
+  setTimeout(() => {
+    fadeOutPlaying(playedEarlier);
+    createNowPlaying(
+      current_track.id,
+      { seconds: 0, human: "00:00" },
+      current_track.duration,
+      current_track.image,
+      current_track.name,
+      current_track.artists
+    );
+    if (!paused) {
+      runCounter(position.seconds);
+    }
+    const previousQueue = [current_track, ...queue];
+    const areQueuesTheSame = queryItems.every(
+      (nextSong, i) => nextSong.dataset.id === previousQueue[i].id
+    );
+    if (areQueuesTheSame) {
+      removeFirstQueueItem(queue);
+    } else {
+      replaceQueue(queue);
+    }
+    setTimeout(animatePlayingTitle, 650);
+  }, HardwareAccelerationDelay);
+}
 
 events.onmessage = (event) => {
   let { current_track, queue, position, paused, action, type } = JSON.parse(
     event.data
   );
-  let position_s;
-  let duration_s;
-  if (type === "break_change") {
-    const { progressBar } = getCounterElements();
-    position_s = Number(progressBar.value);
-  } else {
-    position_s = Math.ceil(position / 1000);
-    duration_s = Math.floor(current_track.duration / 1000);
-  }
   clearInterval(progressInterval);
-  if (queryList.firstChild === null) {
+  if (queueList.firstChild === null) {
     action = "init_song";
   }
   switch (action) {
     case "init_song": {
-      updateBackground(current_track.image);
-      position_human = convertToHumanTime(position_s);
-      createNowPlaying(
-        current_track.id,
-        { seconds: position_s, human: position_human },
-        { seconds: duration_s, human: current_track.duration_human },
-        current_track.image,
-        current_track.name,
-        current_track.artists
-      );
-      if (!paused) {
-        runCounter(position_s);
-      }
-      newQueue(queue);
-      animate();
+      initializeSong(current_track, position, queue, paused);
       break;
     }
     case "new_song": {
-      updateBackground(current_track.image);
-      fadeOutPlaying();
-      createNowPlaying(
-        current_track.id,
-        { seconds: 0, human: "00:00" },
-        { seconds: duration_s, human: current_track.duration_human },
-        current_track.image,
-        current_track.name,
-        current_track.artists
-      );
-      // runCounter(position)
-      if (!paused) {
-        runCounter(position_s);
-      }
-      if (queryList.firstElementChild.dataset.id === current_track.id) {
-        queryList.classList.add("queue-list--song-change");
-        setTimeout(() => {
-          newQueue(queue);
-          queryList.classList.remove("queue-list--song-change");
-          animate();
-        }, 650);
-      } else {
-        queryList.classList.add("queue-list--queue-change");
-        const newQueryList = document.createElement("div");
-        newQueryList.classList.add("queue-list");
-        newQueue(queue, newQueryList);
-        queryListContainer.appendChild(newQueryList);
-        setTimeout(() => {
-          queryList.remove();
-          queryList = newQueryList;
-          animate();
-        }, 650);
-      }
+      showNewSong(current_track, position, queue, paused);
       break;
     }
     case "pause": {
-      updateTime(position_s);
+      if (type !== "break_change") updateTime(position.seconds, position.human);
       break;
     }
     case "resume":
     case "position_change":
-      updateTime(position_s);
+      if (type !== "break_change") {
+        updateTime(position.seconds, position.human);
+      }
       if (!paused) {
-        runCounter(position_s);
+        runCounter(position.seconds);
       }
       break;
   }
@@ -110,11 +135,11 @@ events.onmessage = (event) => {
 
 const timeoutArray = [];
 
-function newQueue(tracks, scopeQueryList = queryList) {
+function newQueue(tracks, scopeQueueList = queueList) {
   timeoutArray.forEach((timeout) => clearTimeout(timeout));
-  let queryListNewContent = "";
+  let queueListNewContent = "";
   tracks.forEach((track) => {
-    queryListNewContent += `<div class="queue-item" data-id="${track.id}">
+    queueListNewContent += `<div class="queue-item" data-id="${track.id}">
         <img class="queue-item-image" src="${track.image}" />
         <div class="queue-item-text">
           <div class="queue-item-title-container">
@@ -123,57 +148,64 @@ function newQueue(tracks, scopeQueryList = queryList) {
           <div class="queue-item-artist">
           ${track.artists}
           </div>
-          <div class="song-timestamp">${track.duration_human}</div>
+          <div class="song-timestamp">${track.duration.human}</div>
         </div>
       </div>`;
   });
-  scopeQueryList.innerHTML = queryListNewContent;
+  scopeQueueList.innerHTML = queueListNewContent;
 }
 
-function animate() {
+function animatePlayingTitle() {
+  const parentsWithChildren = [
+    [
+      document.querySelector(".song-data"),
+      document.querySelector(".song-title"),
+    ],
+  ];
+  animate(parentsWithChildren, 30);
+}
+
+function animateQueueTitles() {
   const queueItems = [...document.querySelectorAll(".queue-item")].slice(0, 4);
   const itemsWithTitles = queueItems.map((item) => {
     title = item.querySelector(".queue-item-title");
-    return { item, title };
+    return [item, title];
   });
+  animate(itemsWithTitles, 10);
+}
 
-  const additionalMargin = 10;
-
-  const filteredItemsWithTitles = itemsWithTitles.filter(({ item, title }) => {
-    //dodac tu jakis padding jaki bedzie potem
+function animate(parentsWithChildren, additionalMargin) {
+  const filteredPairs = parentsWithChildren.filter(([parent, child]) => {
     return (
-      title.getBoundingClientRect().right > item.getBoundingClientRect().right
+      child.getBoundingClientRect().right > parent.getBoundingClientRect().right
     );
   });
-  console.log(filteredItemsWithTitles);
 
-  filteredItemsWithTitles.forEach(({ item, title }) => {
+  filteredPairs.forEach(([parent, child]) => {
     const diff = Math.ceil(
-      title.getBoundingClientRect().right -
-        item.getBoundingClientRect().right +
+      child.getBoundingClientRect().right -
+        parent.getBoundingClientRect().right +
         additionalMargin
     );
     const transitionLength = diff / 20;
-    title.style.transition = `transform ${transitionLength}s linear`;
-    console.log(diff);
-    createTimeout(item, 4000, transitionLength * 1000, -diff, true);
+    child.style.transition = `transform ${transitionLength}s linear`;
+    createTimeout(child, 4000, transitionLength * 1000, -diff, true);
   });
+}
 
-  function createTimeout(item, delay, transitionLength, vector, forward) {
-    const title = item.querySelector(".queue-item-title");
-    timeoutArray.push(
-      setTimeout(() => {
-        title.style.transform = `translateX(${forward ? vector : 0}px)`;
-        timeoutArray.push(
-          setTimeout(
-            () =>
-              createTimeout(item, delay, transitionLength, vector, !forward),
-            transitionLength + 4000
-          )
-        );
-      }, delay)
-    );
-  }
+function createTimeout(element, delay, transitionLength, vector, forward) {
+  timeoutArray.push(
+    setTimeout(() => {
+      element.style.transform = `translateX(${forward ? vector : 0}px)`;
+      timeoutArray.push(
+        setTimeout(
+          () =>
+            createTimeout(element, delay, transitionLength, vector, !forward),
+          transitionLength + 4000
+        )
+      );
+    }, delay)
+  );
 }
 
 function createNowPlaying(id, position, duration, image, name, artists) {
@@ -186,10 +218,17 @@ function createNowPlaying(id, position, duration, image, name, artists) {
     ></progress>
     <img src="${image}" width="100%" />
   </div>
-  <div class="song-title-container">
+  <div class="playing__time">
     <div class="playing__position">${position.human}</div>
     <div class="playing__length">${duration.human}</div>
-    <div class="song-title">${name}</div>
+  </div>
+  <div class="song-data">
+  <!-- ja jebie -->
+  <div class="song-second-title-container">
+    <div class="song-title-container">
+      <div class="song-title">${name}</div>
+    </div>
+  </div>
     <div class="song-artist">${artists}</div>
   </div></div>`);
   nowPlayingContainer.appendChild(nowPlaying);
@@ -205,25 +244,24 @@ function getCounterElements() {
   return { progressBar, positionDiv };
 }
 
-function updateTime(position) {
+function updateTime(seconds, human) {
   const { progressBar, positionDiv } = getCounterElements();
-  progressBar.value = position;
-  positionDiv.innerText = convertToHumanTime(position);
+  progressBar.value = seconds;
+  positionDiv.innerText = human;
 }
 
-function runCounter(position) {
+function runCounter(seconds) {
   const { progressBar, positionDiv } = getCounterElements();
   progressInterval = setInterval(() => {
     if (progressBar.value < progressBar.max) {
       progressBar.value++;
-      position++;
-      positionDiv.innerText = convertToHumanTime(position);
+      seconds++;
+      positionDiv.innerText = convertToHumanTime(seconds);
     }
   }, 1000);
 }
 
-function fadeOutPlaying() {
-  const playedEarlier = document.querySelectorAll(".now-playing");
+function fadeOutPlaying(playedEarlier) {
   playedEarlier.forEach((element) => {
     element.classList.add("now-playing--go");
   });
@@ -239,12 +277,16 @@ function updateBackground(imageSrc) {
   const newBackgroundImage = document.createElement("img");
   newBackgroundImage.src = imageSrc;
   background.appendChild(newBackgroundImage);
-  newBackgroundImage.classList.add("background__image");
-  backgroundImage.classList.add("background__image--fade-out");
-  // debugger;
+  toggleHardwareAcceleration([newBackgroundImage, backgroundImage], "opacity");
   setTimeout(() => {
-    backgroundImage.remove();
-  }, 500);
+    newBackgroundImage.classList.add("background__image");
+    backgroundImage.classList.add("background__image--fade-out");
+    // debugger;
+    setTimeout(() => {
+      backgroundImage.remove();
+      toggleHardwareAcceleration([newBackgroundImage], "opacity");
+    }, 500);
+  }, HardwareAccelerationDelay);
 }
 
 window.addEventListener("beforeunload", function (e) {
