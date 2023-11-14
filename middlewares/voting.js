@@ -10,24 +10,40 @@ function convertIP(remoteAddress) {
   }
 }
 async function checkVoteRight(req, res, next) {
+  console.log(req.body);
+  const [date, formatedDate] = getCurrentDate();
+  const lastVote = req.session.lastVote;
+  if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
+    return res.sendStatus(403);
+  }
   req.convertedIP = convertIP(req.socket.remoteAddress);
-  const hasVoted = await AuthModel.checkTodaysVote(req.convertedIP);
+  const hasVoted = await AuthModel.checkTodaysVote(
+    req.convertedIP,
+    req.body.visitorId
+  );
   if (hasVoted) {
     return res.sendStatus(403);
   }
-  // const lastVote = req.session.lastVote;
 
-  // if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
-  //   return res.sendStatus(403);
-  // }
-  // // res.locals.formatedDate = formatedDate;
-  // req.session.lastVote = formatedDate;
+  req.session.lastVote = formatedDate;
   next();
 }
 async function checkVote(req, res, next) {
+  console.log(req.body);
+  const [date, formatedDate] = getCurrentDate();
+  const lastVote = req.session.lastVote;
+  if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
+    return res.json({ vote: 1 });
+  }
   req.convertedIP = convertIP(req.socket.remoteAddress);
-  const hasVoted = await AuthModel.checkTodaysVote(req.convertedIP);
-  return res.json({ vote: 0 });
+  const hasVoted = await AuthModel.checkTodaysVote(
+    req.convertedIP,
+    req.body.visitorId
+  );
+  // if(hasVoted){
+  //   return res.json({ vote: hasVoted });
+  // }
+  return res.json({ vote: hasVoted });
   // res.locals.formatedDate = formatedDate;
 }
 

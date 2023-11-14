@@ -1,7 +1,7 @@
-const targetEl = document.getElementById("img404");
+const targetEl = document.querySelector("#img404");
 
-elementCount = 9;
+const elementCount = 9;
 
-var randomnumber = Math.floor(Math.random() * (elementCount - 1 + 1)) + 1;
+const randomnumber = Math.floor(Math.random() * elementCount) + 1;
 
 targetEl.src = "/img/404/" + randomnumber + ".webp";

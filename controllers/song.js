@@ -113,9 +113,16 @@ export default class Controller {
               track["duration_ms"],
               track["name"]
             );
-            await songModel.add_vote(track_id, req.convertedIP);
+            await songModel.add_vote(
+              track_id,
+              req.convertedIP,
+              req.body.visitorId
+            );
             const votes = await songModel.votes_amount(track_id);
-            sendEventsToAll(Controller.#clients, { track_id, votes });
+            sendEventsToAll(Controller.#clients, {
+              track_id,
+              votes,
+            });
             res.json({ error: "dodano piosenkę i głos" });
           }
         }
@@ -123,9 +130,19 @@ export default class Controller {
         if (rows[0][0]["banned"] === 1) {
           res.json({ error: "piosenka zostala zabanowan przez administracje" });
         } else {
-          await songModel.add_vote(track_id, req.convertedIP);
+          await songModel.add_vote(
+            track_id,
+            req.convertedIP,
+            req.body.visitorId
+          );
           const votes = await songModel.votes_amount(track_id);
-          sendEventsToAll(Controller.#clients, { track_id, votes });
+          sendEventsToAll(Controller.#clients, {
+            track_id,
+            cover: rows[0][0]["cover"],
+            artist: rows[0][0]["artist"],
+            name: rows[0][0]["name"],
+            votes,
+          });
           res.json({ error: "dodano głos" });
         }
       }

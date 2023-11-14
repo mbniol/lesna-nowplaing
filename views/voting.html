@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
   <head>
+    <script src="/js/helpers.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/voting.css" />
@@ -65,21 +66,5 @@
       </div>
     </div>
     <script src="/js/voting.js" defer></script>
-    <script defer>
-      // Initialize the agent at application startup.
-      var fpPromise = FingerprintJS.load();
-
-      // Analyze the visitor when necessary.
-      setTimeout(() => {
-        fpPromise
-          .then((fp) => {
-            console.log(fp);
-            return fp.get();
-          })
-          .then((result) => console.log(result));
-      }, 0);
-
-      //https://stackoverflow.com/questions/70999961/how-do-i-get-user-geo-location-from-a-node-jsexpress-server
-    </script>
   </body>
 </html>

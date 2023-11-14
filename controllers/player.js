@@ -36,6 +36,7 @@ class Controller {
     res.sendStatus(200);
   }
   static async sendStateToClients(data) {
+    console.log("sendStateToClients");
     sendEventsToAll(Controller.#clients, data);
     const token = await Auth.getInstance().getSDKToken();
     const { devices } = await fetchWebApi(token, "me/player/devices");
@@ -56,13 +57,12 @@ class Controller {
     // res.sendStatus(200);
   }
   static async getQueue(req, res) {
+    console.log("getQueue");
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
       `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
     );
-    // console.log("xD");
     function getTheEssence(track, imageSize) {
-      // console.log(track.type);
       if (track.type === "track") {
         const image = track.album.images.find(
           (image) => image.height === imageSize
@@ -73,15 +73,15 @@ class Controller {
           (track.duration_ms - minutes * 60000) / 1000
         );
         const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
-        // const duration = Math.ceil(track.duration_ms / 1000);
         const name = track.name;
         const id = track.id;
-        // console.log(track);
         return {
           image,
           artists,
-          duration: track.duration_ms,
-          duration_human,
+          duration: {
+            seconds: Math.floor(track.duration_ms / 1000),
+            human: duration_human,
+          },
           name,
           id,
         };
@@ -95,27 +95,26 @@ class Controller {
           (track.duration_ms - minutes * 60000) / 1000
         );
         const duration_human = minutes + ":" + String(seconds).padStart(2, "0");
-        // const duration = Math.ceil(track.duration_ms / 1000);
         const name = track.show.name;
         const id = track.id;
-        // console.log(track);
         return {
           image,
           artists,
-          duration: track.duration_ms,
-          duration_human,
+          duration: {
+            seconds: Math.floor(track.duration_ms / 1000),
+            human: duration_human,
+          },
           name,
           id,
         };
       }
     }
     const data = await fetchWebApi(token, "me/player/queue");
-    // console.log("kurwaaa");
     if (data.queue && data.currently_playing) {
-      const queueTruncated = data.queue.slice(0, 5);
-      // const queueTruncated = data.queue.slice(5);
+      const queueTruncated = data.queue.slice(0, 6);
       const tracks = queueTruncated.map((track) => getTheEssence(track, 300));
       const current_track = getTheEssence(data.currently_playing, 640);
+      console.log({ current_track, queue: tracks });
       res.json({ current_track, queue: tracks });
     }
   }
