@@ -14,7 +14,7 @@ function convertToHumanTime(wholeSeconds) {
 
 const events = new EventSource(
   // `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
-  `https://localhost:3000/api/player`
+  `https://192.168.17.15:3000/api/player`
 );
 let progressInterval;
 const background = document.querySelector(".background");

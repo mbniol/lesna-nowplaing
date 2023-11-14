@@ -107,7 +107,7 @@ async function show_votes() {
   console.log("hejka");
   const events = new EventSource(
     // `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
-    `https://localhost:3000/api/live_votes`
+    `https://192.168.17.15:3000/api/live_votes`
   );
   events.onmessage = (event) => {
     const { track_id, votes } = JSON.parse(event.data);

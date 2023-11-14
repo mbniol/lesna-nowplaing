@@ -110,6 +110,7 @@ export default class Auth {
     ) {
       await this.#setAPIToken();
     }
+    console.log('getAPI', currentDate, this.#tokens)
     return this.#tokens.api.access;
   }
 
@@ -133,6 +134,7 @@ export default class Auth {
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
     }
+    console.log('getSDK', currentDate, this.#tokens)
     return this.#tokens.sdk.access;
   }
 
