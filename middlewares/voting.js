@@ -18,7 +18,7 @@ async function checkVoteRight(req, res, next) {
   }
   req.convertedIP = convertIP(req.socket.remoteAddress);
   const hasVoted = await AuthModel.checkTodaysVote(
-    req.convertedIP,
+    // req.convertedIP,
     req.body.visitorId
   );
   if (hasVoted) {
@@ -35,9 +35,9 @@ async function checkVote(req, res, next) {
   if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
     return res.json({ vote: 1 });
   }
-  req.convertedIP = convertIP(req.socket.remoteAddress);
+  // req.convertedIP = convertIP(req.socket.remoteAddress);
   const hasVoted = await AuthModel.checkTodaysVote(
-    req.convertedIP,
+    // req.convertedIP,
     req.body.visitorId
   );
   // if(hasVoted){
