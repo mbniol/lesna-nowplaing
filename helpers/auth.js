@@ -1,4 +1,4 @@
-import { errorHandler } from "./errorHandler.js";
+import { errorHandler, connSensitiveHandler } from "./errorHandler.js";
 
 export default class Auth {
   // #expiration_timestamp;
@@ -142,9 +142,7 @@ export default class Auth {
   }
 
   async #setSDKToken(tokenOptions) {
-    const [response, responseErr] = await errorHandler(
-      fetch,
-      null,
+    const [response, responseErr] = await connSensitiveHandler(
       "https://accounts.spotify.com/api/token",
       tokenOptions
     );
@@ -173,13 +171,14 @@ export default class Auth {
 
   async #setAPIToken() {
     // console.log(this.#APITokenOptions);
-    const [response, responseErr] = await errorHandler(
-      fetch,
-      null,
+    const [response, responseErr] = await connSensitiveHandler(
       "https://accounts.spotify.com/api/token",
       this.#APITokenOptions
     );
     if (responseErr) {
+      if (responseErr.code === "ECONNRESET") {
+        console.log("zjebany internet");
+      }
       throw new Error("Nie udało się otrzymać tokenu API", {
         cause: responseErr,
       });

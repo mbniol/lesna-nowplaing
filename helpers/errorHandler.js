@@ -7,7 +7,20 @@ async function errorHandler(promise, thisArg = null, ...args) {
   }
 }
 
-export { errorHandler };
+async function connSensitiveHandler(...args) {
+  let [response, error] = await errorHandler(fetch, null, ...args);
+  while (error) {
+    console.log(error);
+    if (error.code === "ECONNRESET") {
+      console.log("zejabny net");
+    }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    [response, error] = await errorHandler(fetch, null, ...args);
+  }
+  return [response, null];
+}
+
+export { errorHandler, connSensitiveHandler };
 
 // Jak używać tej funkcji?
 
