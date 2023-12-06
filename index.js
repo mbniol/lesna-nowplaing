@@ -90,8 +90,8 @@ await fetchWebApi(token, "playlists/0TPpEJxe1NNP6jArvunMRh/tracks");
 https
   .createServer(
     {
-      key: fs.readFileSync("./lesnakey.key"),
-      cert: fs.readFileSync("./lesna.crt"),
+      key: fs.readFileSync("./private.key"),
+      cert: fs.readFileSync("./merge_certificate.crt")
     },
     app
   )
