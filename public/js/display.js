@@ -181,6 +181,8 @@ function animate(parentsWithChildren, additionalMargin) {
     );
   });
 
+  // console.log(filteredPairs, parentsWithChildren);
+
   filteredPairs.forEach(([parent, child]) => {
     const diff = Math.ceil(
       child.getBoundingClientRect().right -

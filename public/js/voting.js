@@ -5,21 +5,22 @@ const addSongPanel = document.getElementsByClassName("add-song")[0];
 const addSongBtn = document.getElementById("addSongBtn");
 
 openBtn.addEventListener("click", async (e) => {
-  addSongPanel.classList.remove("hide");
-  setTimeout(() => addSongPanel.classList.add("visible"), 0);
-  setTimeout(() => addSongPanel.classList.remove("forceHide"), 500);
+  addSongPanel.classList.add("visible");
+  // setTimeout(() => addSongPanel.classList.remove("hide"), 0);
+  // setTimeout(() => addSongPanel.classList.remove("forceHide"), 500);
   //XDDDDDDDDD
 });
 
 closeBtn.forEach((el) => {
   el.addEventListener("click", async (e) => {
     addSongPanel.classList.remove("visible");
-    setTimeout(() => addSongPanel.classList.add("hide"), 0);
-    setTimeout(() => addSongPanel.classList.add("forceHide"), 500);
+    // setTimeout(() => addSongPanel.classList.add("hide"), 0);
+    // setTimeout(() => addSongPanel.classList.add("forceHide"), 500);
   });
 });
 
 backBtn.addEventListener("click", async (e) => {
+  console.log("kurwa");
   document
     .getElementsByClassName("add-song-step1")[0]
     .classList.remove("fadeOut");
