@@ -74,7 +74,7 @@ const token = await Auth.getInstance().getAPIToken();
 //console.log(token);
 // const dane = await fetchWebApi(token, "search?q=choppa&type=track");
 // console.log(dane);
-await fetchWebApi(token, "playlists/0TPpEJxe1NNP6jArvunMRh/tracks");
+await fetchWebApi(token, "playlists/4nENoX9EjnZT8raBlcK14j/tracks");
 //
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );
@@ -91,7 +91,7 @@ https
   .createServer(
     {
       key: fs.readFileSync("./private.key"),
-      cert: fs.readFileSync("./merge_certificate.crt")
+      cert: fs.readFileSync("./merge_certificate.crt"),
     },
     app
   )
@@ -210,8 +210,11 @@ const func = async () => {
       Controller.sendStateToClients({ action: "pause", type: "break_change" });
     });
   });
+  console.log(rows);
   const tasks = cron.getTasks();
 };
+
+func();
 
 cron.schedule("0 2 * * Monday-Friday", func);
 

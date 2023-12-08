@@ -4,8 +4,8 @@ import {
   get_pattern,
   addToPlaylist,
 } from "../helpers/playlist.js";
-import patternModel from '../models/pattern.js'
-import Auth from '../helpers/auth.js'
+import patternModel from "../models/pattern.js";
+import Auth from "../helpers/auth.js";
 import "dotenv/config";
 
 export default class Controller {
@@ -28,14 +28,13 @@ export default class Controller {
       tracks_votes.forEach((track) => (time += track["length"] / 1000));
       i++;
     } while (pattern.main_offset > time);
-
     //odwrócona tablica glosów
     if (time < pattern.main_time + pattern.main_offset) {
       let track_list = tracks_votes.reverse();
       const tracks_uris = await track_list.map(
         (track) => "spotify:track:" + track["id"]
       );
-      await addToPlaylist(APIToken, tracks_uris);
+      await addToPlaylist(SDKToken, tracks_uris);
     } else if (time >= pattern.main_time + pattern.main_offset) {
       let index = 0;
       let time = 0;
@@ -43,6 +42,7 @@ export default class Controller {
       let offset_uris = [];
       //stworzenie tablicy z piosenek o największej ilości głosów
       do {
+        console.log("index", index);
         time += tracks_votes[index]["length"] / 1000;
         main_uris.push("spotify:track:" + tracks_votes[index]["id"]);
         index++;
@@ -60,7 +60,8 @@ export default class Controller {
       for (; index < tracks_votes.length; index++) {
         uris.push("spotify:track:" + tracks_votes[index]["id"]);
       }
-      await addToPlaylist(APIToken, uris);
+      // console.log(uris)
+      await addToPlaylist(SDKToken, uris);
     }
     res.sendStatus(200);
   }

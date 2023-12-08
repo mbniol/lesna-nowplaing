@@ -73,7 +73,7 @@ export default class Model {
       `
         SELECT t.id, t.cover, t.name, t.artist, t.length,
                SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) +
-               ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) / 2) AS count
+               ROUND(SUM(CASE WHEN DATE(v.date_added) >= DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) / 2) AS count
         FROM tracks t
         JOIN votes v ON t.id = v.track_id
         GROUP BY t.name
@@ -82,6 +82,7 @@ export default class Model {
         LIMIT 99;`,
       [one, two]
     );
+    console.log(result);
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
