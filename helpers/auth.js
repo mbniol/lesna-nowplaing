@@ -154,7 +154,7 @@ export default class Auth {
     const [jsonResponse, jsonErr] = await errorHandler(response.json, response);
     if (jsonErr) {
       throw new Error("Nie udało się uzyskać tokenu SDK w formacie JSON", {
-        cause: jsonErr,
+        cause: {jsonErr, responseErr},
       });
     }
     // console.log("response", jsonResponse.refresh_token, this.#tokens.sdk);

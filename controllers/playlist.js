@@ -4,6 +4,8 @@ import {
   get_pattern,
   addToPlaylist,
 } from "../helpers/playlist.js";
+import patternModel from '../models/pattern.js'
+import Auth from '../helpers/auth.js'
 import "dotenv/config";
 
 export default class Controller {
@@ -14,7 +16,7 @@ export default class Controller {
     );
     await clearPlaylist(SDKToken);
     const APIToken = await Auth.getInstance().getAPIToken();
-    const pattern = await get_pattern(await playlistModel.withBreaks());
+    const pattern = await get_pattern(await patternModel.withBreaks());
 
     //wyciągnięcie odpowiedniej ilości piosenek z bazy aby zapewnić odpowiedni czas
     let time;

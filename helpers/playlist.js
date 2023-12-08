@@ -7,6 +7,7 @@ async function clearPlaylist(token) {
     "GET"
   );
   //przekształcenie zwróconego obiektu z api na tablice
+  console.log(current_playlist_tracks)
   const tracks_array = current_playlist_tracks.tracks.items.map((item) => ({
     uri: item.track.uri,
   }));
