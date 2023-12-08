@@ -63,6 +63,7 @@ export default class Controller {
   }
 
   static async getMany(req, res) {
+    console.log(req.body);
     const songs = await songModel.getSongs();
     res.json(songs);
   }

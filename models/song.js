@@ -91,12 +91,13 @@ export default class Model {
 
   static async getSongs(banned = 0, verified = 0) {
     const pool = Mysql.getPromiseInstance();
-    const [[rows], err] = await errorHandler(
+    const [rows, err] = await errorHandler(
       pool.query,
       pool,
-      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?",
+      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?;",
       [banned, verified]
     );
+    console.log(rows);
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }

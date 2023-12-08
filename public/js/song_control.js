@@ -7,20 +7,20 @@ function convertToHumanTime(wholeSeconds) {
 const tableBody = document.querySelector(".table__body");
 const submitButton = document.querySelector(".submit-button");
 //wygenerowanie widoku do unbana
-const bannetTracksBtn = document.querySelector("#banned_tracks");
-bannetTracksBtn.addEventListener("click", async (e) => {
-  await getSongs("/api/banned_tracks", 1);
-});
+// const bannetTracksBtn = document.querySelector("#banned_tracks");
+// bannetTracksBtn.addEventListener("click", async (e) => {
+//   await getSongs("/api/banned_tracks", 1);
+// });
 //wygenerowanie widoku do banowania zweryfikowanych piosenek
-const verifiedTracksBtn = document.querySelector("#verified_tracks");
-verifiedTracksBtn.addEventListener("click", async (e) => {
-  await getSongs("/api/verified_tracks", 2);
-});
+// const verifiedTracksBtn = document.querySelector("#verified_tracks");
+// verifiedTracksBtn.addEventListener("click", async (e) => {
+//   await getSongs("/api/verified_tracks", 2);
+// });
 //wygenerowanie widoku do weryfikacji piosenek
-const verifyTracksBtn = document.querySelector("#verify_tracks");
-verifyTracksBtn.addEventListener("click", async (e) => {
-  await getSongs();
-});
+// const verifyTracksBtn = document.querySelector("#verify_tracks");
+// verifyTracksBtn.addEventListener("click", async (e) => {
+//   await getSongs();
+// });
 
 const originalState = {};
 const changes = {};
@@ -156,6 +156,35 @@ async function waitForVerify() {
   });
 }
 
-submitButton.addEventListener("click", sendChanges);
+// submitButton.addEventListener("click", sendChanges);
 
 getSongs();
+
+const filterSubmit = document.querySelector(".filter-menu__button");
+
+filterSubmit.addEventListener("click", async (e) => {
+  const currentPageSearchParams = new URL(location.href).searchParams;
+  const selectTypeElement = document.querySelector("#type-select");
+  const selectedType =
+    selectTypeElement.options[selectTypeElement.selectedIndex].value;
+  // console.log(selectedType);
+  const selectCountElement = document.querySelector("#pp-select");
+  const selectedCount =
+    selectCountElement.options[selectCountElement.selectedIndex].value;
+  const searchInput = document.querySelector(".filter-menu__input");
+  const searchValue = searchInput.value;
+  const newSearchParams = new URLSearchParams({
+    pp: selectedCount,
+    page: currentPageSearchParams.get("page"),
+    s: searchValue,
+    type: selectedType,
+  });
+
+  await fetch(`/api/songs`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: newSearchParams,
+  });
+});

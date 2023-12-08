@@ -133,13 +133,19 @@ CREATE TABLE `requested_tracks` (
 
 CREATE TABLE `tracks` (
   `id` varchar(22) NOT NULL,
-  `cover` varchar(255) DEFAULT NULL,
-  `artist` text NOT NULL,
+  `cover` varchar(100) DEFAULT NULL,
+  `artist` varchar(255) NOT NULL,
   `length` int(11) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `banned` tinyint(1) DEFAULT NULL,
   `verified` tinyint(1) not null DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `tracks`
+    ADD FULLTEXT INDEX `nameIndex` (`name`);
+
+ALTER TABLE `tracks`
+    ADD FULLTEXT INDEX `artistIndex` (`artist`);
 
 --
 -- Dumping data for table `tracks`

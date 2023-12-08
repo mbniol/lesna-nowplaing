@@ -15,9 +15,33 @@
         </div>
       </div>
       <div class="filter-menu">
-        <button id="banned_tracks">Zbanowane piosenki</button>
-        <button id="verified_tracks">Zbanuj zweryfikowana piosenke</button>
-        <button id="verify_tracks">Zweryfikuj nowe piosenki</button>
+        <label for="filter-search">
+          Wyszukaj
+          <input
+            type="text"
+            class="filter-menu__input"
+            id="filter-search"
+            placeholder="Nazwa artysty, piosenki"
+          />
+        </label>
+        <label for="type-select">
+          Rodzaj
+          <select id="type-select" class="filter-menu__select">
+            <option value="unverified">Niezweryfikowane</option>
+            <option value="all">Wszystkie</option>
+            <option value="banned">Zbanowane</option>
+            <option value="verified">Zweryfikowane</option>
+          </select>
+        </label>
+        <label for="type-select">
+          Rodzaj
+          <select id="pp-select" class="filter-menu__select">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </label>
+        <button class="filter-menu__button">Wyszukaj</button>
       </div>
       <table class="table">
         <thead class="table__head">
