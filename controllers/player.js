@@ -32,6 +32,7 @@ class Controller {
   }
   static async sendDataToClients(req, res) {
     const data = req.body;
+    // console.log('sending data')
     sendEventsToAll(Controller.#clients, data);
     res.sendStatus(200);
   }
@@ -114,7 +115,6 @@ class Controller {
       const queueTruncated = data.queue.slice(0, 6);
       const tracks = queueTruncated.map((track) => getTheEssence(track, 300));
       const current_track = getTheEssence(data.currently_playing, 640);
-      console.log({ current_track, queue: tracks });
       res.json({ current_track, queue: tracks });
     }
   }

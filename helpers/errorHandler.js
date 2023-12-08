@@ -11,7 +11,7 @@ async function connSensitiveHandler(...args) {
   let [response, error] = await errorHandler(fetch, null, ...args);
   while (error) {
     console.log(error);
-    if (error.code === "ECONNRESET") {
+    if (error.code === "ECONNRESET" || error.code === 'ETIMEDOUT') {
       console.log("zejabny net");
     }
     await new Promise((resolve) => setTimeout(resolve, 3000));

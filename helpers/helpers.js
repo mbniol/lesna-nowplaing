@@ -1,14 +1,12 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { errorHandler } from "./errorHandler.js";
+import { errorHandler, connSensitiveHandler } from "./errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function fetchWebApi(token, endpoint, method = "GET", body) {
-  const [response, responseErr] = await errorHandler(
-    fetch,
-    null,
+  const [response, responseErr] = await connSensitiveHandler(
     `https://api.spotify.com/v1/${endpoint}`,
     {
       headers: {
