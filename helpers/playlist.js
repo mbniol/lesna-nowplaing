@@ -3,11 +3,10 @@ import { fetchWebApi } from "./helpers.js";
 async function clearPlaylist(token) {
   const current_playlist_tracks = await fetchWebApi(
     token,
-    "playlists/4nENoX9EjnZT8raBlcK14j",
+    "playlists/"+process.env.PLAYLIST_ID,
     "GET"
   );
   //przekształcenie zwróconego obiektu z api na tablice
-  // console.log(current_playlist_tracks)
   const tracks_array = current_playlist_tracks.tracks.items.map((item) => ({
     uri: item.track.uri,
   }));
@@ -15,13 +14,15 @@ async function clearPlaylist(token) {
   const tracks_object = {
     tracks: tracks_array,
   };
+  //console.log(tracks_object);
   //usunięcie obiektów
-  await fetchWebApi(
+  const result = await fetchWebApi(
     token,
-    "playlists/4nENoX9EjnZT8raBlcK14j/tracks",
+      "playlists/"+process.env.PLAYLIST_ID+"/tracks",
     "DELETE",
     tracks_object
   );
+  //console.log(result);
 }
 
 function get_pattern(rows) {
@@ -49,17 +50,17 @@ function get_pattern(rows) {
 }
 
 async function addToPlaylist(token, tracks_table) {
-  console.log("tracktables", tracks_table, token);
+  //console.log("tracktables", tracks_table, token);
   const res = await fetchWebApi(
     token,
-    "playlists/4nENoX9EjnZT8raBlcK14j/tracks",
+    "playlists/"+process.env.PLAYLIST_ID+"/tracks",
     "POST",
     {
       uris: tracks_table,
       position: 0,
     }
   );
-  console.log(res);
+  //console.log(res);
 }
 
 export { clearPlaylist, get_pattern, addToPlaylist };

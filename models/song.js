@@ -82,7 +82,7 @@ export default class Model {
         LIMIT 99;`,
       [one, two]
     );
-    console.log(result);
+    //console.log(result);
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
@@ -97,7 +97,7 @@ export default class Model {
       "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?;",
       [banned, verified]
     );
-    console.log(rows);
+    //console.log(rows);
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
