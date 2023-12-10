@@ -7,6 +7,22 @@ import { sendEventsToAll } from "../helpers/player.js";
 
 export default class Controller {
   static #clients = [];
+  static generateNavigation(pages, currentPage) {
+    if (pages < 1) return [];
+    const visiblePages = [{ num: currentPage, current: true }];
+    while (visiblePages.length < pages && visiblePages.length < 10) {
+      const firstElement = visiblePages[0];
+      const lastElement = visiblePages[visiblePages.length - 1];
+      if (firstElement.num > 1) {
+        visiblePages.unshift({ num: firstElement.num - 1, current: false });
+      }
+      if (lastElement.num < pages) {
+        visiblePages.push({ num: lastElement.num + 1, current: false });
+      }
+    }
+    return visiblePages;
+  }
+
   static async addNewClient(req, res) {
     console.log("open");
     const headers = {
@@ -63,9 +79,34 @@ export default class Controller {
   }
 
   static async getMany(req, res) {
-    console.log(req.body);
-    const songs = await songModel.getSongs();
-    res.json(songs);
+    console.log("hejka", req.query);
+    const type = req.query.type ?? "unverified";
+    const pp = +(req.query.pp ?? 25);
+    let page = +(req.query.page ?? 1);
+    console.log(page, pp, req.query);
+    let selectionLimiter = {};
+    switch (type) {
+      case "unverified":
+        console.log("xD");
+        selectionLimiter.verified = false;
+        break;
+      case "verified":
+        selectionLimiter.verified = true;
+        break;
+      case "banned":
+        selectionLimiter.banned = true;
+        break;
+    }
+    let offset = (page - 1) * pp;
+    const songsCount = await songModel.countSongs(selectionLimiter);
+    if (songsCount <= offset) {
+      page = 1;
+      offset = 0;
+    }
+    const pagesCount = Math.ceil(songsCount / pp);
+    const songs = await songModel.getSongs(selectionLimiter, offset, pp);
+    const navigation = Controller.generateNavigation(pagesCount, page);
+    res.json({ songs, navigation });
   }
   static async getBannedTracks(req, res) {
     const songs = await songModel.getSongs(1, 1);
@@ -77,7 +118,7 @@ export default class Controller {
   }
 
   static async votes(req, res) {
-    const track_list = await songModel.get_track_ranking();
+    const track_list = await songModel.get_tracks_to_display();
     res.json(track_list);
   }
   static async vote(req, res) {

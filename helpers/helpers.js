@@ -36,6 +36,8 @@ async function fetchWebApi(token, endpoint, method = "GET", body) {
     );
   }
 
+  // console.log(endpoint, response);
+
   return jsonResponse;
 }
 

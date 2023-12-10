@@ -21,11 +21,11 @@ async function checkVoteRight(req, res, next) {
     // req.convertedIP,
     req.body.visitorId
   );
-  // if (hasVoted) {
-  //   return res.sendStatus(403);
-  // }
+  if (hasVoted) {
+    return res.sendStatus(403);
+  }
 
-  // req.session.lastVote = formatedDate;
+  req.session.lastVote = formatedDate;
   next();
 }
 async function checkVote(req, res, next) {
@@ -40,9 +40,9 @@ async function checkVote(req, res, next) {
     // req.convertedIP,
     req.body.visitorId
   );
-  // if(hasVoted){
-  //   return res.json({ vote: hasVoted });
-  // }
+  if (hasVoted) {
+    return res.json({ vote: hasVoted });
+  }
   return res.json({ vote: false /* hasVoted*/ });
   // res.locals.formatedDate = formatedDate;
 }

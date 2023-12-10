@@ -27,17 +27,19 @@
         <label for="type-select">
           Rodzaj
           <select id="type-select" class="filter-menu__select">
-            <option value="unverified">Niezweryfikowane</option>
             <option value="all">Wszystkie</option>
             <option value="banned">Zbanowane</option>
             <option value="verified">Zweryfikowane</option>
+            <option value="unverified" selected="selected">
+              Niezweryfikowane
+            </option>
           </select>
         </label>
         <label for="type-select">
           Rodzaj
           <select id="pp-select" class="filter-menu__select">
             <option value="10">10</option>
-            <option value="25">25</option>
+            <option value="25" selected="selected">25</option>
             <option value="50">50</option>
           </select>
         </label>
@@ -50,7 +52,7 @@
             <th class="table__title">Name</th>
             <th class="table__title">Artist</th>
             <th class="table__title">Length</th>
-            <th class="table__title">Banned</th>
+            <th class="table__title" colspan="2">Akcje</th>
           </tr>
         </thead>
         <tbody class="table__body">
@@ -65,6 +67,7 @@
           </tr>
         </tbody>
       </table>
+      <div class="navigation"></div>
     </div>
     <script src="/js/song_control.js"></script>
   </body>

@@ -60,7 +60,9 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
     console.log("xD");
 
     player.addListener("ready", ({ device_id }) => {
-      console.log("ready");
+      // fetch("/api/playlist", {
+      //   method: "POST",
+      // });
       addConnectEnforcer();
       // console.log("The Web Playback SDK is ready to play music!");
       // console.log("Device ID", device_id);

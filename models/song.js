@@ -82,26 +82,92 @@ export default class Model {
         LIMIT 99;`,
       [one, two]
     );
-    //console.log(result);
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
     return result[0];
   }
 
-  static async getSongs(banned = 0, verified = 0) {
+  static async get_tracks_to_display(one = 0, two = 1) {
+    const pool = Mysql.getPromiseInstance();
+    const [result, err] = await errorHandler(
+      pool.query,
+      pool,
+      `
+        SELECT t.id, t.cover, t.name, t.artist, t.length,
+               SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) +
+               ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) / 2) AS count
+        FROM tracks t
+        JOIN votes v ON t.id = v.track_id
+        GROUP BY t.name
+        HAVING count > 0
+        ORDER BY count DESC
+        LIMIT 99;`,
+      [one, two]
+    );
+    if (err) {
+      throw new Error("Nie udało isę wykonać zapytania", { cause: err });
+    }
+    return result[0];
+  }
+
+  static async getSongs(selectionLimiter, offset, amount) {
+    const whereConstraints = [];
+    if (selectionLimiter.banned !== undefined) {
+      whereConstraints.push(
+        selectionLimiter.banned ? "banned = 1" : "banned = 0"
+      );
+    }
+    if (selectionLimiter.verified !== undefined) {
+      whereConstraints.push(
+        selectionLimiter.verified ? "verified = 1" : "verified = 0"
+      );
+    }
+    const whereConstraintsJoined =
+      whereConstraints.length > 0
+        ? " where " + whereConstraints.join(" AND ")
+        : "";
     const pool = Mysql.getPromiseInstance();
     const [rows, err] = await errorHandler(
       pool.query,
       pool,
-      "SELECT id, name, cover, artist, length, banned FROM tracks where banned = ? and verified = ?;",
-      [banned, verified]
+      "SELECT id, name, cover, artist, length, banned, verified FROM tracks " +
+        whereConstraintsJoined +
+        " LIMIT ?,?",
+      [offset, amount]
     );
-    //console.log(rows);
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
     }
-    return rows;
+    return rows[0];
+  }
+
+  static async countSongs(selectionLimiter) {
+    const whereConstraints = [];
+    if (selectionLimiter.banned !== undefined) {
+      whereConstraints.push(
+        selectionLimiter.banned ? "banned = 1" : "banned = 0"
+      );
+    }
+    if (selectionLimiter.verified !== undefined) {
+      whereConstraints.push(
+        selectionLimiter.verified ? "verified = 1" : "verified = 0"
+      );
+    }
+    const whereConstraintsJoined =
+      whereConstraints.length > 0
+        ? " where " + whereConstraints.join(" AND ")
+        : "";
+    const pool = Mysql.getPromiseInstance();
+    const [rows, err] = await errorHandler(
+      pool.query,
+      pool,
+      "SELECT COUNT(*) as count FROM tracks" + whereConstraintsJoined
+    );
+    if (err) {
+      throw new Error("Nie udało isę wykonać zapytania", { cause: err });
+    }
+    return rows[0][0]["count"];
   }
 
   static async changeSongStatus(id, status) {

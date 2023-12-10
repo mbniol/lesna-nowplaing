@@ -24,15 +24,40 @@ const submitButton = document.querySelector(".submit-button");
 
 const originalState = {};
 const changes = {};
+const navigationContainer = document.querySelector(".navigation");
 
-async function getSongs(api = "/api/songs", mode = 0) {
-  console.log("test");
-  const response = await fetch(api);
+function changePage(page) {
+  const currentSearchParams = new URL(location.href).searchParams;
+  currentSearchParams.set("page", page);
+  // const newURL = url;
+  history.pushState({}, "", "?" + currentSearchParams.toString());
+  getSongs(currentSearchParams.toString());
+  // locationcurrentSearchParams
+}
+
+async function getSongs(searchParams = "") {
+  const response = await fetch("/api/songs?" + searchParams);
   const json = await response.json();
   let tableRows = "";
-  json.forEach(({ cover, name, artist, length, id, banned }) => {
-    const bannedBoolean = Boolean(banned);
-    let tableRow = `
+  let navigationContent = "";
+  json.navigation.forEach(({ num, current }) => {
+    navigationContent += `<div><a data-page="${num}" class="navigation__anchor ${
+      current ? "navigation__anchor--current" : ""
+    }" href="#">${num}</a></div>`;
+  });
+  navigationContainer.innerHTML = navigationContent;
+  const newNavigationAnchors = document.querySelectorAll(".navigation__anchor");
+  newNavigationAnchors.forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      e.preventDefault();
+      changePage(anchor.dataset.page);
+    });
+  });
+  console.log(json);
+  json.songs.forEach(
+    ({ cover, name, artist, length, id, banned, verified }) => {
+      const bannedBoolean = Boolean(banned);
+      let tableRow = `
     <tr class="table__body-row">
       <td class="table__cell"><div><img src="${cover}" alt=""></div></td>
       <td class="table__cell"><div>${name}</div></td>
@@ -41,35 +66,44 @@ async function getSongs(api = "/api/songs", mode = 0) {
         Math.ceil(length / 1000)
       )}</td>
      `;
-    if (mode === 0) {
+      if (banned) {
+        tableRow += `<td class="table__cell"><button class="table__button table__button--unban" data-track-id="${id}">unban</button></td>`;
+      } else {
+        tableRow += `<td class="table__cell"><button class="table__button table__button--ban" data-track-id="${id}">ban</button></td>`;
+      }
+      if (!verified) {
+        tableRow += `<td class="table__cell"><button class="table__button table__button--verify" data-track-id="${id}">verify</button></td>`;
+      }
+      // if (mode === 0) {
       //domyślny widok-nowe piosenki
-      tableRow += `
-        <td class="table__cell"><button class="track_ban" data-track-id="${id}">ban</button></td>
-        <td class="table__cell"><button class="track_verify" data-track-id="${id}">verify</button></td>
-      </tr>
-    `;
-    } else if (mode === 1) {
-      //piosenki zbanowane
-      tableRow += `
-      <td class="table__cell"><button class="track_unban" data-track-id="${id}">unban</button></td>
-    </tr>
-  `;
-    } else if (mode === 2) {
-      //piosenki zwryfikowane do zbanowania
-      tableRow += `
-      <td class="table__cell"><button class="verified_track_ban" data-track-id="${id}">ban</button></td>
-    </tr>
-  `;
-    }
+      //   tableRow += `
+      //     <td class="table__cell"><button class="track_ban" data-track-id="${id}">ban</button></td>
+      //     <td class="table__cell"><button class="track_verify" data-track-id="${id}">verify</button></td>
+      //   </tr>
+      // `;
+      //   } else if (mode === 1) {
+      //     //piosenki zbanowane
+      //     tableRow += `
+      //     <td class="table__cell"><button class="track_unban" data-track-id="${id}">unban</button></td>
+      //   </tr>
+      // `;
+      //   } else if (mode === 2) {
+      //     //piosenki zwryfikowane do zbanowania
+      //     tableRow += `
+      //     <td class="table__cell"><button class="verified_track_ban" data-track-id="${id}">ban</button></td>
+      //   </tr>
+      // `;
+      //   }
 
-    originalState[id] = bannedBoolean;
-    tableRows += tableRow;
-  });
+      originalState[id] = bannedBoolean;
+      tableRows += tableRow;
+    }
+  );
   tableBody.innerHTML = tableRows;
   waitForBan();
   waitForVerify();
   waitForUnBan();
-  waitForVerifyBan();
+  // waitForVerifyBan();
 }
 
 async function sendChanges() {
@@ -92,7 +126,7 @@ async function sendChanges() {
   // console.log(changes);
 }
 async function waitForBan() {
-  const banButtons = document.querySelectorAll(".track_ban");
+  const banButtons = document.querySelectorAll(".table__button--ban");
   banButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const trackID = el.dataset.trackId;
@@ -103,28 +137,29 @@ async function waitForBan() {
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
-      getSongs();
+      const currentSearchParams = new URL(location.href).searchParams;
+      getSongs(currentSearchParams.toString());
     });
   });
 }
-async function waitForVerifyBan() {
-  const verifiedBanButtons = document.querySelectorAll(".verified_track_ban");
-  verifiedBanButtons.forEach((el) => {
-    el.addEventListener("click", async (e) => {
-      const trackID = el.dataset.trackId;
-      await fetch(`/api/songs_ban`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ spotifyLink: trackID }),
-      });
-      await getSongs("/api/verified_tracks", 2);
-    });
-  });
-}
+// async function waitForVerifyBan() {
+//   const verifiedBanButtons = document.querySelectorAll(".verified_track_ban");
+//   verifiedBanButtons.forEach((el) => {
+//     el.addEventListener("click", async (e) => {
+//       const trackID = el.dataset.trackId;
+//       await fetch(`/api/songs_ban`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ spotifyLink: trackID }),
+//       });
+//       await getSongs("/api/verified_tracks", 2);
+//     });
+//   });
+// }
 async function waitForUnBan() {
-  const banButtons = document.querySelectorAll(".track_unban");
+  const banButtons = document.querySelectorAll(".table__button--unban");
   banButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const trackID = el.dataset.trackId;
@@ -135,12 +170,13 @@ async function waitForUnBan() {
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
-      await getSongs("/api/banned_tracks", 1);
+      const currentSearchParams = new URL(location.href).searchParams;
+      getSongs(currentSearchParams.toString());
     });
   });
 }
 async function waitForVerify() {
-  const verifyButtons = document.querySelectorAll(".track_verify");
+  const verifyButtons = document.querySelectorAll(".table__button--verify");
   verifyButtons.forEach((el) => {
     el.addEventListener("click", async (e) => {
       const trackID = el.dataset.trackId;
@@ -151,14 +187,15 @@ async function waitForVerify() {
         },
         body: JSON.stringify({ spotifyLink: trackID }),
       });
-      getSongs();
+      const currentSearchParams = new URL(location.href).searchParams;
+      getSongs(currentSearchParams.toString());
     });
   });
 }
 
 // submitButton.addEventListener("click", sendChanges);
 
-getSongs();
+getSongs(new URL(location.href).searchParams.toString());
 
 const filterSubmit = document.querySelector(".filter-menu__button");
 
@@ -175,16 +212,11 @@ filterSubmit.addEventListener("click", async (e) => {
   const searchValue = searchInput.value;
   const newSearchParams = new URLSearchParams({
     pp: selectedCount,
-    page: currentPageSearchParams.get("page"),
+    page: currentPageSearchParams.get("page") ?? 1,
     s: searchValue,
     type: selectedType,
   });
-
-  await fetch(`/api/songs`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: newSearchParams,
-  });
+  console.log(newSearchParams);
+  history.pushState({}, "", "?" + newSearchParams.toString());
+  getSongs(newSearchParams.toString());
 });

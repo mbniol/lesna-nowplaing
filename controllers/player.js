@@ -30,6 +30,23 @@ class Controller {
       );
     });
   }
+  static async setPlaylist(req, res) {
+    const token = await Auth.getInstance().getSDKToken(
+      req.session.code,
+      `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`
+    );
+    const data = await fetchWebApi(token, "me/player/play", "PUT", {
+      context_uri: `spotify:playlist:${process.env.PLAYLIST_ID}`,
+      offset: {
+        position: 0,
+      },
+      position_ms: 0,
+    });
+    console.log(data);
+    res.send(200);
+    // const data1 = await fetchWebApi(token, "me/player/pause", "PUT");
+    // console.log(data, data1);
+  }
   static async sendDataToClients(req, res) {
     const data = req.body;
     // console.log('sending data')

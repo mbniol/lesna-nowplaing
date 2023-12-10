@@ -74,7 +74,7 @@ const token = await Auth.getInstance().getAPIToken();
 //console.log(token);
 // const dane = await fetchWebApi(token, "search?q=choppa&type=track");
 // console.log(dane);
-await fetchWebApi(token, "playlists/"+process.env.PLAYLIST_ID);
+await fetchWebApi(token, "playlists/" + process.env.PLAYLIST_ID);
 //
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );
@@ -150,7 +150,13 @@ function votingtest() {
 }
 //votingtest();
 
-function runAtSpecificTimeOfDay(hour, minutes, seconds, func) {
+function runAtSpecificTimeOfDay(
+  hour,
+  minutes,
+  seconds,
+  func,
+  alarm_offset = 0
+) {
   const now = new Date();
   let eta_ms =
     new Date(
@@ -162,7 +168,7 @@ function runAtSpecificTimeOfDay(hour, minutes, seconds, func) {
       seconds,
       0
     ).getTime() - now;
-
+  eta_ms += alarm_offset * 1000;
   if (eta_ms > 0) {
     setTimeout(func, eta_ms);
   }
@@ -190,22 +196,62 @@ const func = async () => {
   const [data, err] = await errorHandler(
     pool.query,
     pool,
-    `SELECT b.id, b.start, b.end 
+    `SELECT b.id, b.start, b.end, p.alarm_offset
         FROM breaks as b join patterns as p on p.id=b.pattern_id
         WHERE p.active=1
         ORDER BY b.start;`
   );
   const [rows] = data;
-  rows.forEach(({ id, start, end }) => {
+  console.log(rows);
+  rows.forEach(({ id, start, end, alarm_offset }, i) => {
+    // console.log("alarm_offset", alarm_offset);
+    // console.log("hej");
     const startArr = start.split(":");
     const endArr = end.split(":");
     const startDate = new Date();
     const endDate = new Date();
     startDate.setHours(...startArr);
     endDate.setHours(...endArr);
-    runAtSpecificTimeOfDay(...startArr, () => {
-      Controller.sendStateToClients({ action: "resume", type: "break_change" });
-    });
+    if (i === 0) {
+      runAtSpecificTimeOfDay(
+        ...startArr,
+        async () => {
+          console.log("na jedna nóżkę");
+          // await fetch(
+          //   `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/playlist`,
+          //   { method: "POST" }
+          // );
+          const token = await Auth.getInstance().getSDKToken();
+          const { devices } = await fetchWebApi(token, "me/player/devices");
+          const currentDevice = devices.find((device) => device.is_active);
+          await fetchWebApi(
+            token,
+            "me/player/play?device_id=" + currentDevice.id,
+            "PUT",
+            {
+              context_uri: `spotify:playlist:${process.env.PLAYLIST_ID}`,
+              offset: {
+                position: 0,
+              },
+              position_ms: 0,
+            }
+          );
+        },
+        alarm_offset
+      );
+    } else {
+      runAtSpecificTimeOfDay(
+        ...startArr,
+        () => {
+          console.log("już nie");
+          Controller.sendStateToClients({
+            action: "resume",
+            type: "break_change",
+          });
+        },
+        alarm_offset
+      );
+    }
     runAtSpecificTimeOfDay(...endArr, () => {
       Controller.sendStateToClients({ action: "pause", type: "break_change" });
     });
@@ -214,7 +260,7 @@ const func = async () => {
   const tasks = cron.getTasks();
 };
 
-func();
+// func();
 
 cron.schedule("0 2 * * Monday-Friday", func);
 

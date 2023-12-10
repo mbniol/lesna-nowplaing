@@ -88,6 +88,7 @@ async function getVisitorId() {
 async function show_votes() {
   const result = await fetch("/api/track_list");
   const json = await result.json();
+  console.log(json);
   json.forEach(({ id, name, artist, count, cover }) => {
     document.getElementById("voting-list").innerHTML += add_track(
       id,
@@ -119,6 +120,7 @@ async function show_votes() {
   );
   events.onmessage = async (event) => {
     const { track_id, cover, name, artist, votes } = JSON.parse(event.data);
+    // console.log(JSON.stringify)
     console.log(JSON.parse(event.data));
     const targetElement = document.querySelector("#letterstart" + track_id);
     if (!targetElement) {

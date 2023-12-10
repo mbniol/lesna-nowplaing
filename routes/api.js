@@ -61,6 +61,8 @@ router.get("/player", checkAdmin, PlayerController.addNewClient);
 
 router.post("/player", checkAdmin, PlayerController.sendDataToClients);
 
+router.post("/playlist", checkAdmin, PlayerController.setPlaylist);
+
 router.get("/playlist", checkAdmin, PlaylistController.make);
 
 router.get("/queue", checkAdmin, PlayerController.getQueue);
