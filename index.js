@@ -74,7 +74,7 @@ const token = await Auth.getInstance().getAPIToken();
 //console.log(token);
 // const dane = await fetchWebApi(token, "search?q=choppa&type=track");
 // console.log(dane);
-await fetchWebApi(token, "playlists/" + process.env.PLAYLIST_ID);
+
 //
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );
@@ -202,8 +202,9 @@ const func = async () => {
         ORDER BY b.start;`
   );
   const [rows] = data;
-  console.log(rows);
+  // console.log(rows);
   rows.forEach(({ id, start, end, alarm_offset }, i) => {
+    console.log(start, end)
     // console.log("alarm_offset", alarm_offset);
     // console.log("hej");
     const startArr = start.split(":");
@@ -222,11 +223,12 @@ const func = async () => {
           //   { method: "POST" }
           // );
           const token = await Auth.getInstance().getSDKToken();
-          const { devices } = await fetchWebApi(token, "me/player/devices");
-          const currentDevice = devices.find((device) => device.is_active);
+          // const { devices } = await fetchWebApi(token, "me/player/devices");
+          // const currentDevice = devices.find((device) => device.is_active);
           await fetchWebApi(
             token,
-            "me/player/play?device_id=" + currentDevice.id,
+            // "me/player/play?device_id=" + currentDevice.id,
+            "me/player/play",
             "PUT",
             {
               context_uri: `spotify:playlist:${process.env.PLAYLIST_ID}`,
@@ -242,7 +244,13 @@ const func = async () => {
     } else {
       runAtSpecificTimeOfDay(
         ...startArr,
-        () => {
+        async () => {
+          await fetchWebApi(
+            token,
+            // "me/player/play?device_id=" + currentDevice.id,
+            "me/player/play",
+            "PUT"
+          );
           console.log("już nie");
           Controller.sendStateToClients({
             action: "resume",
@@ -254,13 +262,13 @@ const func = async () => {
     }
     runAtSpecificTimeOfDay(...endArr, () => {
       Controller.sendStateToClients({ action: "pause", type: "break_change" });
-    });
+    }, alarm_offset);
   });
   console.log(rows);
   const tasks = cron.getTasks();
 };
 
-// func();
+func();
 
 cron.schedule("0 2 * * Monday-Friday", func);
 

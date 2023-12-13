@@ -88,7 +88,7 @@ export default class Model {
     return result[0];
   }
 
-  static async get_tracks_to_display(one = 0, two = 1) {
+  static async get_tracks_to_display(one = 0, two = 0) {
     const pool = Mysql.getPromiseInstance();
     const [result, err] = await errorHandler(
       pool.query,

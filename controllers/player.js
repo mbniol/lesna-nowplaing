@@ -57,18 +57,21 @@ class Controller {
     console.log("sendStateToClients");
     sendEventsToAll(Controller.#clients, data);
     const token = await Auth.getInstance().getSDKToken();
-    const { devices } = await fetchWebApi(token, "me/player/devices");
-    const currentDevice = devices.find((device) => device.is_active);
+    // const { devices } = await fetchWebApi(token, "me/player/devices");
+    // const currentDevice = devices.find((device) => device.is_active);
+    // console.log('currentDevice', currentDevice)
     if (data.action === "resume") {
       await fetchWebApi(
         token,
-        "me/player/play?device_id=" + currentDevice.id,
+        // "me/player/play?device_id=" + currentDevice.id,
+        "me/player/play",
         "PUT"
       );
     } else if (data.action === "pause") {
       await fetchWebApi(
         token,
-        "me/player/pause?device_id=" + currentDevice.id,
+        // "me/player/pause?device_id=" + currentDevice.id,
+        "me/player/pause",
         "PUT"
       );
     }

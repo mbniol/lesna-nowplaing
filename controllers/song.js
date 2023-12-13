@@ -24,7 +24,7 @@ export default class Controller {
   }
 
   static async addNewClient(req, res) {
-    console.log("open");
+    // console.log("open");
     const headers = {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
@@ -42,7 +42,7 @@ export default class Controller {
     Controller.#clients.push(newClient);
 
     req.on("close", () => {
-      console.log("close", clientId);
+      // console.log("close", clientId);
       Controller.#clients = Controller.#clients.filter(
         (client) => client.id !== clientId
       );
@@ -79,15 +79,15 @@ export default class Controller {
   }
 
   static async getMany(req, res) {
-    console.log("hejka", req.query);
+    //console.log("hejka", req.query);
     const type = req.query.type ?? "unverified";
     const pp = +(req.query.pp ?? 25);
     let page = +(req.query.page ?? 1);
-    console.log(page, pp, req.query);
+    //console.log(page, pp, req.query);
     let selectionLimiter = {};
     switch (type) {
       case "unverified":
-        console.log("xD");
+        // console.log("xD");
         selectionLimiter.verified = false;
         break;
       case "verified":
@@ -118,15 +118,18 @@ export default class Controller {
   }
 
   static async votes(req, res) {
-    const track_list = await songModel.get_tracks_to_display();
+    // const track_list = await songModel.get_tracks_to_display();
+    const track_list = await songModel.get_track_ranking()
     res.json(track_list);
   }
   static async vote(req, res) {
-    console.log(req.convertedIP);
+    // console.log(req.convertedIP);
     const track_link = req.body.spotifyLink;
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
     const track_id = await get_id(track_link);
+    console.log(track_id);
+    // console.log(track_id);
     if (track_id) {
       const rows = await songModel.get_song(track_id);
       if (rows[0][0] === undefined) {
@@ -198,6 +201,7 @@ export default class Controller {
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
     const track_id = await get_id(track_link);
+    console.log(track_id);
     if (track_id) {
       const rows = await songModel.get_song(track_id);
       if (rows[0][0] === undefined) {
