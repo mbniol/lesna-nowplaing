@@ -76,7 +76,7 @@ export default class Model {
                ROUND(SUM(CASE WHEN DATE(v.date_added) >= DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) / 2) AS count
         FROM tracks t
         JOIN votes v ON t.id = v.track_id
-        GROUP BY t.name
+        GROUP BY t.id
         HAVING count > 0
         ORDER BY count DESC
         LIMIT 99;`,
@@ -88,22 +88,21 @@ export default class Model {
     return result[0];
   }
 
-  static async get_tracks_to_display(one = 0, two = 0) {
+  static async get_tracks_to_display() {
     const pool = Mysql.getPromiseInstance();
     const [result, err] = await errorHandler(
       pool.query,
       pool,
       `
         SELECT t.id, t.cover, t.name, t.artist, t.length,
-               SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) +
-               ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL ? DAY) THEN 1 ELSE 0 END) / 2) AS count
+               SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 0 DAY) THEN 1 ELSE 0 END) +
+               ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) / 2) AS count
         FROM tracks t
         JOIN votes v ON t.id = v.track_id
-        GROUP BY t.name
+        GROUP BY t.id
         HAVING count > 0
         ORDER BY count DESC
-        LIMIT 99;`,
-      [one, two]
+        LIMIT 99;`
     );
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
@@ -233,12 +232,13 @@ export default class Model {
     const [data, selectErr] = await errorHandler(
       pool.query,
       pool,
-      `SELECT
+      `SELECT t.id, t.cover, t.name, t.artist, t.length,
       SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 0 DAY) THEN 1 ELSE 0 END) +
       ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 1 ELSE 0 END) / 2) AS count
 FROM tracks t
 JOIN votes v ON t.id = v.track_id
-WHERE t.id = ?`,
+WHERE t.id = ?
+GROUP BY t.id`,
       [id]
     );
     if (selectErr) {

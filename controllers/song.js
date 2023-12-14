@@ -118,8 +118,8 @@ export default class Controller {
   }
 
   static async votes(req, res) {
-    // const track_list = await songModel.get_tracks_to_display();
-    const track_list = await songModel.get_track_ranking()
+    const track_list = await songModel.get_tracks_to_display();
+    // const track_list = await songModel.get_track_ranking();
     res.json(track_list);
   }
   static async vote(req, res) {
