@@ -27,7 +27,7 @@ function getTheEssence(track, imageSize) {
   const duration = minutes + ":" + String(seconds).padStart(2, "0");
   const name = track.name;
   const id = track.id;
-  // console.log(track);
+  
   return { image, artists, duration, name, id };
 }
 
@@ -37,11 +37,11 @@ const params = new URL(document.location).searchParams;
 const code = params.get("code");
 window.onSpotifyWebPlaybackSDKReady = async () => {
   const response = await fetch("/api/token/sdk?code=" + code);
-  // console.log(await response.json());
+  
   const jsonResponse = await response.json();
   let token = jsonResponse.token;
-  // console.log(jsonResponse);
-  // console.log(token);
+  
+  
   setTimeout(() => {
     const player = new Spotify.Player({
       name: "Lesna",
@@ -64,8 +64,8 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
       //   method: "POST",
       // });
       addConnectEnforcer();
-      // console.log("The Web Playback SDK is ready to play music!");
-      // console.log("Device ID", device_id);
+      
+      
     });
 
     let lastId = undefined;
@@ -217,7 +217,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
 };
 
 function addClickEnforcer() {
-  // console.log(connectEnforcer);
+  
   connectEnforcer.remove();
   const clickEnforcer = document.createElement("div");
   clickEnforcer.classList.add("enforcer");

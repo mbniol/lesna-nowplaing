@@ -15,7 +15,6 @@ const queueListContainer = document.querySelector(".queue-list-container");
 
 function toggleHardwareAcceleration(elements, ...properties) {
   elements.forEach((el) => {
-    console.log(el.style);
     el.style.willChange =
       el.style.willChange === "" ? properties.join(",") : "";
   });
@@ -104,6 +103,7 @@ events.onmessage = (event) => {
   let { current_track, queue, position, paused, action, type } = JSON.parse(
     event.data
   );
+  console.log(JSON.parse(event.data))
   clearInterval(progressInterval);
   if (queueList.firstChild === null) {
     action = "init_song";
@@ -181,7 +181,7 @@ function animate(parentsWithChildren, additionalMargin) {
     );
   });
 
-  // console.log(filteredPairs, parentsWithChildren);
+  
 
   filteredPairs.forEach(([parent, child]) => {
     const diff = Math.ceil(

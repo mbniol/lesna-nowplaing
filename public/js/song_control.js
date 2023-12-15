@@ -123,7 +123,7 @@ async function sendChanges() {
     },
     body: JSON.stringify(changes),
   });
-  // console.log(changes);
+  
 }
 async function waitForBan() {
   const banButtons = document.querySelectorAll(".table__button--ban");
@@ -204,7 +204,7 @@ filterSubmit.addEventListener("click", async (e) => {
   const selectTypeElement = document.querySelector("#type-select");
   const selectedType =
     selectTypeElement.options[selectTypeElement.selectedIndex].value;
-  // console.log(selectedType);
+  
   const selectCountElement = document.querySelector("#pp-select");
   const selectedCount =
     selectCountElement.options[selectCountElement.selectedIndex].value;

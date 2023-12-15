@@ -3,7 +3,6 @@ import "dotenv/config";
 
 export default class Controller {
   static async getSDKToken(req, res) {
-    console.log("getSDKToken");
     req.session.code = req.query.code;
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,

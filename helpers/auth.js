@@ -89,7 +89,7 @@ export default class Auth {
   #getAutorizationParams(redirect) {
     const temporaryParams = new URLSearchParams(this.#authorizationParams);
     temporaryParams.append("redirect_uri", redirect);
-    // console.log(temporaryParams);
+    
     return temporaryParams.toString();
   }
 
@@ -109,8 +109,8 @@ export default class Auth {
       // || this.#tokens.api.expiration_date < currentTimestamp + 1000 * 60 * 1
     ) {
       await this.#setAPIToken();
+      console.log('Nowy API token', currentDate, this.#tokens.api)
     }
-    console.log('getAPI', currentDate, this.#tokens)
     return this.#tokens.api.access;
   }
 
@@ -124,20 +124,20 @@ export default class Auth {
   async getSDKToken(code, uri) {
     const currentDate = new Date();
     const currentTimestamp = currentDate.getTime();
-    // console.log(code);
+    
     if (this.#tokens.sdk.access === undefined && code) {
-      // console.log("fresh");
       const tokenOptions = this.#getSDKTokenOptions(code, uri);
       await this.#setSDKToken(tokenOptions);
+      console.log('Pierszwy SDK token', currentDate, this.#tokens.sdk)
     } else if (
-      // this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
+      this.#tokens.sdk.expiration_date < currentTimestamp + 1000 * 60 * 1 &&
       this.#tokens.sdk.refresh !== undefined
     ) {
-      // console.log("refresh");
+      
       const tokenOptions = this.#getSDKTokenRefreshOptions();
       await this.#setSDKToken(tokenOptions);
+      console.log('Refresh SDK tokena', currentDate, this.#tokens.sdk)
     }
-    console.log('getSDK', currentDate, this.#tokens)
     return this.#tokens.sdk.access;
   }
 
@@ -157,11 +157,11 @@ export default class Auth {
         cause: {jsonErr, responseErr},
       });
     }
-    // console.log("response", jsonResponse.refresh_token, this.#tokens.sdk);
+    
     const currentDate = new Date();
     // this.#expiration_timestamp = currentDate + jsonResponse.expires_in * 1000;
     const oldRefreshToken = this.#tokens.sdk.refresh;
-    // console.log("respon6s", jsonResponse, tokenOptions);
+    
     this.#tokens.sdk = {
       expiration_date: currentDate.getTime() + jsonResponse.expires_in * 1000,
       access: jsonResponse.access_token,
@@ -170,13 +170,13 @@ export default class Auth {
   }
 
   async #setAPIToken() {
-    // console.log(this.#APITokenOptions);
+    
     const [response, responseErr] = await connSensitiveHandler(
       "https://accounts.spotify.com/api/token",
       this.#APITokenOptions
     );
     if (responseErr) {
-      if (responseErr.code === "ECONNRESET") {
+      if (responseErr.code === "ECONNRESET" || responseErr.code === 'ETIMEDOUT') {
         console.log("zjebany internet");
       }
       throw new Error("Nie udało się otrzymać tokenu API", {

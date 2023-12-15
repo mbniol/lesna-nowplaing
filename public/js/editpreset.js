@@ -134,7 +134,6 @@ async function getPatternData() {
 
 async function updatePatternForm() {
   const { name, alarm_offset, active } = await getPatternData();
-  console.log(name, alarm_offset, active);
   const patternForm = document.querySelector("#pattern-form");
   const nameInput = patternForm.querySelector("#presetName");
   const offsetInput = patternForm.querySelector("#presetOffset");
@@ -303,7 +302,7 @@ newBreakSubmit.addEventListener("click", async (e) => {
     });
     validateBreaks(breaksData);
     console.log(breaksData);
-    // console.log(params.values(), FormData.keys());
+    
     //   await fetch(`/api/pattern/${patternID}/break`, {
     //     method: "POST",
     //     headers: {

@@ -25,7 +25,6 @@ async function show_news() {
   const result = await fetch("/api/get_news");
   const json = await result.json();
   json.forEach((row) => {
-    console.log(row);
     document.getElementById("news-list").innerHTML += add_news(row);
   });
 }

@@ -15,7 +15,6 @@ router.get(
   "/token/sdk",
   checkAdmin,
   (req, res, next) => {
-    console.log("call");
     next();
   },
   AuthController.getSDKToken

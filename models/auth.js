@@ -9,7 +9,7 @@ export default class Model {
       pool,
       `
       SELECT 
-      EXISTS(SELECT date_added = CURDATE() FROM votes WHERE visitor_id=?)
+      EXISTS(SELECT date_added FROM votes WHERE visitor_id=? AND date_added = CURDATE())
       as has_voted
     `,
       [visitorId]

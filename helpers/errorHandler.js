@@ -10,7 +10,7 @@ async function errorHandler(promise, thisArg = null, ...args) {
 async function connSensitiveHandler(...args) {
   let [response, error] = await errorHandler(fetch, null, ...args);
   while (error) {
-    console.log(error);
+    console.error(error.errno, error.type, err. name);
     if (error.code === "ECONNRESET" || error.code === 'ETIMEDOUT') {
       console.log("zejabny net");
     }

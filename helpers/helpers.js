@@ -28,15 +28,16 @@ async function fetchWebApi(token, endpoint, method = "GET", body) {
   const [jsonResponse, jsonErr] = await errorHandler(response.json, response);
   if (jsonErr) {
     console.warn(
-      new Error(
+      // new Error(
         `Nie udało się uzyskać danych w formacie JSON z zapytania do WebAPI na endpoint ${endpoint}`,
 
-        { cause: jsonErr }
-      )
+        // { cause: jsonErr }
+      // ),
     );
+    return response;
   }
 
-  // console.log(endpoint, response);
+  
 
   return jsonResponse;
 }

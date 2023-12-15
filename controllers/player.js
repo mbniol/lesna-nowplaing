@@ -6,7 +6,6 @@ import "dotenv/config";
 class Controller {
   static #clients = [];
   static async addNewClient(req, res) {
-    console.log("open");
     const headers = {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
@@ -24,7 +23,6 @@ class Controller {
     Controller.#clients.push(newClient);
 
     req.on("close", () => {
-      console.log("close", clientId);
       Controller.#clients = Controller.#clients.filter(
         (client) => client.id !== clientId
       );
@@ -42,31 +40,30 @@ class Controller {
       },
       position_ms: 0,
     });
-    console.log(data);
     res.send(200);
     // const data1 = await fetchWebApi(token, "me/player/pause", "PUT");
-    // console.log(data, data1);
+    
   }
   static async sendDataToClients(req, res) {
     const data = req.body;
-    // console.log('sending data')
+    
     sendEventsToAll(Controller.#clients, data);
     res.sendStatus(200);
   }
   static async sendStateToClients(data) {
-    console.log("sendStateToClients");
     sendEventsToAll(Controller.#clients, data);
     const token = await Auth.getInstance().getSDKToken();
+    // console.log('token: ', token)
     // const { devices } = await fetchWebApi(token, "me/player/devices");
     // const currentDevice = devices.find((device) => device.is_active);
-    // console.log('currentDevice', currentDevice)
+    console.log('sendtoclients', data)
     if (data.action === "resume") {
       await fetchWebApi(
         token,
         // "me/player/play?device_id=" + currentDevice.id,
         "me/player/play",
         "PUT"
-      );
+      )
     } else if (data.action === "pause") {
       await fetchWebApi(
         token,
@@ -78,7 +75,6 @@ class Controller {
     // res.sendStatus(200);
   }
   static async getQueue(req, res) {
-    console.log("getQueue");
     const token = await Auth.getInstance().getSDKToken(
       req.session.code,
       `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/player`

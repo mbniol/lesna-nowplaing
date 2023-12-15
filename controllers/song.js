@@ -120,6 +120,7 @@ export default class Controller {
   static async votes(req, res) {
     const track_list = await songModel.get_tracks_to_display();
     // const track_list = await songModel.get_track_ranking();
+    // console.log(track_list)
     res.json(track_list);
   }
   static async vote(req, res) {
@@ -128,7 +129,7 @@ export default class Controller {
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
     const track_id = await get_id(track_link);
-    console.log(track_id);
+    // console.log(track_id);
     // console.log(track_id);
     if (track_id) {
       const rows = await songModel.get_song(track_id);
@@ -201,11 +202,11 @@ export default class Controller {
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
     const track_id = await get_id(track_link);
-    console.log(track_id);
+    // console.log(track_id);
     if (track_id) {
       const rows = await songModel.get_song(track_id);
       if (rows[0][0] === undefined) {
-        console.log("api");
+        // console.log("api");
         const track = await fetchWebApi(token, "tracks/" + track_id);
         if (track["error"] !== undefined) {
           res.json({ error: "wystapil blad przy odczycie piosenki" });

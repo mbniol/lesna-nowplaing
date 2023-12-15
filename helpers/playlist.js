@@ -14,7 +14,7 @@ async function clearPlaylist(token) {
   const tracks_object = {
     tracks: tracks_array,
   };
-  //console.log(tracks_object);
+  
   //usunięcie obiektów
   const result = await fetchWebApi(
     token,
@@ -22,7 +22,7 @@ async function clearPlaylist(token) {
     "DELETE",
     tracks_object
   );
-  //console.log(result);
+  
 }
 
 function get_pattern(rows) {
@@ -50,7 +50,7 @@ function get_pattern(rows) {
 }
 
 async function addToPlaylist(token, tracks_table) {
-  //console.log("tracktables", tracks_table, token);
+  
   const res = await fetchWebApi(
     token,
     "playlists/"+process.env.PLAYLIST_ID+"/tracks",
@@ -60,7 +60,7 @@ async function addToPlaylist(token, tracks_table) {
       position: 0,
     }
   );
-  //console.log(res);
+  
 }
 
 export { clearPlaylist, get_pattern, addToPlaylist };

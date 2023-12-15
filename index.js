@@ -71,9 +71,9 @@ Mysql.setInstance(
 //ustawienie połączenia z api spotify
 Auth.setInstance(client_id, client_secret);
 const token = await Auth.getInstance().getAPIToken();
-//console.log(token);
+
 // const dane = await fetchWebApi(token, "search?q=choppa&type=track");
-// console.log(dane);
+
 
 //
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
@@ -202,11 +202,10 @@ const func = async () => {
         ORDER BY b.start;`
   );
   const [rows] = data;
-  // console.log(rows);
+  console.log("Opóźnienie: ", rows[0].alarm_offset)
+  console.log("Układ przerw:")
   rows.forEach(({ id, start, end, alarm_offset }, i) => {
     console.log(start, end)
-    // console.log("alarm_offset", alarm_offset);
-    // console.log("hej");
     const startArr = start.split(":");
     const endArr = end.split(":");
     const startDate = new Date();
@@ -217,7 +216,7 @@ const func = async () => {
       runAtSpecificTimeOfDay(
         ...startArr,
         async () => {
-          console.log("na jedna nóżkę");
+          console.log("Pierwsza przerwa dnia, uruchomienie");
           // await fetch(
           //   `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/playlist`,
           //   { method: "POST" }
@@ -244,28 +243,31 @@ const func = async () => {
     } else {
       runAtSpecificTimeOfDay(
         ...startArr,
-        async () => {
+       async () => {
+          console.log("Inna przerwa dnia, uruchomienie");
+          const token = await Auth.getInstance().getSDKToken();
+          // console.log("token do innego dnia: ", token)
+          console.log('token od SDK', token)
           await fetchWebApi(
             token,
             // "me/player/play?device_id=" + currentDevice.id,
             "me/player/play",
             "PUT"
           );
-          console.log("już nie");
-          Controller.sendStateToClients({
-            action: "resume",
-            type: "break_change",
-          });
+          // Controller.sendStateToClients({
+          //   action: "resume",
+          //   type: "break_change",
+          // });
         },
         alarm_offset
       );
     }
     runAtSpecificTimeOfDay(...endArr, () => {
+      console.log('Pauzowanie przerwy')
       Controller.sendStateToClients({ action: "pause", type: "break_change" });
     }, alarm_offset);
   });
-  console.log(rows);
-  const tasks = cron.getTasks();
+  // const tasks = cron.getTasks();
 };
 
 func();

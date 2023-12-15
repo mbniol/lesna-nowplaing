@@ -10,13 +10,14 @@ function convertIP(remoteAddress) {
   }
 }
 async function checkVoteRight(req, res, next) {
-  console.log(req.body);
   const [date, formatedDate] = getCurrentDate();
   const lastVote = req.session.lastVote;
+  // console.log('checkowanie: previousDate ', lastVote, ' currentDate ', formatedDate)
   if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
     return res.sendStatus(403);
   }
   req.convertedIP = convertIP(req.socket.remoteAddress);
+  // console.log('visitorID', req.body.visitorId)
   const hasVoted = await AuthModel.checkTodaysVote(
     // req.convertedIP,
     req.body.visitorId
@@ -29,13 +30,14 @@ async function checkVoteRight(req, res, next) {
   next();
 }
 async function checkVote(req, res, next) {
-  console.log(req.body);
   const [date, formatedDate] = getCurrentDate();
   const lastVote = req.session.lastVote;
+  // console.log('checkowanie: previousDate ', lastVote, ' currentDate ', formatedDate)
   if (lastVote && new Date(formatedDate) >= new Date(lastVote)) {
     return res.json({ vote: 1 });
   }
   // req.convertedIP = convertIP(req.socket.remoteAddress);
+  // console.log('visitorID', req.body.visitorId)
   const hasVoted = await AuthModel.checkTodaysVote(
     // req.convertedIP,
     req.body.visitorId

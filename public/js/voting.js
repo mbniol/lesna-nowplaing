@@ -194,7 +194,7 @@ async function show_votes() {
   }
 }
 function add_track(id, name, artist, count, cover) {
-  console.log(disabled);
+  // console.log(disabled);
   const disabledAttribute = votestatus ? `disabled` : "";
   return `
   <div class="voting-item" id="letterstart${id}">
