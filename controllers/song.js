@@ -83,28 +83,45 @@ export default class Controller {
     const type = req.query.type ?? "unverified";
     const pp = +(req.query.pp ?? 25);
     let page = +(req.query.page ?? 1);
+    const searchQuery = req.query.s ?? "";
+    const sanitizedSearchQuery = searchQuery
+      .replace(/\+|\-|\>|\<|\(|\)|\~|\*|\"/, "")
+      .split(" ")
+      .filter((word) => word.length > 0)
+      .map((word) => "*" + word + "*")
+      .join(" ");
     //console.log(page, pp, req.query);
     let selectionLimiter = {};
     switch (type) {
       case "unverified":
         // console.log("xD");
         selectionLimiter.verified = false;
+        selectionLimiter.banned = false;
         break;
       case "verified":
         selectionLimiter.verified = true;
+        selectionLimiter.banned = false;
         break;
       case "banned":
         selectionLimiter.banned = true;
         break;
     }
     let offset = (page - 1) * pp;
-    const songsCount = await songModel.countSongs(selectionLimiter);
+    const songsCount = await songModel.countSongs(
+      selectionLimiter,
+      sanitizedSearchQuery
+    );
     if (songsCount <= offset) {
       page = 1;
       offset = 0;
     }
     const pagesCount = Math.ceil(songsCount / pp);
-    const songs = await songModel.getSongs(selectionLimiter, offset, pp);
+    const songs = await songModel.getSongs(
+      selectionLimiter,
+      sanitizedSearchQuery,
+      offset,
+      pp
+    );
     const navigation = Controller.generateNavigation(pagesCount, page);
     res.json({ songs, navigation });
   }

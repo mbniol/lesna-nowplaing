@@ -30,7 +30,11 @@ function changePage(page) {
   const currentSearchParams = new URL(location.href).searchParams;
   currentSearchParams.set("page", page);
   // const newURL = url;
-  history.pushState({}, "", "?" + currentSearchParams.toString());
+  history.pushState(
+    currentSearchParams.toString(),
+    "",
+    "?" + currentSearchParams.toString()
+  );
   getSongs(currentSearchParams.toString());
   // locationcurrentSearchParams
 }
@@ -123,7 +127,6 @@ async function sendChanges() {
     },
     body: JSON.stringify(changes),
   });
-  
 }
 async function waitForBan() {
   const banButtons = document.querySelectorAll(".table__button--ban");
@@ -196,6 +199,7 @@ async function waitForVerify() {
 // submitButton.addEventListener("click", sendChanges);
 
 getSongs(new URL(location.href).searchParams.toString());
+setFormValues(new URL(location.href).searchParams.toString());
 
 const filterSubmit = document.querySelector(".filter-menu__button");
 
@@ -204,7 +208,7 @@ filterSubmit.addEventListener("click", async (e) => {
   const selectTypeElement = document.querySelector("#type-select");
   const selectedType =
     selectTypeElement.options[selectTypeElement.selectedIndex].value;
-  
+
   const selectCountElement = document.querySelector("#pp-select");
   const selectedCount =
     selectCountElement.options[selectCountElement.selectedIndex].value;
@@ -217,6 +221,34 @@ filterSubmit.addEventListener("click", async (e) => {
     type: selectedType,
   });
   console.log(newSearchParams);
-  history.pushState({}, "", "?" + newSearchParams.toString());
+  history.pushState(
+    newSearchParams.toString(),
+    "",
+    "?" + newSearchParams.toString()
+  );
   getSongs(newSearchParams.toString());
+});
+
+function setFormValues(searchParamsStringified) {
+  const searchParams = new URLSearchParams(searchParamsStringified);
+  const searchType = searchParams.get("type") ?? "unverified";
+  const selectTypeElement = document.querySelector("#type-select");
+  const currentTypeOption = [...selectTypeElement.options].find(
+    (option) => option.value === searchType
+  );
+  selectTypeElement.selectedIndex = currentTypeOption.index;
+  const searchPP = searchParams.get("pp") ?? "25";
+  const selectPPElement = document.querySelector("#pp-select");
+  const currentPPOption = [...selectPPElement.options].find(
+    (option) => option.value === searchPP
+  );
+  selectPPElement.selectedIndex = currentPPOption.index;
+  const searchQuery = searchParams.get("s") ?? "";
+  const searchInput = document.querySelector(".filter-menu__input");
+  searchInput.value = searchQuery;
+}
+
+window.addEventListener("popstate", (event) => {
+  setFormValues(event.state);
+  getSongs(event.state);
 });

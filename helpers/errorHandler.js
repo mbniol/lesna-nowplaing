@@ -1,6 +1,7 @@
 async function errorHandler(promise, thisArg = null, ...args) {
+  let data;
   try {
-    const data = await promise.apply(thisArg, args);
+    data = await promise.apply(thisArg, args);
     return [data, null];
   } catch (e) {
     return [null, e];
@@ -10,8 +11,8 @@ async function errorHandler(promise, thisArg = null, ...args) {
 async function connSensitiveHandler(...args) {
   let [response, error] = await errorHandler(fetch, null, ...args);
   while (error) {
-    console.error(error.errno, error.type, err. name);
-    if (error.code === "ECONNRESET" || error.code === 'ETIMEDOUT') {
+    console.log("retry, args:", ...args);
+    if (error.cause.code === "ECONNRESET" || error.cause.code === "ETIMEDOUT") {
       console.log("zejabny net");
     }
     await new Promise((resolve) => setTimeout(resolve, 3000));

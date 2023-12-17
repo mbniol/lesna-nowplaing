@@ -110,7 +110,7 @@ export default class Model {
     return result[0];
   }
 
-  static async getSongs(selectionLimiter, offset, amount) {
+  static async getSongs(selectionLimiter, searchQuery, offset, amount) {
     const whereConstraints = [];
     if (selectionLimiter.banned !== undefined) {
       whereConstraints.push(
@@ -122,6 +122,12 @@ export default class Model {
         selectionLimiter.verified ? "verified = 1" : "verified = 0"
       );
     }
+    if (searchQuery) {
+      whereConstraints.push(
+        "(MATCH(name) AGAINST(? IN BOOLEAN MODE) OR MATCH(artist) AGAINST(? IN BOOLEAN MODE))"
+      );
+    }
+    console.log(whereConstraints);
     const whereConstraintsJoined =
       whereConstraints.length > 0
         ? " where " + whereConstraints.join(" AND ")
@@ -133,7 +139,9 @@ export default class Model {
       "SELECT id, name, cover, artist, length, banned, verified FROM tracks " +
         whereConstraintsJoined +
         " LIMIT ?,?",
-      [offset, amount]
+      searchQuery
+        ? [searchQuery, searchQuery, offset, amount]
+        : [offset, amount]
     );
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });
@@ -141,7 +149,8 @@ export default class Model {
     return rows[0];
   }
 
-  static async countSongs(selectionLimiter) {
+  static async countSongs(selectionLimiter, searchQuery) {
+    console.log("searchQuery", searchQuery);
     const whereConstraints = [];
     if (selectionLimiter.banned !== undefined) {
       whereConstraints.push(
@@ -153,15 +162,22 @@ export default class Model {
         selectionLimiter.verified ? "verified = 1" : "verified = 0"
       );
     }
+    if (searchQuery) {
+      whereConstraints.push(
+        "(MATCH(name) AGAINST(? IN BOOLEAN MODE) OR MATCH(artist) AGAINST(? IN BOOLEAN MODE))"
+      );
+    }
     const whereConstraintsJoined =
       whereConstraints.length > 0
         ? " where " + whereConstraints.join(" AND ")
         : "";
+
     const pool = Mysql.getPromiseInstance();
     const [rows, err] = await errorHandler(
       pool.query,
       pool,
-      "SELECT COUNT(*) as count FROM tracks" + whereConstraintsJoined
+      "SELECT COUNT(*) as count FROM tracks" + whereConstraintsJoined,
+      searchQuery ? [searchQuery, searchQuery] : []
     );
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });

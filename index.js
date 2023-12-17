@@ -74,7 +74,6 @@ const token = await Auth.getInstance().getAPIToken();
 
 // const dane = await fetchWebApi(token, "search?q=choppa&type=track");
 
-
 //
 //   await vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1")
 // );
@@ -202,10 +201,10 @@ const func = async () => {
         ORDER BY b.start;`
   );
   const [rows] = data;
-  console.log("Opóźnienie: ", rows[0].alarm_offset)
-  console.log("Układ przerw:")
+  console.log("Opóźnienie: ", rows[0].alarm_offset);
+  console.log("Układ przerw:");
   rows.forEach(({ id, start, end, alarm_offset }, i) => {
-    console.log(start, end)
+    console.log(start, end);
     const startArr = start.split(":");
     const endArr = end.split(":");
     const startDate = new Date();
@@ -243,11 +242,11 @@ const func = async () => {
     } else {
       runAtSpecificTimeOfDay(
         ...startArr,
-       async () => {
+        async () => {
           console.log("Inna przerwa dnia, uruchomienie");
           const token = await Auth.getInstance().getSDKToken();
           // console.log("token do innego dnia: ", token)
-          console.log('token od SDK', token)
+          console.log("token od SDK", token);
           await fetchWebApi(
             token,
             // "me/player/play?device_id=" + currentDevice.id,
@@ -262,15 +261,46 @@ const func = async () => {
         alarm_offset
       );
     }
-    runAtSpecificTimeOfDay(...endArr, () => {
-      console.log('Pauzowanie przerwy')
-      Controller.sendStateToClients({ action: "pause", type: "break_change" });
-    }, alarm_offset);
+    runAtSpecificTimeOfDay(
+      ...endArr,
+      () => {
+        console.log("Pauzowanie przerwy");
+        Controller.sendStateToClients({
+          action: "pause",
+          type: "break_change",
+        });
+      },
+      alarm_offset
+    );
   });
   // const tasks = cron.getTasks();
 };
 
 func();
+let index = 0;
+setInterval(async () => {
+  if (index % 2 === 0) {
+    console.log("Inna przerwa dnia, uruchomienie");
+    const token = await Auth.getInstance().getSDKToken();
+    // console.log("token do innego dnia: ", token)
+    console.log("token od SDK", token);
+    console.log(
+      await fetchWebApi(
+        token,
+        // "me/player/play?device_id=" + currentDevice.id,
+        "me/player/play",
+        "PUT"
+      )
+    );
+  } else {
+    console.log("Pauzowanie przerwy");
+    Controller.sendStateToClients({
+      action: "pause",
+      type: "break_change",
+    });
+  }
+  index++;
+}, 15000);
 
 cron.schedule("0 2 * * Monday-Friday", func);
 
