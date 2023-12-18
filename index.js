@@ -278,29 +278,29 @@ const func = async () => {
 
 func();
 let index = 0;
-setInterval(async () => {
-  if (index % 2 === 0) {
-    console.log("Inna przerwa dnia, uruchomienie");
-    const token = await Auth.getInstance().getSDKToken();
-    // console.log("token do innego dnia: ", token)
-    console.log("token od SDK", token);
-    console.log(
-      await fetchWebApi(
-        token,
-        // "me/player/play?device_id=" + currentDevice.id,
-        "me/player/play",
-        "PUT"
-      )
-    );
-  } else {
-    console.log("Pauzowanie przerwy");
-    Controller.sendStateToClients({
-      action: "pause",
-      type: "break_change",
-    });
-  }
-  index++;
-}, 15000);
+// setInterval(async () => {
+//   if (index % 2 === 0) {
+//     console.log("Inna przerwa dnia, uruchomienie");
+//     const token = await Auth.getInstance().getSDKToken();
+//     // console.log("token do innego dnia: ", token)
+//     console.log("token od SDK", token);
+//     console.log(
+//       await fetchWebApi(
+//         token,
+//         // "me/player/play?device_id=" + currentDevice.id,
+//         "me/player/play",
+//         "PUT"
+//       )
+//     );
+//   } else {
+//     console.log("Pauzowanie przerwy");
+//     Controller.sendStateToClients({
+//       action: "pause",
+//       type: "break_change",
+//     });
+//   }
+//   index++;
+// }, 15000);
 
 cron.schedule("0 2 * * Monday-Friday", func);
 

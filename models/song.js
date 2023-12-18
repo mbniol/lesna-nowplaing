@@ -127,7 +127,6 @@ export default class Model {
         "(MATCH(name) AGAINST(? IN BOOLEAN MODE) OR MATCH(artist) AGAINST(? IN BOOLEAN MODE))"
       );
     }
-    console.log(whereConstraints);
     const whereConstraintsJoined =
       whereConstraints.length > 0
         ? " where " + whereConstraints.join(" AND ")
@@ -150,7 +149,6 @@ export default class Model {
   }
 
   static async countSongs(selectionLimiter, searchQuery) {
-    console.log("searchQuery", searchQuery);
     const whereConstraints = [];
     if (selectionLimiter.banned !== undefined) {
       whereConstraints.push(
@@ -256,6 +254,72 @@ JOIN votes v ON t.id = v.track_id
 WHERE t.id = ?
 GROUP BY t.id`,
       [id]
+    );
+    if (selectErr) {
+      throw new Error("Nie udało isę wykonać zapytania", { cause: err });
+    }
+    return data[0][0].count;
+  }
+
+  static async getTracksRankingFrom(previousDay) {
+    const pool = Mysql.getPromiseInstance();
+    const [result, err] = await errorHandler(
+      pool.query,
+      pool,
+      `
+        SELECT t.id, t.cover, t.name, t.artist, t.length,
+               SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 0 DAY) THEN 1 ELSE 0 END) +
+               ROUND(SUM(CASE WHEN DATE(v.date_added) >= DATE_SUB(?, INTERVAL 1 DAY) THEN 1 ELSE 0 END) / 2) AS count
+        FROM tracks t
+        JOIN votes v ON t.id = v.track_id
+        GROUP BY t.id
+        HAVING count > 0
+        ORDER BY count DESC
+        LIMIT 99;`,
+      [previousDay]
+    );
+    if (err) {
+      throw new Error("Nie udało isę wykonać zapytania", { cause: err });
+    }
+    return result[0];
+  }
+
+  static async getTracksToDisplayFrom(previousDay) {
+    const pool = Mysql.getPromiseInstance();
+    const [result, err] = await errorHandler(
+      pool.query,
+      pool,
+      `
+        SELECT t.id, t.cover, t.name, t.artist, t.length,
+               SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 0 DAY) THEN 1 ELSE 0 END) +
+               ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(?, INTERVAL 1 DAY) THEN 1 ELSE 0 END) / 2) AS count
+        FROM tracks t
+        JOIN votes v ON t.id = v.track_id
+        GROUP BY t.id
+        HAVING count > 0
+        ORDER BY count DESC
+        LIMIT 99;`,
+      [previousDay]
+    );
+    if (err) {
+      throw new Error("Nie udało isę wykonać zapytania", { cause: err });
+    }
+    return result[0];
+  }
+
+  static async getVotesAmountFrom(id, previousDay) {
+    const pool = Mysql.getPromiseInstance();
+    const [data, selectErr] = await errorHandler(
+      pool.query,
+      pool,
+      `SELECT t.id, t.cover, t.name, t.artist, t.length,
+      SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(CURDATE(), INTERVAL 0 DAY) THEN 1 ELSE 0 END) +
+      ROUND(SUM(CASE WHEN DATE(v.date_added) = DATE_SUB(?, INTERVAL 1 DAY) THEN 1 ELSE 0 END) / 2) AS count
+FROM tracks t
+JOIN votes v ON t.id = v.track_id
+WHERE t.id = ?
+GROUP BY t.id`,
+      [previousDay, id]
     );
     if (selectErr) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });

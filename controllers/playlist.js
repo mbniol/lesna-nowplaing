@@ -17,24 +17,25 @@ export default class Controller {
     await clearPlaylist(SDKToken);
     const APIToken = await Auth.getInstance().getAPIToken();
     const pattern = await get_pattern(await patternModel.withBreaks());
-    
+
     //wyciągnięcie odpowiedniej ilości piosenek z bazy aby zapewnić odpowiedni czas
     let time;
     let tracks_votes;
     let i = 0;
     do {
-      tracks_votes = await songModel.get_track_ranking(1, i);
+      // tracks_votes = await songModel.get_track_ranking(1, i);
+      tracks_votes = await getTracksRankingFrom("2023-12-15");
       time = 0;
       tracks_votes.forEach((track) => (time += track["length"] / 1000));
       i++;
-    } while (pattern.main_offset+pattern.main_time > time);
+    } while (pattern.main_offset + pattern.main_time > time);
     //odwrócona tablica glosów
     if (time < pattern.main_time + pattern.main_offset) {
       let track_list = tracks_votes.reverse();
       const tracks_uris = await track_list.map(
         (track) => "spotify:track:" + track["id"]
       );
-      
+
       await addToPlaylist(SDKToken, tracks_uris);
     } else if (time >= pattern.main_time + pattern.main_offset) {
       let index = 0;
@@ -43,7 +44,6 @@ export default class Controller {
       let offset_uris = [];
       //stworzenie tablicy z piosenek o największej ilości głosów
       do {
-        
         time += tracks_votes[index]["length"] / 1000;
         main_uris.push("spotify:track:" + tracks_votes[index]["id"]);
         index++;
@@ -61,7 +61,7 @@ export default class Controller {
       for (; index < tracks_votes.length; index++) {
         uris.push("spotify:track:" + tracks_votes[index]["id"]);
       }
-      
+
       await addToPlaylist(SDKToken, uris);
     }
     res.sendStatus(200);

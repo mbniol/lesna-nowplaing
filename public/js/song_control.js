@@ -57,7 +57,6 @@ async function getSongs(searchParams = "") {
       changePage(anchor.dataset.page);
     });
   });
-  console.log(json);
   json.songs.forEach(
     ({ cover, name, artist, length, id, banned, verified }) => {
       const bannedBoolean = Boolean(banned);
@@ -220,7 +219,6 @@ filterSubmit.addEventListener("click", async (e) => {
     s: searchValue,
     type: selectedType,
   });
-  console.log(newSearchParams);
   history.pushState(
     newSearchParams.toString(),
     "",

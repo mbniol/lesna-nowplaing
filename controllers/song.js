@@ -135,8 +135,8 @@ export default class Controller {
   }
 
   static async votes(req, res) {
-    const track_list = await songModel.get_tracks_to_display();
-    // const track_list = await songModel.get_track_ranking();
+    const track_list = await songModel.getTracksToDisplayFrom("2023-12-15");
+    // const track_list = await songModel.get_tracks_to_display();
     // console.log(track_list)
     res.json(track_list);
   }
@@ -181,7 +181,10 @@ export default class Controller {
               req.convertedIP,
               req.body.visitorId
             );
-            const votes = await songModel.votes_amount(track_id);
+            const votes = await songModel.getVotesAmountFrom(
+              track_id,
+              "2023-12-15"
+            );
             sendEventsToAll(Controller.#clients, {
               track_id,
               votes,
@@ -198,7 +201,10 @@ export default class Controller {
             req.convertedIP,
             req.body.visitorId
           );
-          const votes = await songModel.votes_amount(track_id);
+          const votes = await songModel.getVotesAmountFrom(
+            track_id,
+            "2023-12-15"
+          );
           sendEventsToAll(Controller.#clients, {
             track_id,
             cover: rows[0][0]["cover"],
