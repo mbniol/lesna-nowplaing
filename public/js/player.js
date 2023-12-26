@@ -27,7 +27,7 @@ function getTheEssence(track, imageSize) {
   const duration = minutes + ":" + String(seconds).padStart(2, "0");
   const name = track.name;
   const id = track.id;
-  
+
   return { image, artists, duration, name, id };
 }
 
@@ -37,11 +37,10 @@ const params = new URL(document.location).searchParams;
 const code = params.get("code");
 window.onSpotifyWebPlaybackSDKReady = async () => {
   const response = await fetch("/api/token/sdk?code=" + code);
-  
+
   const jsonResponse = await response.json();
   let token = jsonResponse.token;
-  
-  
+
   setTimeout(() => {
     const player = new Spotify.Player({
       name: "Lesna",
@@ -64,8 +63,6 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
       //   method: "POST",
       // });
       addConnectEnforcer();
-      
-      
     });
 
     let lastId = undefined;
@@ -86,7 +83,19 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
     function sameQueue(queue1, queue2) {
       return JSON.stringify(queue1) === JSON.stringify(queue2);
     }
-    let j = 0;
+
+    const events = new EventSource(`/api/player`);
+
+    events.onmessage = (event) => {
+      const { action } = JSON.parse(event.data);
+      if (action === "resume") {
+        player.resume();
+      } else if (action === "pause") {
+        player.pause();
+      }
+      // console.log(action);
+    };
+
     player.addListener(
       "player_state_changed",
       async ({
@@ -150,7 +159,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
             lastRequestArchive.paused !== paused
           ) {
             // return console.log("pauza/unpauza");
-            return fetch("/api/player", {
+            return fetch("/api/display", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -173,7 +182,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
             sameQueue(lastRequestArchive.queue, fetch_queue)
           ) {
             // return console.log("zmiana pozycji");
-            return fetch("/api/player", {
+            return fetch("/api/display", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -192,7 +201,7 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
           }
           if (position === 0) {
             // return console.log("nowa piosenka");
-            return fetch("/api/player", {
+            return fetch("/api/display", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -217,7 +226,6 @@ window.onSpotifyWebPlaybackSDKReady = async () => {
 };
 
 function addClickEnforcer() {
-  
   connectEnforcer.remove();
   const clickEnforcer = document.createElement("div");
   clickEnforcer.classList.add("enforcer");

@@ -6,7 +6,7 @@ function convertToHumanTime(wholeSeconds) {
   return position_minutes + ":" + String(position_seconds).padStart(2, "0");
 }
 
-const events = new EventSource(`/api/player`);
+const events = new EventSource(`/api/display`);
 let progressInterval;
 const background = document.querySelector(".background");
 const nowPlayingContainer = document.querySelector(".main-left");
@@ -103,7 +103,7 @@ events.onmessage = (event) => {
   let { current_track, queue, position, paused, action, type } = JSON.parse(
     event.data
   );
-  console.log(JSON.parse(event.data))
+  console.log(JSON.parse(event.data));
   clearInterval(progressInterval);
   if (queueList.firstChild === null) {
     action = "init_song";
@@ -180,8 +180,6 @@ function animate(parentsWithChildren, additionalMargin) {
       child.getBoundingClientRect().right > parent.getBoundingClientRect().right
     );
   });
-
-  
 
   filteredPairs.forEach(([parent, child]) => {
     const diff = Math.ceil(

@@ -4,6 +4,7 @@ import AuthController from "../controllers/auth.js";
 import BreakController from "../controllers/break.js";
 import PatternController from "../controllers/pattern.js";
 import PlayerController from "../controllers/player.js";
+import DisplayController from "../controllers/display.js";
 import PlaylistController from "../controllers/playlist.js";
 import SongController from "../controllers/song.js";
 import NewsController from "../controllers/news.js";
@@ -58,13 +59,15 @@ router.get("/get_news", NewsController.show_news);
 
 router.get("/player", checkAdmin, PlayerController.addNewClient);
 
-router.post("/player", checkAdmin, PlayerController.sendDataToClients);
+router.post("/player", checkAdmin, PlayerController.addNewClient);
+
+router.get("/display", checkAdmin, DisplayController.addNewClient);
 
 router.post("/playlist", checkAdmin, PlayerController.setPlaylist);
 
 router.get("/playlist", checkAdmin, PlaylistController.make);
 
-router.get("/queue", checkAdmin, PlayerController.getQueue);
+router.get("/queue", checkAdmin, DisplayController.getQueue);
 
 router.get("/songs", checkAdmin, SongController.getMany);
 

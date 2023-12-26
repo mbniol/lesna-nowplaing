@@ -11,7 +11,7 @@ import fs from "fs";
 import https from "https";
 import cron from "node-cron";
 import { errorHandler } from "./helpers/errorHandler.js";
-import Controller from "./controllers/player.js";
+import PlayerController from "./controllers/player.js";
 
 // import {vote} from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
@@ -215,27 +215,18 @@ const func = async () => {
       runAtSpecificTimeOfDay(
         ...startArr,
         async () => {
-          console.log("Pierwsza przerwa dnia, uruchomienie");
-          // await fetch(
-          //   `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/playlist`,
-          //   { method: "POST" }
-          // );
+          console.log("Pierwsza przerwa dnia");
           const token = await Auth.getInstance().getSDKToken();
-          // const { devices } = await fetchWebApi(token, "me/player/devices");
-          // const currentDevice = devices.find((device) => device.is_active);
-          await fetchWebApi(
-            token,
-            // "me/player/play?device_id=" + currentDevice.id,
-            "me/player/play",
-            "PUT",
-            {
-              context_uri: `spotify:playlist:${process.env.PLAYLIST_ID}`,
-              offset: {
-                position: 0,
-              },
-              position_ms: 0,
-            }
-          );
+          await fetchWebApi(token, "me/player/play", "PUT", {
+            context_uri: `spotify:playlist:${process.env.PLAYLIST_ID}`,
+            offset: {
+              position: 0,
+            },
+            position_ms: 0,
+          });
+          PlayerController.sendDataToClients({
+            action: "resume",
+          });
         },
         alarm_offset
       );
@@ -244,30 +235,19 @@ const func = async () => {
         ...startArr,
         async () => {
           console.log("Inna przerwa dnia, uruchomienie");
-          const token = await Auth.getInstance().getSDKToken();
-          // console.log("token do innego dnia: ", token)
-          console.log("token od SDK", token);
-          await fetchWebApi(
-            token,
-            // "me/player/play?device_id=" + currentDevice.id,
-            "me/player/play",
-            "PUT"
-          );
-          // Controller.sendStateToClients({
-          //   action: "resume",
-          //   type: "break_change",
-          // });
+          PlayerController.sendDataToClients({
+            action: "resume",
+          });
         },
         alarm_offset
       );
     }
     runAtSpecificTimeOfDay(
       ...endArr,
-      () => {
+      async () => {
         console.log("Pauzowanie przerwy");
-        Controller.sendStateToClients({
+        PlayerController.sendDataToClients({
           action: "pause",
-          type: "break_change",
         });
       },
       alarm_offset
@@ -279,24 +259,18 @@ const func = async () => {
 func();
 let index = 0;
 // setInterval(async () => {
+//   console.log(
+//     `https://${process.env.WEB_HOST}:${process.env.WEB_PORT}/api/player`
+//   );
 //   if (index % 2 === 0) {
-//     console.log("Inna przerwa dnia, uruchomienie");
-//     const token = await Auth.getInstance().getSDKToken();
-//     // console.log("token do innego dnia: ", token)
-//     console.log("token od SDK", token);
-//     console.log(
-//       await fetchWebApi(
-//         token,
-//         // "me/player/play?device_id=" + currentDevice.id,
-//         "me/player/play",
-//         "PUT"
-//       )
-//     );
+//     console.log("run");
+//     PlayerController.sendDataToClients({
+//       action: "resume",
+//     });
 //   } else {
 //     console.log("Pauzowanie przerwy");
-//     Controller.sendStateToClients({
+//     PlayerController.sendDataToClients({
 //       action: "pause",
-//       type: "break_change",
 //     });
 //   }
 //   index++;
