@@ -39,10 +39,11 @@ router.get(
   renderViewChainable("admin/song_control.html")
 );
 
+router.get("/display2", checkAdmin, renderViewChainable("admin/display2.html"));
+
 router.get(
-  "/display2",
-  checkAdmin,
-  renderViewChainable("admin/display2.html")
+  "/calendar",
+  /*checkAdmin,*/ renderViewChainable("admin/calendar.html")
 );
 
 router.get("*", renderViewChainable("404.html"));
