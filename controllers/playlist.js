@@ -24,7 +24,7 @@ export default class Controller {
     let i = 0;
     do {
       // tracks_votes = await songModel.get_track_ranking(1, i);
-      tracks_votes = await getTracksRankingFrom("2023-12-15");
+      tracks_votes = await getTracksRankingFrom("2023-12-22");
       time = 0;
       tracks_votes.forEach((track) => (time += track["length"] / 1000));
       i++;
