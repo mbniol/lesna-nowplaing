@@ -8,6 +8,7 @@ import DisplayController from "../controllers/display.js";
 import PlaylistController from "../controllers/playlist.js";
 import SongController from "../controllers/song.js";
 import NewsController from "../controllers/news.js";
+import DayOffController from "../controllers/day_off.js";
 import { checkVoteRight, checkVote } from "../middlewares/voting.js";
 
 const router = new Router();
@@ -82,5 +83,13 @@ router.post("/verified_songs_ban", checkAdmin, SongController.verifiedBan);
 router.post("/songs_verify", checkAdmin, SongController.verify);
 
 router.post("/songs_unban", checkAdmin, SongController.unban);
+
+router.get("/days_off", checkAdmin, DayOffController.getMany);
+
+router.get("/days_off/:date", checkAdmin, DayOffController.exists);
+
+router.delete("/days_off/:date", checkAdmin, DayOffController.delete);
+
+router.post("/days_off", checkAdmin, DayOffController.add);
 
 export default router;

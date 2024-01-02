@@ -32,6 +32,14 @@ CREATE TABLE `artists` (
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `days_off` (
+  `date` date NOT NULL,
+  `weekday` int(11) NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `days_off`
+  ADD PRIMARY KEY (`date`);
+
 -- --------------------------------------------------------
 
 --
