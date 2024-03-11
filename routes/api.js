@@ -7,7 +7,7 @@ import PlayerController from "../controllers/player.js";
 import DisplayController from "../controllers/display.js";
 import PlaylistController from "../controllers/playlist.js";
 import SongController from "../controllers/song.js";
-import NewsController from "../controllers/news.js";
+import NewsController from "../maciej/controllers/news.js";
 import DayOffController from "../controllers/day_off.js";
 import { checkVoteRight, checkVote } from "../middlewares/voting.js";
 
