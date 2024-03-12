@@ -38,6 +38,10 @@ CREATE TABLE `artists` (
 -- Struktura tabeli dla tabeli `artists_tracks`
 --
 
+CREATE TABLE `artists_tracks` (
+  `artists_id` int(11) NOT NULL,
+  `tracks_id` varchar(22) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- --------------------------------------------------------
 
 --
@@ -138,6 +142,11 @@ ALTER TABLE `votes`
 --
 -- Constraints for table `artists_tracks`
 --
+ALTER TABLE `artists_tracks`
+  ADD CONSTRAINT `artists_tracks_ibfk_1` FOREIGN KEY (`artists_id`) REFERENCES `artists` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `artists_tracks_ibfk_2` FOREIGN KEY (`tracks_id`) REFERENCES `tracks` (`id`) ON DELETE CASCADE;
+
+
 
 --
 -- Constraints for table `votes`
@@ -145,14 +154,6 @@ ALTER TABLE `votes`
 ALTER TABLE `votes`
   ADD CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`track_id`) REFERENCES `tracks` (`id`) ON DELETE CASCADE;
 COMMIT;
-
-CREATE TABLE `artists_tracks` (
-  `artists_id` int(11) NOT NULL,
-  `tracks_id` int(11) NOT NULL,
-  CONSTRAINT artist_track_pk PRIMARY KEY (`artists_id`,`tracks_id`)
-  CONSTRAINT `artists_tracks_ibfk_1` FOREIGN KEY (`artists_id`) REFERENCES `artists` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `artists_tracks_ibfk_2` FOREIGN KEY (`tracks_id`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

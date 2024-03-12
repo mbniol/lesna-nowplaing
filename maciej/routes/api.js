@@ -43,3 +43,5 @@ router.post("/verified_songs_ban", checkAdmin, SongController.verifiedBan);
 router.post("/songs_verify", checkAdmin, SongController.verify);
 
 router.post("/songs_unban", checkAdmin, SongController.unban);
+
+export default router;

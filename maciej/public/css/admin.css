@@ -1,0 +1,251 @@
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/PlusJakartaSans-Variable.ttf") format("truetype");
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+html, body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  font-family: "Plus Jakarta Sans";
+}
+
+.root {
+  height: 100dvh;
+  position: relative;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  isolation: isolate;
+}
+
+.selected:after {
+  content: "";
+  width: 100%;
+  translate: -100% 1.1em;
+  position: absolute;
+  height: 0.125rem;
+  z-index: -1;
+  background-color: #00c2c9;
+}
+
+.admin-wrapper {
+  font-size: 2rem;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.admin-title {
+  height: 2em;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.preset-box {
+  background-color: white;
+  position: relative;
+  border-radius: 1rem;
+  padding: 1em;
+  color: black;
+  height: 6em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.preset-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.preset-header a {
+  color: #00c2c9;
+}
+
+.preset-header-button {
+  user-select: none;
+}
+
+.preset-info {
+  font-size: 1.5rem;
+}
+
+.preset-isselected {
+  font-size: 1.5rem;
+  color: red;
+}
+
+.preset-selected {
+  color: lime;
+}
+
+.admin-presets {
+  display: grid;
+  padding: 0 1em;
+  grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+  gap: 1em;
+}
+
+.preset-quick-settings {
+  position: absolute;
+  translate: -15% -150%;
+  font-size: 1rem;
+  display: flex;
+  right: 0;
+  opacity: 0;
+  flex-direction: column;
+  background-color: #00c2c9;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  border-radius: 1rem;
+  gap: 0.5em;
+  padding: 0.5em;
+  transition: opacity 0.2s ease-in-out;
+}
+.preset-quick-settings button {
+  background: none;
+  color: white;
+  font-family: inherit;
+  border: none;
+  font-size: 1rem;
+}
+.preset-quick-settings--visible {
+  opacity: 1;
+}
+
+#deletePreset, #deleteBreak {
+  background-color: red;
+  border-color: red;
+}
+
+.preset-quick-settings:after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 0;
+  bottom: 0;
+  right: 0;
+  translate: -0.5em 1em;
+  width: 0;
+  z-index: 10;
+  border-left: 1em solid transparent;
+  border-right: 1em solid transparent;
+  border-top: 1.5em solid #00c2c9;
+}
+
+.add-preset {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  color: black;
+  font-size: 2rem;
+  border-radius: 1rem;
+  gap: 1em;
+  z-index: 100;
+  background-color: white;
+  box-shadow: 0 0 0.25rem black;
+  top: 50%;
+  padding: 3em;
+  left: 50%;
+  translate: -50% -50%;
+}
+.add-preset form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.add-preset form input {
+  font-size: 1.5rem;
+}
+.add-preset form button {
+  font-size: 1.5rem;
+  outline: none;
+  border: 0.125rem solid black;
+  border-radius: 1rem;
+  color: white;
+  padding: 0.125em 0.25em;
+  background-color: black;
+}
+
+.add-preset-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.add-preset-close-btn {
+  position: absolute;
+  right: 0.5em;
+  top: 0;
+}
+
+.add-preset input[type=text], .add-preset input[type=number] {
+  font-size: 1.5rem;
+  outline: none;
+  border: 0.125rem solid black;
+  border-radius: 1rem;
+  color: black;
+  padding: 0.125em 0.25em;
+  background-color: white;
+}
+
+.add-preset-background {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 50;
+  position: fixed;
+  background-color: black;
+}
+
+.add-preset-background.show {
+  visibility: visible;
+  opacity: 25%;
+}
+
+.add-preset-button {
+  position: fixed;
+  font-size: 3rem;
+  right: 0.5em;
+  bottom: 0.5em;
+  background-color: #00c2c9;
+  text-align: center;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 1rem;
+  box-shadow: 0 0 0.5rem black;
+  z-index: 999;
+}
+
+.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+/*# sourceMappingURL=admin.css.map */

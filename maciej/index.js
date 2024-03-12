@@ -66,7 +66,7 @@ Mysql.setInstance(
   process.env.DB_HOST || "localhost",
   process.env.DB_USER || "root",
   process.env.DB_PASSWORD || "",
-  process.env.DB_NAME || "radio"
+  process.env.DB_NAME || "maciej"
 );
 //ustawienie połączenia z api spotify
 Auth.setInstance(client_id, client_secret);
@@ -89,64 +89,15 @@ const token = await Auth.getInstance().getAPIToken();
 https
   .createServer(
     {
-      key: fs.readFileSync("./private.key"),
-      cert: fs.readFileSync("./merge_certificate.crt"),
+      key: fs.readFileSync("./localKey.key"),
+      cert: fs.readFileSync("./localCertificate.crt"),
     },
     app
   )
-  .listen(port);
+  .listen(port, () => {
+    console.log(`app listening on port ${port}`);
+  });
 
-//
-//   "TEST API QUERY: ",
-//   (await fetchWebApi(token, "search?q=choppa&type=track")).tracks.items
-// );
-
-// import("./models/song.js").then(({ newTruck, vote, votes }) => {
-//   //testy pobierania danych piosenki z api
-//   const track_id = "2LBqCSwhJGcFQeTHMVGwy3";
-//   //
-//   // votes();
-// });
-
-/* 
-  'track',track['name']
-)
-
-  'typ',track['type']
-)
-
-  'exp', track['explicit']
-)
-
-  'zdj',track['album']['images'][0]['url']
-)
-
-  'czas', Number((track['duration_ms']/1000).toFixed(2)),'s'
-) */
-function votingtest() {
-  vote("https://open.spotify.com/track/0fYVliAYKHuPmECRs1pbRf");
-  vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
-  vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
-  vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
-  vote("https://open.spotify.com/track/0DrDcqWpokMlhKYJSwoT4B");
-  vote("https://open.spotify.com/track/3K00Ib1shkOEiAXU5pec6e");
-  vote("https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3");
-  vote("https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3");
-  vote("https://open.spotify.com/track/2LBqCSwhJGcFQeTHMVGwy3");
-  vote("https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b");
-  vote("https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b");
-  vote("https://open.spotify.com/track/0OI7AFifLSoGzpb8bdBLLV");
-  vote("https://open.spotify.com/track/54ipXppHLA8U4yqpOFTUhr");
-  vote("https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw");
-  vote("https://open.spotify.com/track/0AUyNF6iFxMNQsNx2nhtrw");
-  vote("https://open.spotify.com/track/7lGKEWMXVWWTt3X71Bv44I");
-  vote("https://open.spotify.com/track/0fYVliAYKHuPmECRs1pbRf");
-  vote("https://open.spotify.com/track/4h9wh7iOZ0GGn8QVp4RAOB");
-  vote("https://open.spotify.com/track/4h9wh7iOZ0GGn8QVp4RAOB");
-  vote("https://open.spotify.com/track/4h9wh7iOZ0GGn8QVp4RAOB");
-  vote("https://open.spotify.com/track/07fbDnkKdZGk1gLvknxrns");
-  vote("https://open.spotify.com/track/2tpWsVSb9UEmDRxAl1zhX1");
-}
 //votingtest();
 
 function runAtSpecificTimeOfDay(
@@ -256,7 +207,7 @@ const func = async () => {
   // const tasks = cron.getTasks();
 };
 
-func();
+// func();
 let index = 0;
 // setInterval(async () => {
 //   console.log(

@@ -17,7 +17,7 @@ router.get(
 router.get("/", renderViewChainable("voting.html"));
 
 router.get(
-  "/admin/songs",
+  "/admin",
   checkAdmin,
   renderViewChainable("admin/song_control.html")
 );

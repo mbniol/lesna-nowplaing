@@ -1,4 +1,4 @@
-import newsModel from "../../models/news.js";
+import newsModel from "../models/news.js";
 
 export default class Controller {
   static async show_news(req, res) {
