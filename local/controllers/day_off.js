@@ -4,22 +4,26 @@ import dayOffModel from "../models/day_off.js";
 
 export default class Controller {
   static async add(req, res) {
-    const { weekday, date } = req.body;
-    await dayOffModel.add(date, weekday);
+    console.log(req.body);
+    await req.body.dates.forEach(async ({ day, month }) => {
+      await dayOffModel.add(month, day);
+    });
     res.sendStatus(200);
   }
   static async delete(req, res) {
-    const { date } = req.body;
-    await dayOffModel.delete(date);
+    await req.body.dates.forEach(async ({ day, month }) => {
+      await dayOffModel.delete(month, day);
+    });
     res.sendStatus(200);
   }
   static async getMany(req, res) {
     const daysOff = await dayOffModel.getMany();
-    res.json({ daysOff });
+
+    res.json(daysOff);
   }
   static async exists(req, res) {
-    const date = req.params.date;
-    const doesExist = await dayOffModel.exists(date);
+    const { month, day } = req.params;
+    const doesExist = await dayOffModel.exists(month, day);
     res.sendStatus({ doesExist: Boolean(doesExist) });
   }
 }

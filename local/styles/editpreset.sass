@@ -1,0 +1,125 @@
+@use 'core.sass'
+
+.edit-preset-wrapper
+    display: grid
+    height: 100%
+    width: 100%
+    grid-template-columns: 1fr 2fr
+    grid-template-rows: 1fr 15fr
+    grid-column-gap: 0px
+    grid-row-gap: 0px
+
+.edit-preset-title
+    grid-area: 1 / 1 / 2 / 3
+    font-size: 2rem
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    padding: 0 1.5em
+.edit-preset-main
+    font-size: 1.5rem
+    grid-area: 2 / 1 / 3 / 2
+    gap: 1em
+    flex-direction: column
+    display: flex
+    width: 100%
+    height: 100%
+    padding: 0 2em
+    button
+        font-size: 1.5rem
+        outline: none
+        border: 0.125rem solid black
+        border-radius: core.$border-radius
+        color: core.$text-base
+        padding: 0.125em 0.25em
+        background-color: black
+.edit-preset-breaks
+    grid-area: 2 / 2 / 3 / 3
+
+.edit-preset-main-box
+    display: flex
+    flex-direction: column
+    border-radius: core.$border-radius
+    background-color: white
+    color: black
+    padding: 2em
+    gap: 1em
+
+.edit-preset-main-box-item
+    display: flex
+    flex-direction: column
+    gap: 0.25em
+
+.edit-preset-main-box-settings
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    div
+        width: fit-content
+
+.edit-preset-main-box input[type="text"],.edit-preset-main-box input[type="number"]
+    font-size: 1.5rem
+    outline: none
+    border: 0.125rem solid black
+    border-radius: core.$border-radius
+    color: black
+    padding: 0.125em 0.25em
+    width: 10em
+    background-color: white
+
+.edit-preset-breaks
+    padding: 0 2em
+    gap: 1em
+    display: flex
+    flex-direction: column
+    overflow-y: auto
+    -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent)
+    padding-bottom: 5em
+
+.break
+    background-color: white
+    color: black
+    padding: 1em
+    display: flex
+    flex-direction: row
+    border-radius: core.$border-radius
+    input
+        font-size: 1rem
+        outline: none
+        border: 0.125rem solid black
+        border-radius: core.$border-radius
+        color: black
+        padding: 0.125em 0.25em
+        background-color: white
+
+.break-number
+    @include core.flexCenter()
+    flex: 0 1 2em
+
+// .break-time
+//     input
+//         width: 5em
+
+.break-name
+    input
+        font-size: 1.5rem
+        
+
+.break-delete
+    display: flex
+    align-items: flex-start
+    justify-content: center
+    flex: 0 1 3em
+    button
+        outline: none
+        border: 0.125rem solid black
+        border-radius: core.$border-radius
+        color: core.$text-base
+        padding: 0.125em 0.25em
+        background-color: black
+
+.break-main
+    flex: 1 1 auto
+    gap: 0.25em
+    display: flex
+    flex-direction: column

@@ -12,6 +12,12 @@ import https from "https";
 import cron from "node-cron";
 import { errorHandler } from "./helpers/errorHandler.js";
 import PlayerController from "./controllers/player.js";
+import {
+  clearPlaylist,
+  get_pattern,
+  addToPlaylist,
+} from "./helpers/playlist.js";
+import patternModel from "./models/pattern.js";
 
 // import {vote} from "./models/song.js";
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
@@ -89,12 +95,94 @@ const token = await Auth.getInstance().getAPIToken();
 https
   .createServer(
     {
-      key: fs.readFileSync("./private.key"),
-      cert: fs.readFileSync("./merge_certificate.crt"),
+      key: fs.readFileSync("./localKey.key"),
+      cert: fs.readFileSync("./localCertificate.crt"),
     },
     app
   )
   .listen(port);
+
+async function aaa() {
+  const SDKToken = await Auth.getInstance().getSDKToken();
+  // const APIToken = await Auth.getInstance().getAPIToken();
+  const pattern = get_pattern(await patternModel.withBreaks());
+  const votesRequest = await fetch(
+    "https://localhost:3001/api/finishing_ranking"
+  );
+  const votesJSON = await votesRequest.json();
+  // //wyciągnięcie odpowiedniej ilości piosenek z bazy aby zapewnić odpowiedni czas
+  let tracksLength = votesJSON.reduce(
+    (accumulator, { length }) => (accumulator += length),
+    0
+  );
+  const songsSurplus =
+    pattern.short_break_time + pattern.lunch_break_time - tracksLength;
+
+  console.log(songsSurplus);
+  if (songsSurplus < 0) {
+    const deficitRequest = await fetch(
+      "https://localhost:3001/api/random_songs?l=" + -songsSurplus
+    );
+    const additionalSongs = await deficitRequest.json();
+    console.log("additional", additionalSongs);
+    votesJSON.push(...additionalSongs);
+  }
+  // let tracks_votes;
+  let i = 0;
+  const mainSongs = [];
+  const beginningSongs = [];
+  let currentSong = votesJSON.shift();
+  for (
+    let remainingLunchTime = pattern.lunch_break_time;
+    currentSong && remainingLunchTime > 0;
+
+  ) {
+    remainingLunchTime -= currentSong.length;
+    mainSongs.push(currentSong);
+    currentSong = votesJSON.shift();
+  }
+  for (
+    let remainingBeginningTime =
+      pattern.short_break_time /*- theTimeOfRemainingSongs*/;
+    currentSong && remainingBeginningTime - currentSong.length > 0;
+
+  ) {
+    remainingBeginningTime -= currentSong.length;
+    beginningSongs.push(currentSong);
+    currentSong = votesJSON.shift();
+  }
+  const finishingSongs = currentSong ? [currentSong, ...votesJSON] : votesJSON;
+  const orderedSongArray = [...beginningSongs, ...mainSongs, ...finishingSongs];
+  const tracks_uris = orderedSongArray.map(
+    (track) => "spotify:track:" + track["id"]
+  );
+  console.log(orderedSongArray);
+  await clearPlaylist(SDKToken);
+  await addToPlaylist(SDKToken, tracks_uris);
+  await fetch("https://localhost:3001/api/reset_ranking", { method: "PUT" });
+  //potem halvuje
+  // to do: i tak potrzebne jest archiwum dla vote'ow
+  // console.log(beginningSongs);
+  // console.log({
+  //   long: {
+  //     break: pattern.lunch_break_time,
+  //     songs: mainSongs.reduce(
+  //       (accumulator, { length }) => (accumulator += length),
+  //       0
+  //     ),
+  //   },
+  //   beginning: {
+  //     break: pattern.short_break_time,
+  //     songs: beginningSongs.reduce(
+  //       (accumulator, { length }) => (accumulator += length),
+  //       0
+  //     ),
+  //   },
+  // });
+}
+// insertRecurrentnonWorkingDays(1);
+
+// setTimeout(aaa, 5 * 1000);
 
 //
 //   "TEST API QUERY: ",
@@ -173,7 +261,7 @@ function runAtSpecificTimeOfDay(
   }
 }
 
-const freeDaysCalendar = [
+const nonWorkingDaysCalendar = [
   {
     day: undefined,
     month: undefined,
@@ -185,8 +273,9 @@ const func = async () => {
   const day = now.getDate();
   const month = now.getMonth() + 1;
   if (
-    freeDaysCalendar.find(
-      ({ freeDay, freeMonth }) => freeDay === day && freeMonth === month
+    nonWorkingDaysCalendar.find(
+      ({ nonWorkingDay, nonWorkingMonth }) =>
+        nonWorkingDay === day && nonWorkingMonth === month
     )
   ) {
     return;
@@ -256,7 +345,7 @@ const func = async () => {
   // const tasks = cron.getTasks();
 };
 
-func();
+// func();
 let index = 0;
 // setInterval(async () => {
 //   console.log(

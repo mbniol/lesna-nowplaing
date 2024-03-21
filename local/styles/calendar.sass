@@ -1,0 +1,30 @@
+.calendar
+  width: 300px
+  
+  &__grid
+    display: grid
+    grid-auto-rows: 200px
+    grid-auto-flow: column
+
+  &__week
+    display: flex
+
+    &:first-child
+      justify-content: right
+
+  &__weekday
+    cursor: pointer
+    width: calc(100% / 7)
+
+    &--non-working
+      background: red
+
+  &__weekday-names-container
+    display: flex
+
+  &__weekday-name
+    width: calc(100% / 7)
+
+  &__navigation-bar
+    display: flex
+    justify-content: space-between

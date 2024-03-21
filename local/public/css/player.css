@@ -1,0 +1,34 @@
+.enforcer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.now-playing {
+  z-index: 0;
+  position: absolute;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+.now-playing--go {
+  z-index: 1;
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.queue-item {
+  display: grid;
+  grid-template-columns: 60px auto;
+  height: 60px;
+}
+.queue-item-image {
+  height: 100%;
+}
+
+/*# sourceMappingURL=player.css.map */

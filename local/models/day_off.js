@@ -2,16 +2,16 @@ import Mysql from "../helpers/database.js";
 import { errorHandler } from "../helpers/errorHandler.js";
 
 export default class Model {
-  static async exists(date) {
+  static async exists(month, day) {
     const pool = Mysql.getPromiseInstance();
     const [[rows], err] = await errorHandler(
       pool.query,
       pool,
       `
       SELECT 
-      EXISTS(SELECT * FROM days_off WHERE date=?)
+      EXISTS(SELECT * FROM days_off WHERE month=? AND day=?)
       as exists`,
-      [date]
+      [month, day]
     );
     if (err) {
       throw new Error("Nie udało się wykonać zapytania", { cause: err });
@@ -24,35 +24,36 @@ export default class Model {
       pool.query,
       pool,
       `
-				SELECT weekday, date FROM days_off`
-    );
-    if (err) {
-      throw new Error("Nie udało się wykonać zapytania", { cause: err });
-    }
-    return rows[0];
-  }
-  static async add(date, weekday) {
-    const pool = Mysql.getPromiseInstance();
-    const [[rows], err] = await errorHandler(
-      pool.query,
-      pool,
-      `
-        INSERT INTO days_off (date, weekday) VALUES (?, ?)`,
-      [date, weekday]
+				SELECT month, day FROM days_off`
     );
     if (err) {
       throw new Error("Nie udało się wykonać zapytania", { cause: err });
     }
     return rows;
   }
-  static async delete(date) {
+  static async add(month, day) {
+    console.log("a");
     const pool = Mysql.getPromiseInstance();
     const [[rows], err] = await errorHandler(
       pool.query,
       pool,
       `
-        DELETE FROM days_off where date=?`,
-      [date]
+        INSERT IGNORE INTO days_off (month, day) VALUES (?, ?)`,
+      [month, day]
+    );
+    if (err) {
+      throw new Error("Nie udało się wykonać zapytania", { cause: err });
+    }
+    return rows;
+  }
+  static async delete(month, day) {
+    const pool = Mysql.getPromiseInstance();
+    const [[rows], err] = await errorHandler(
+      pool.query,
+      pool,
+      `
+        DELETE FROM days_off where month=? AND day=?`,
+      [month, day]
     );
     if (err) {
       throw new Error("Nie udało się wykonać zapytania", { cause: err });

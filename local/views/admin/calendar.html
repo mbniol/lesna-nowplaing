@@ -5,26 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="js/helpers.js"></script>
+    <link rel="stylesheet" href="/css/calendar.css" />
   </head>
   <body>
     <div class="calendar">
-      <div class="calendar__top-bar">
-        <div class="calendar__left-arrow"></div>
+      <div class="calendar__navigation-bar">
+        <button class="calendar__left-arrow">poprzedni</button>
         <div class="calendar__month-name"></div>
-        <div class="calendar__right-arrow"></div>
+        <button class="calendar__right-arrow">następny</button>
+      </div>
+      <div class="calendar__weekday-names-container">
+        <div class="calendar__weekday-name">Pon</div>
+        <div class="calendar__weekday-name">Wto</div>
+        <div class="calendar__weekday-name">Śro</div>
+        <div class="calendar__weekday-name">Czw</div>
+        <div class="calendar__weekday-name">Pią</div>
+        <div class="calendar__weekday-name">Sob</div>
+        <div class="calendar__weekday-name">Ndz</div>
       </div>
       <div class="calendar__grid">
-        <div class="calendar__weekdays-container">
-          <div class="calendar__weekday">Pon</div>
-          <div class="calendar__weekday">Wto</div>
-          <div class="calendar__weekday">Śro</div>
-          <div class="calendar__weekday">Czw</div>
-          <div class="calendar__weekday">Pią</div>
-          <div class="calendar__weekday">Sob</div>
-          <div class="calendar__weekday">Ndz</div>
-        </div>
         <div class="calendar__dates-container"></div>
       </div>
+    </div>
+    <div>
+      <div>
+        Wszystkie
+        <select class="weekday-selector">
+          <option value="1">poniedziałki</option>
+          <option value="2">wtorki</option>
+          <option value="3">środy</option>
+          <option value="4">czwartki</option>
+          <option value="5">piątki</option>
+          <option value="6">soboty</option>
+          <option value="0">niedziele</option>
+        </select>
+        ustal jako dni
+        <select class="operation-selector">
+          <option value="POST">wolne</option>
+          <option value="DELETE">pracujące</option>
+        </select>
+        <button class="open-dialog">Zatwierdź</button>
+      </div>
+      <button>Cały miesiąc wolny</button>
+      <button>Zresetuj kalendarz</button>
+      <dialog class="dialog">
+        Czy na pewno chcesz <span class="alert-text"></span>
+        <button class="cancel-operation">Anuluj</button>
+        <button class="submit-operation">Wykonaj</button>
+      </dialog>
     </div>
     <script src="js/calendar.js"></script>
   </body>

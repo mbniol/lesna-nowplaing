@@ -41,10 +41,7 @@ router.get(
 
 router.get("/display2", checkAdmin, renderViewChainable("admin/display2.html"));
 
-router.get(
-  "/calendar",
-  /*checkAdmin,*/ renderViewChainable("admin/calendar.html")
-);
+router.get("/calendar", checkAdmin, renderViewChainable("admin/calendar.html"));
 
 router.get("*", renderViewChainable("404.html"));
 
