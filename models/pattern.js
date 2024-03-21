@@ -7,10 +7,10 @@ export default class Model {
     const [data, err] = await errorHandler(
       pool.query,
       pool,
-      `SELECT breaks.id ,round(time_to_sec(TIMEDIFF(end, start))) time, breaks.for_requested as main 
-          FROM breaks join patterns on patterns.id=breaks.pattern_id
-          WHERE patterns.active=1
-          ORDER BY breaks.start;`
+      `SELECT breaks.id ,time_to_sec(TIMEDIFF(end, start)) * 1000 time, breaks.for_requested as main 
+      FROM breaks join patterns on patterns.id=breaks.pattern_id
+      WHERE patterns.active=1
+      ORDER BY breaks.start;`
     );
     if (err) {
       throw new Error("Nie udało isę wykonać zapytania", { cause: err });

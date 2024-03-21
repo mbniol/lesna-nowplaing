@@ -8,7 +8,7 @@
 
 const datesContainer = document.querySelector(".calendar__dates-container");
 // let loopDateRow = createNewDateRow();
-const freeDaysArray = [0, 6];
+const nonWorkingDaysArray = [0, 6];
 const currDate = new Date();
 const calendarArray = Array.from({ length: 12 }, mapFn);
 function mapFn(v, i) {
@@ -26,7 +26,7 @@ function mapFn(v, i) {
       loopDateRow = monthArray.push([]);
     }
     lastWeekArray.push({
-      isFree: freeDaysArray.includes(loopWeekday),
+      isNonWorking: nonWorkingDaysArray.includes(loopWeekday),
       weekday: loopWeekday,
       date: new Date(currDate.getFullYear(), i, j),
     });

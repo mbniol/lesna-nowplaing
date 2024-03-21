@@ -97,7 +97,6 @@ https
   .listen(port, () => {
     console.log(`app listening on port ${port}`);
   });
-
 //votingtest();
 
 function runAtSpecificTimeOfDay(
@@ -124,7 +123,7 @@ function runAtSpecificTimeOfDay(
   }
 }
 
-const freeDaysCalendar = [
+const nonWorkingDaysCalendar = [
   {
     day: undefined,
     month: undefined,
@@ -136,8 +135,9 @@ const func = async () => {
   const day = now.getDate();
   const month = now.getMonth() + 1;
   if (
-    freeDaysCalendar.find(
-      ({ freeDay, freeMonth }) => freeDay === day && freeMonth === month
+    nonWorkingDaysCalendar.find(
+      ({ nonWorkingDay, nonWorkingMonth }) =>
+        nonWorkingDay === day && nonWorkingMonth === month
     )
   ) {
     return;

@@ -42,9 +42,10 @@ async function checkVote(req, res, next) {
     // req.convertedIP,
     req.body.visitorId
   );
-  if (hasVoted) {
-    return res.json({ vote: hasVoted });
-  }
+  // if (hasVoted) {
+  //   return res.json({ vote: hasVoted });
+  // }
+  console.log("hija");
   return res.json({ vote: false /* hasVoted*/ });
   // res.locals.formatedDate = formatedDate;
 }

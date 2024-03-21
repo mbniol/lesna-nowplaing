@@ -16,9 +16,25 @@ router.get(
   AuthController.getSDKToken
 );
 
+router.get(
+  "/random_songs",
+  /* checkIfMainframe, */ SongController.getRandomSongs
+);
+
+router.get(
+  "/finishing_ranking",
+  /* checkIfMainframe, */ SongController.getVotes
+);
+
+router.put(
+  "/reset_ranking",
+  /* checkIfMainframe, */
+  SongController.resetRanking
+);
+
 router.post("/login", checkNotAdmin, AuthController.loginAdmin);
 
-router.post("/votes", checkVoteRight, SongController.vote);
+router.post("/votes", /*checkVoteRight,*/ SongController.addVote);
 
 router.get("/live_votes", SongController.addNewClient);
 
@@ -28,7 +44,7 @@ router.post("/check_vote_status", checkVote);
 
 router.post("/check_track", SongController.check_track);
 
-router.get("/track_list", SongController.votes);
+router.get("/track_list", SongController.getVotes);
 
 router.get("/get_news", NewsController.show_news);
 

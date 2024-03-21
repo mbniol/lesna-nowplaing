@@ -173,7 +173,7 @@ function runAtSpecificTimeOfDay(
   }
 }
 
-const freeDaysCalendar = [
+const NonWorkingDaysCalendar = [
   {
     day: undefined,
     month: undefined,
@@ -185,8 +185,9 @@ const func = async () => {
   const day = now.getDate();
   const month = now.getMonth() + 1;
   if (
-    freeDaysCalendar.find(
-      ({ freeDay, freeMonth }) => freeDay === day && freeMonth === month
+    nonWorkingDaysCalendar.find(
+      ({ nonWorkingDay, nonWorkingMonth }) =>
+        nonWorkingDay === day && nonWorkingMonth === month
     )
   ) {
     return;

@@ -1,9 +1,11 @@
 import songModel from "../models/song.js";
 import Auth from "../helpers/auth.js";
+import voteModel from "../models/vote.js";
 import { get_id } from "../helpers/vote.js";
 import { fetchWebApi } from "../helpers/helpers.js";
 import request from "request";
 import { sendEventsToAll } from "../helpers/player.js";
+// import voteController from "./vote.js";
 
 export default class Controller {
   static #clients = [];
@@ -78,6 +80,20 @@ export default class Controller {
     res.sendStatus(200);
   }
 
+  static async getRandomSongs(req, res) {
+    const deficitLength = req.query.l;
+    const songsAmount = 100;
+    const songs = await songModel.getTopVerifiedSong(songsAmount);
+    const randomSongs = [];
+    for (let remainingLength = deficitLength; remainingLength > 0; ) {
+      const randomIndex = (Math.random() * songs.length) | 0;
+      remainingLength -= songs[randomIndex].length;
+      randomSongs.push(songs[randomIndex]);
+      songs.splice(randomIndex, 1);
+    }
+    res.json(randomSongs);
+  }
+
   static async getMany(req, res) {
     //console.log("hejka", req.query);
     const type = req.query.type ?? "unverified";
@@ -134,90 +150,100 @@ export default class Controller {
     res.json(songs);
   }
 
-  static async votes(req, res) {
-    const track_list = await songModel.getTracksToDisplayFrom("2023-12-22");
+  static async getVotes(req, res) {
+    const track_list = await songModel.getTracksRanking();
     // const track_list = await songModel.get_tracks_to_display();
     // console.log(track_list)
     res.json(track_list);
   }
-  static async vote(req, res) {
+  static async addVote(req, res) {
     // console.log(req.convertedIP);
     const track_link = req.body.spotifyLink;
     const token = await Auth.getInstance().getAPIToken();
     //przeksztalcenie linku na track id
     const track_id = await get_id(track_link);
     // console.log(track_id);
-    // console.log(track_id);
-    if (track_id) {
-      const rows = await songModel.get_song(track_id);
-      if (rows[0][0] === undefined) {
-        const track = await fetchWebApi(token, "tracks/" + track_id);
-        if (track["error"] !== undefined) {
-          res.json({ error: "wystapil blad przy odczycie piosenki" });
-        } else {
-          //piosenka jest niecenzuralna
-          if (track["explicit"] === true) {
-            await songModel.add_track(
-              track_id,
-              track["album"]["images"][0]["url"],
-              track.artists[0].name,
-              track["duration_ms"],
-              track["name"],
-              1,
-              1
-            );
-            res.json({ error: "piosenka jest nieodpowiednia" });
-          } else {
-            //piosenki nie ma w bazie danych
-            await songModel.add_track(
-              track_id,
-              track["album"]["images"][0]["url"],
-              track.artists[0].name,
-              track["duration_ms"],
-              track["name"]
-            );
-            await songModel.add_vote(
-              track_id,
-              req.convertedIP,
-              req.body.visitorId
-            );
-            const votes = await songModel.getVotesAmountFrom(
-              track_id,
-              "2023-12-22"
-            );
-            sendEventsToAll(Controller.#clients, {
-              track_id,
-              votes,
-            });
-            res.json({ error: "dodano piosenkę i głos" });
-          }
-        }
-      } else {
-        if (rows[0][0]["banned"] === 1) {
-          res.json({ error: "piosenka zostala zabanowan przez administracje" });
-        } else {
-          await songModel.add_vote(
-            track_id,
-            req.convertedIP,
-            req.body.visitorId
-          );
-          const votes = await songModel.getVotesAmountFrom(
-            track_id,
-            "2023-12-22"
-          );
-          sendEventsToAll(Controller.#clients, {
-            track_id,
-            cover: rows[0][0]["cover"],
-            artist: rows[0][0]["artist"],
-            name: rows[0][0]["name"],
-            votes,
-          });
-          res.json({ error: "dodano głos" });
-        }
-      }
-    } else {
-      res.json({ error: "podany link jest nieprawidłowy" });
+    if (!track_id) {
+      return res.json({ error: "podany link jest nieprawidłowy" });
     }
+    const localTrackData = await songModel.get_song(track_id);
+    if (localTrackData && localTrackData["banned"]) {
+      return res.json({
+        error: "piosenka zostala zabanowan przez administracje",
+      });
+    } else if (localTrackData) {
+      await voteModel.add(
+        track_id,
+        req.convertedIP || "",
+        req.body.visitorId || ""
+      );
+      const votes = await songModel.getVotesFor(track_id);
+      sendEventsToAll(Controller.#clients, {
+        track_id,
+        cover: localTrackData["cover"],
+        artist: localTrackData["artist"],
+        name: localTrackData["name"],
+        votes,
+      });
+      return res.json({ error: "dodano głos" });
+    }
+    const track = await fetchWebApi(token, "tracks/" + track_id);
+    if (track["error"]) {
+      return res.json({ error: "wystapil blad przy odczycie piosenki" });
+    }
+    //piosenka jest niecenzuralna
+    if (track["explicit"]) {
+      await songModel.add_track(
+        track_id,
+        track["album"]["images"][0]["url"],
+        track.artists[0].name,
+        track["duration_ms"],
+        track["name"],
+        1,
+        1
+      );
+      return res.json({ error: "piosenka jest nieodpowiednia" });
+    }
+    //piosenki nie ma w bazie danych
+    await songModel.add_track(
+      track_id,
+      track["album"]["images"][0]["url"],
+      track.artists[0].name,
+      track["duration_ms"],
+      track["name"]
+    );
+    await voteModel.add(
+      track_id,
+      req.convertedIP || "",
+      req.body.visitorId || ""
+    );
+    const votes = await songModel.getVotesFor(track_id);
+    sendEventsToAll(Controller.#clients, {
+      track_id,
+      votes,
+    });
+    res.json({ error: "dodano piosenkę i głos" });
+  }
+
+  static async archiveRanking(tracks) {
+    tracks.forEach(async ({ id, votesCount }) => {
+      await songModel.updateTrackArchiveRanking(id, votesCount);
+    });
+    console.log("ej");
+  }
+
+  static async resetRanking(req, res) {
+    const tracks = await songModel.getTracksRanking();
+    await Controller.archiveRanking(tracks);
+    console.log("po");
+    await voteModel.clear();
+    tracks.forEach(async (track) => {
+      const halvedVotes = Math.floor(track.votesCount / 2);
+      for (let votesToAdd = halvedVotes; votesToAdd > 0; votesToAdd--) {
+        await voteModel.addArtificial(track.id);
+      }
+    });
+    res.send(200);
   }
 
   static async check_track(req, res) {
@@ -226,63 +252,57 @@ export default class Controller {
     //przeksztalcenie linku na track id
     const track_id = await get_id(track_link);
     // console.log(track_id);
-    if (track_id) {
-      const rows = await songModel.get_song(track_id);
-      if (rows[0][0] === undefined) {
-        // console.log("api");
-        const track = await fetchWebApi(token, "tracks/" + track_id);
-        if (track["error"] !== undefined) {
-          res.json({ error: "wystapil blad przy odczycie piosenki" });
-        } else {
-          //piosenka jest niecenzuralna
-          if (track["explicit"] === true) {
-            res.json({ error: "piosenka jest nieodpowiednia" });
-            await songModel.add_track(
-              track_id,
-              track["album"]["images"][0]["url"],
-              track.artists[0].name,
-              track["duration_ms"],
-              track["name"],
-              1,
-              1
-            );
-          } else {
-            //piosenki nie ma w bazie danych
-            if (rows[0][0] === undefined) {
-              await songModel.add_track(
-                track_id,
-                track["album"]["images"][0]["url"],
-                track.artists[0].name,
-                track["duration_ms"],
-                track["name"],
-                0
-              );
-              res.json({
-                id: track_id,
-                img: track["album"]["images"][0]["url"],
-                artist: track.artists[0].name,
-                time: track["duration_ms"],
-                name: track["name"],
-              });
-            }
-          }
-        }
-      } else {
-        if (rows[0][0]["banned"] === 1) {
-          res.json({ error: "piosenka zostala zabanowan przez administracje" });
-        } else {
-          const json = {
-            id: rows[0][0]["id"],
-            img: rows[0][0]["cover"],
-            artist: rows[0][0]["artist"],
-            time: rows[0][0]["length"],
-            name: rows[0][0]["name"],
-          };
-          res.json(json);
-        }
-      }
-    } else {
-      res.json({ error: "podany link jest nieprawidłowy" });
+    if (!track_id) {
+      return res.json({ error: "podany link jest nieprawidłowy" });
     }
+    const localTrackData = await songModel.get_song(track_id);
+    if (localTrackData && localTrackData["banned"]) {
+      return res.json({
+        error: "piosenka zostala zabanowan przez administracje",
+      });
+    } else if (localTrackData) {
+      const json = {
+        id: localTrackData["id"],
+        img: localTrackData["cover"],
+        artist: localTrackData["artist"],
+        time: localTrackData["length"],
+        name: localTrackData["name"],
+      };
+      return res.json(json);
+    }
+    // console.log("api");
+    const track = await fetchWebApi(token, "tracks/" + track_id);
+    if (track["error"]) {
+      return res.json({ error: "wystapil blad przy odczycie piosenki" });
+    }
+    //piosenka jest niecenzuralna
+    if (track["explicit"]) {
+      await songModel.add_track(
+        track_id,
+        track["album"]["images"][0]["url"],
+        track.artists[0].name,
+        track["duration_ms"],
+        track["name"],
+        1,
+        1
+      );
+      return res.json({ error: "piosenka jest nieodpowiednia" });
+    }
+    //piosenki nie ma w bazie danych
+    await songModel.add_track(
+      track_id,
+      track["album"]["images"][0]["url"],
+      track.artists[0].name,
+      track["duration_ms"],
+      track["name"],
+      0
+    );
+    res.json({
+      id: track_id,
+      img: track["album"]["images"][0]["url"],
+      artist: track.artists[0].name,
+      time: track["duration_ms"],
+      name: track["name"],
+    });
   }
 }

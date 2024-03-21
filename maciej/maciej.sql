@@ -95,6 +95,14 @@ CREATE TABLE `votes` (
   `visitor_id` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `ranking_archive` (
+  -- `id` int(11) NOT NULL,
+  `track_id` varchar(22) NOT NULL,
+  `vote_count` int(11) NOT NULL,
+  PRIMARY KEY (`track_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 --
 -- Indeksy dla zrzutów tabel
 --
