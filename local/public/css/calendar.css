@@ -6,6 +6,12 @@
   grid-auto-rows: 200px;
   grid-auto-flow: column;
 }
+.calendar__month {
+  display: none;
+}
+.calendar__month--visible {
+  display: block;
+}
 .calendar__week {
   display: flex;
 }

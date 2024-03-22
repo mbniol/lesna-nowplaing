@@ -23,9 +23,7 @@
         <div class="calendar__weekday-name">Sob</div>
         <div class="calendar__weekday-name">Ndz</div>
       </div>
-      <div class="calendar__grid">
-        <div class="calendar__dates-container"></div>
-      </div>
+      <div class="calendar__grid"></div>
     </div>
     <div>
       <div>
@@ -40,14 +38,14 @@
           <option value="0">niedziele</option>
         </select>
         ustal jako dni
-        <select class="operation-selector">
-          <option value="POST">wolne</option>
-          <option value="DELETE">pracujące</option>
+        <select class="type-selector">
+          <option value="non-working">wolne</option>
+          <option value="working">pracujące</option>
         </select>
         <button class="open-dialog">Zatwierdź</button>
       </div>
-      <button>Cały miesiąc wolny</button>
-      <button>Zresetuj kalendarz</button>
+      <button class="whole-month-off">Cały miesiąc wolny</button>
+      <button class="reset-calendar">Zresetuj kalendarz</button>
       <dialog class="dialog">
         Czy na pewno chcesz <span class="alert-text"></span>
         <button class="cancel-operation">Anuluj</button>

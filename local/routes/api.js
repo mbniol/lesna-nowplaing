@@ -61,6 +61,8 @@ router.get("/days_off", checkAdmin, DayOffController.exists);
 
 router.delete("/days_off", checkAdmin, DayOffController.delete);
 
+router.delete("/days_off/all", checkAdmin, DayOffController.deleteAll);
+
 router.post("/days_off", checkAdmin, DayOffController.add);
 
 export default router;

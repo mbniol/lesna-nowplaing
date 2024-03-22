@@ -16,6 +16,10 @@ export default class Controller {
     });
     res.sendStatus(200);
   }
+  static async deleteAll(req, res) {
+    await dayOffModel.deleteAll();
+    res.sendStatus(200);
+  }
   static async getMany(req, res) {
     const daysOff = await dayOffModel.getMany();
 

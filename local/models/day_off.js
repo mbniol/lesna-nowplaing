@@ -60,4 +60,17 @@ export default class Model {
     }
     return rows;
   }
+  static async deleteAll() {
+    const pool = Mysql.getPromiseInstance();
+    const [[rows], err] = await errorHandler(
+      pool.query,
+      pool,
+      `
+        DELETE FROM days_off`
+    );
+    if (err) {
+      throw new Error("Nie udało się wykonać zapytania", { cause: err });
+    }
+    return rows;
+  }
 }
