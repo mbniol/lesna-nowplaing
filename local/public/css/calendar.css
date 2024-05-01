@@ -1,0 +1,39 @@
+.calendar {
+  width: 300px;
+}
+.calendar__grid {
+  display: grid;
+  grid-auto-rows: 200px;
+  grid-auto-flow: column;
+}
+.calendar__month {
+  display: none;
+}
+.calendar__month--visible {
+  display: block;
+}
+.calendar__week {
+  display: flex;
+}
+.calendar__week:first-child {
+  justify-content: right;
+}
+.calendar__weekday {
+  cursor: pointer;
+  width: 14.2857142857%;
+}
+.calendar__weekday--non-working {
+  background: red;
+}
+.calendar__weekday-names-container {
+  display: flex;
+}
+.calendar__weekday-name {
+  width: 14.2857142857%;
+}
+.calendar__navigation-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+/*# sourceMappingURL=calendar.css.map */

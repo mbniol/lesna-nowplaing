@@ -1,0 +1,409 @@
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/PlusJakartaSans-Variable.ttf") format("truetype");
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+html, body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  font-family: "Plus Jakarta Sans";
+}
+
+.root {
+  height: 100dvh;
+  position: relative;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00c2c9;
+  border-radius: 1rem;
+}
+
+.dialog {
+  text-align: center;
+  border-radius: 10px;
+}
+.dialog__paragraph {
+  text-align: left;
+  margin: 0 0 10px 0;
+}
+.dialog__button {
+  display: inline-block;
+  margin: 10px;
+  justify-content: center;
+  border-radius: 5px;
+  border: 1px solid black;
+  background: #00c2c9;
+  color: #fff;
+  font-size: 1rem;
+  padding: 7px 20px;
+}
+
+.voting-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.voting-header {
+  font-size: 1.5rem;
+  padding: 0.5em 0.75em;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.voting-list {
+  overflow-y: auto;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 0.5em;
+  flex-direction: column;
+  padding: 0.5em 1em;
+}
+
+.voting-item {
+  display: flex;
+  flex-direction: row;
+  height: 5em;
+  width: 100%;
+}
+.voting-item button {
+  height: 2em;
+  overflow: hidden;
+  align-self: center;
+  justify-self: center;
+  font-family: inherit;
+  font-weight: 100;
+  font-size: 1.5rem;
+  border-radius: 1rem;
+  border: none;
+  background: #00c2c9;
+  color: white;
+  width: 2em;
+}
+.voting-item button svg {
+  fill: white;
+}
+
+.voting-song-cover {
+  height: 5em;
+  flex: 0 1 5em;
+}
+.voting-song-cover img {
+  height: 100%;
+  border-radius: 1rem;
+}
+
+.voting-song-info-wrapper {
+  flex: 1 1 auto;
+  padding: 0 0.5em;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
+  text-wrap: nowrap;
+  -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent);
+}
+
+.voting-votecount-wrapper {
+  overflow: hidden;
+  width: 100%;
+}
+
+.voting-votecount-count {
+  padding-left: 5px;
+  position: absolute;
+  display: inline-block;
+}
+.voting-votecount-count--take-position {
+  position: absolute;
+  animation: 0.5s ease-in-out example1;
+}
+.voting-votecount-count--leave-position {
+  position: absolute;
+  animation: 0.5s ease-in-out example2;
+}
+
+@keyframes example1 {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+@keyframes example2 {
+  0% {
+    transform: translateY(0%);
+    left: 0;
+  }
+  100% {
+    position: absolute;
+    transform: translateY(100%);
+  }
+}
+.voting-vote-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.add-song-floating-btn {
+  color: inherit;
+  border: none;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  line-height: 0.75em;
+  font-size: 3rem;
+  text-align: center;
+  border-radius: 1rem;
+  background-color: #00c2c9;
+  width: 1em;
+  height: 1em;
+}
+
+.add-song-floating-btn, .voting-vote-btn {
+  transition: 0.3s filter ease-out;
+}
+
+.add-song {
+  z-index: 1;
+  transition: transform 0.7s ease-in-out;
+  position: fixed;
+  color: black;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  transform: translateX(100%);
+}
+
+.add-song.visible {
+  transform: translateX(0%);
+}
+
+.add-song-step1 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.add-song-step1 .error {
+  color: red;
+  text-align: center;
+  height: 2em;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-song-step2 {
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+}
+.add-song-step2 button {
+  bottom: 1em;
+  left: 50%;
+  translate: -50% 0;
+  position: absolute;
+  background: black;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0.25em 0.5em;
+  color: white;
+  border-radius: 1rem;
+  width: 13.3333333333em;
+}
+
+.add-song-step2-song {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding-bottom: 5em;
+}
+
+.step2-song-cover, .step2-song-artist {
+  padding: 0 2em;
+}
+
+.step2-song-title {
+  font-size: 1.5rem;
+  padding: 0 1.3333333333em;
+}
+
+.step2-song-cover {
+  width: 100%;
+}
+.step2-song-cover img {
+  border-radius: 1rem;
+  width: 100%;
+}
+
+.visible {
+  opacity: 1;
+}
+
+.add-song-header {
+  font-size: 2rem;
+  padding: 0.25em;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1em 1fr 1em;
+  justify-content: space-between;
+}
+
+.add-song-header-close {
+  height: 1em;
+  width: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 200;
+  overflow: hidden;
+  color: white;
+}
+
+#spotifyForm {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex: 1 1 auto;
+  justify-content: center;
+  font-size: 1.5rem;
+  gap: 0.5em;
+  align-items: center;
+  padding: 1em;
+}
+#spotifyForm input {
+  background: white;
+  border: none;
+  font-size: 1rem;
+  padding: 0.5em 1em;
+  width: 20em;
+  color: black;
+  outline: none;
+  border: 0.125rem solid black;
+  border-radius: 1rem;
+}
+#spotifyForm button {
+  bottom: 1em;
+  position: absolute;
+  background: black;
+  border: none;
+  font-size: 1.5rem;
+  padding: 0.25em 0.5em;
+  color: white;
+  border-radius: 1rem;
+  width: 13.3333333333em;
+}
+#spotifyForm button.hidden {
+  display: none;
+}
+
+.loader {
+  border: 0.25em solid #f3f3f3;
+  border-top: 0.25em solid #00c2c9;
+  border-radius: 50%;
+  width: 1.5em;
+  height: 1.5em;
+  animation: spin 1s ease-in-out infinite;
+  bottom: 1em;
+  position: absolute;
+  z-index: -1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.closeBtn, #backBtn {
+  border: 0.125rem solid black;
+  border-radius: 100%;
+  background-color: black;
+}
+.closeBtn svg, #backBtn svg {
+  width: 1rem;
+  height: 1rem;
+  fill: white;
+}
+
+#backBtn svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.add-song-step1, .add-song-step2 {
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  position: absolute;
+}
+
+.fadeOut {
+  transition: opacity 0.5s ease-in-out;
+  opacity: 0;
+}
+
+.fadeIn {
+  z-index: 2;
+  transition: opacity 0.5s ease-in-out 0.5s;
+  opacity: 1;
+}
+
+@media only screen and (min-width: 600px) {
+  .root {
+    display: flex;
+    justify-content: center;
+  }
+  .voting-wrapper {
+    width: 50em;
+  }
+  .add-song-step2-song {
+    width: clamp(20em, 50%, 30em);
+    align-self: center;
+  }
+}
+button[disabled] {
+  filter: grayscale(1);
+}
+
+/*# sourceMappingURL=voting.css.map */

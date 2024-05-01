@@ -1,0 +1,135 @@
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/PlusJakartaSans-Variable.ttf") format("truetype");
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+html, body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  font-family: "Plus Jakarta Sans";
+}
+
+.root {
+  height: 100dvh;
+  position: relative;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.root {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  isolation: isolate;
+}
+
+.selected:after {
+  content: "";
+  width: 100%;
+  translate: -100% 1.1em;
+  position: absolute;
+  height: 0.125rem;
+  z-index: -1;
+  background-color: #00c2c9;
+}
+
+.admin-wrapper {
+  font-size: 2rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.admin-title {
+  height: 2em;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+tr:nth-child(even) {
+  background-color: #3b3b3b;
+}
+
+td {
+  height: 4em;
+  overflow: hidden;
+}
+td div {
+  height: 4em;
+  display: flex;
+  align-items: center;
+}
+td img {
+  height: 4em;
+}
+
+td:nth-child(2) div, td:nth-child(3) div {
+  -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent);
+}
+
+td:first-child, th:first-child {
+  width: 4em;
+}
+
+td:nth-child(2), td:nth-child(3), th:nth-child(2), th:nth-child(3) {
+  width: 15em;
+}
+td:nth-child(2) div, td:nth-child(3) div, th:nth-child(2) div, th:nth-child(3) div {
+  overflow: hidden;
+  padding: 0.5em;
+  width: 15em;
+  text-wrap: nowrap;
+}
+
+td:nth-child(4), th:nth-child(4), td:nth-child(5), th:nth-child(5), td:nth-child(6), th:nth-child(6) {
+  width: 4em;
+  text-align: center;
+}
+
+.filter-menu {
+  font-size: 1.5rem;
+  height: 2.5em;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  align-items: center;
+}
+
+.navigation {
+  display: flex;
+  gap: 10px;
+}
+.navigation__anchor--current {
+  color: red;
+}
+
+/*# sourceMappingURL=bans.css.map */

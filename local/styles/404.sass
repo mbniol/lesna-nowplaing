@@ -1,0 +1,33 @@
+@font-face 
+    font-family: "Plus Jakarta Sans"
+    src: url('/fonts/PlusJakartaSans-Variable.ttf') format('truetype')
+
+html, body
+  margin: 0
+  font-family: "Plus Jakarta Sans"
+  background-color: black
+  
+.root
+  width: 100%
+  min-height: 100dvh
+  background-color: black
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+
+.image
+  height: 10em
+  img
+    height: 100%
+  
+.text
+  color: white
+  text-align: center
+  h1
+    font-size: 4rem
+    margin: 0
+
+@media only screen and (min-width: 900px)
+  .image
+    height: 30em

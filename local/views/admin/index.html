@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <script src="js/adminbuttons.js" defer></script>
+    <title>Lesna - admin panel</title>
+  </head>
+  <body>
+    <div class="root">
+      <div class="add-preset-button">+</div>
+      <div class="add-preset">
+        <div class="add-preset-close-btn">x</div>
+        <div class="add-preset-top">
+          <div>Dodaj szablon</div>
+        </div>
+        <form action="/api/pattern" method="post" id="pattern_form">
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Nazwa"
+            required
+          />
+          <input
+            type="number"
+            name="offset"
+            id="offset"
+            placeholder="Przesunięcie"
+            required
+          />
+          <button type="submit">Dodaj</button>
+        </form>
+      </div>
+      <div class="add-preset-background"></div>
+      <div class="admin-wrapper">
+        <div class="admin-title">
+          <a class="selected">Szablony</a><a href="/admin/songs">Bany</a>
+        </div>
+        <div class="admin-presets"></div>
+      </div>
+    </div>
+    <script src="js/admin.js"></script>
+  </body>
+</html>

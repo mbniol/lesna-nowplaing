@@ -1,0 +1,12 @@
+package-lock.json
+node_modules
+public/css/*
+.env
+maciej/node_modules
+local/node_modules
+maciej/package-lock.json
+local/package-lock.json
+maciej/.env
+local/.env
+local/localKey.key
+local/localCertificate.crt

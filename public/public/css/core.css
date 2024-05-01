@@ -1,0 +1,31 @@
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/PlusJakartaSans-Variable.ttf") format("truetype");
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+html, body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  font-family: "Plus Jakarta Sans";
+}
+
+.root {
+  height: 100dvh;
+  position: relative;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/*# sourceMappingURL=core.css.map */
